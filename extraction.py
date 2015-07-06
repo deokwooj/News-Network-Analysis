@@ -11,14 +11,28 @@ from openpyxl import load_workbook
 
 import xlsxwriter
 
-#kkma = Kkma()
-#pprint (kkma.nouns(u"아버지가 방에 들어가신다. 그 방에는 내 동생이 있다."))
 
 wb=load_workbook('reference.xlsx')
 sheetList = wb.get_sheet_names()
 sheet = wb.get_sheet_by_name(sheetList[0])
+
 cellValue = sheet.cell('B2').value
 
-print cellValue
+#count = cellValue.count('\u201c')
+count = cellValue.count(u'\u201c')   # count of quatation mark
 
+if count == 1:
 
+	START_QUA = cellValue.find(u"\u201c") + 1 # position of first quatation mark
+	CELL_VALUE_LEN = len(cellValue)
+
+	cellValue_re = cellValue[START_QUA:CELL_VALUE_LEN]
+	END_QUA = cellValue_re.find(u"\u201d") # position of last quatation mark
+
+	cellValue_final = cellValue_re[0:END_QUA]
+
+	kkma = Kkma()
+	pprint (kkma.nouns(cellValue_final))
+
+else :
+	print "no one sentence"
