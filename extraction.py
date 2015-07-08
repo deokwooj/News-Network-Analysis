@@ -26,9 +26,11 @@ for i in range(2, row_count):
 	if sheet.row_dimensions[i].visible :
 		pass
 	else :
+		#new_sheet.row_dimensions[i].hidden ='1'
 		continue
 	
 	noun_val = ""
+	full_qua = ""
 
 	cellValue_name = sheet.cell(row=i, column=1).value
 	cellValue = sheet.cell(row=i, column=2).value
@@ -90,6 +92,8 @@ for i in range(2, row_count):
 
 				arr_cellValue = arr[q][arr_start_qua:arr_len]
 
+				full_qua = full_qua + arr_cellValue
+
 				kkma = Kkma()
 				#pprint (kkma.nouns(cellValue_final))
 				s = (kkma.nouns(arr_cellValue))
@@ -98,7 +102,7 @@ for i in range(2, row_count):
 					noun_val = noun_val + s[j].encode('utf-8') + ','
 					#print str(i) + " " + arr_cellValue
 				excel_write(i, 1, cellValue_name)
-				excel_write(i, 2, arr_cellValue)
+				excel_write(i, 2, full_qua)
 				excel_write(i, 3, noun_val)
 
 wb.save('reference.xlsx')
