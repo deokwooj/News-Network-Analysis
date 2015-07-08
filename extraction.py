@@ -8,9 +8,6 @@ from openpyxl.cell import get_column_letter
 
 from openpyxl import load_workbook
 
-#import xlsxwriter
-#from openpyxl.worksheet import Worksheet, ColumnDimension, RowDimension
-
 def excel_write(row_val, column_val, data):
 	new_sheet.cell(row = row_val, column = column_val, value="%s" %data)
 	
@@ -20,13 +17,14 @@ sheet = wb.get_sheet_by_name(sheetList[0])
 row_count = sheet.get_highest_row()
 
 new_sheet = wb.create_sheet(title='extraction')
-#new_sheet.cell('E7').value = 7
 
 for i in range(2, row_count):
 	if sheet.row_dimensions[i].visible :
 		pass
 	else :
-		#new_sheet.row_dimensions[i].hidden ='1'
+		excel_write(i,1,'')
+		new_sheet.row_dimensions[i].hidden = True
+		#new_sheet.row_dimensions[i].outlineLevel = 1
 		continue
 	
 	noun_val = ""
