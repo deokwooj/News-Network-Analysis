@@ -3,6 +3,15 @@
 
 # defintion of class strutures. 
 
+# class definition : news source. 
+class new_source:
+    def __init__(self):
+        self.id = [] # uuid 
+        self.org = [] # orgnizaiton
+        self.pos = [] # position
+    def add(self, x):
+        self.data.append(x)
+     
 
 
 
