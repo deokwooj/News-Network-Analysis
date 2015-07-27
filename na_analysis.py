@@ -5,7 +5,7 @@
 from __future__ import division # To forace float point division
 import os
 import sys
-import numpy as np
+import numpy as np
 from numpy.linalg import inv
 from numpy.linalg import norm
 import uuid
@@ -31,8 +31,10 @@ import pprint
 # Tempoary defition --> need to be checked by Dr.Park....
 
 # Article is stroed in harddisk or DB,... 
-QuaLabel={'eco':0, 'phil':1,'culture'2}
+QuaLabel={'eco':0, 'phil':1,'culture':2}
 
+TotalNum_NewsSources=100
+TotalNum_Quatations=10000
 # class definition : news source. 
 class NewsSource:
     def __init__(self):
@@ -49,40 +51,71 @@ class NewsQuation:
         self.qua_unicode = [] # unicode
         self.qua_date=[] # date of quations , defined by datetime. 
         self.qua_nouns = [] # position, need to be initionalized by kkd_functions. 
-        self.qua_artile=get_ArticleLabel() # Article Label ...
+        self.qua_article=get_ArticleLabel() # Article Label ...
         # many other featured to beArticleLabel added....
     # sentecne parsing functions. 
     def kkd_funcs(self, x):
         self.data.append(x)
-# to be done...     
+
+# get a vector of nones from quatations
+def get_nouns(sentence):
+    return None
+
+# return artice label.
+def get_ArticleLabel():
+    # this body to be filled
+    return None
+    # to be filled...     
+    
+    
 def get_all_NS():
     all_NS=[]
-    total_ns=100
+    # total number of news sources 
+    total_ns=TotalNum_NewsSources
     for i in range(total_ns):
-        all_NS.append(NewsSource())
-    # Fill all members and details...
-    retrun all_NS    
+        temp_ns=NewsSource() # create an instance of news sources
+        all_NS.append(temp_ns)
+    # to be filled all members and details...
+    return all_NS
+
 
 def get_all_Qua():
     all_Qua=[]
-    total_quo=10000
-    for i in range(total_qua):
-        all_NS.append(NewsQuation()qua_)
+    total_quo=TotalNum_Quatations
+    for i in range(total_quo):
+        temp_nq=NewsQuation() # create an instance of news quatations
+        all_Qua.append(temp_nq)
         # To be manually or automatically (preferred)...
-        all_NS[i].gth_label=QuaLabel['eco'] # this is example. 
-        all_NS[i].qua_nouns()  # to be done...
+        temp_nq.gth_label=QuaLabel['eco'] # this is example. 
+        temp_nq.qua_nouns=get_nouns(temp_nq.qua_unicode) # to be done...
     # Fill all members and details...
-    return all_Quo
+    return all_Qua
+ 
     
 if __name__ == "__main__":
     print " running news source analysis..... "
     
     # Load class list of NewsSource object. 
     all_ns=get_all_NS()
+    
+    # Load class list of Quatation object. 
     all_qua=get_all_Qua()
     
 
+
+    #####################################################
+    # Simulation test 
+    # This part is for simulations
+    #####################################################
     
+    #S-A associatoin matrix 
+    U=np.matrix(np.ones((5,2)))
+    U[3:5,0]=0
+    U[1:3,1]=0
+    S=U*U.T
+    pprint.pprint(S)
+
     
+
     
     
