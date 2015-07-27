@@ -47,6 +47,7 @@ class NewsQuation:
     def __init__(self):
         self.gth_label = [] # uuid 
         self.qua_unicode = [] # unicode
+        self.qua_date=[] # date of quations , defined by datetime. 
         self.qua_nouns = [] # position, need to be initionalized by kkd_functions. 
         self.qua_artile=get_ArticleLabel() # Article Label ...
         # many other featured to beArticleLabel added....
