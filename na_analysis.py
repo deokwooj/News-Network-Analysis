@@ -27,14 +27,14 @@ from matplotlib.collections import LineCollection
 import pprint
 
 # defintion of class strutures. 
-# Quation label classfication defined by dictionary...
+# Quotation label classfication defined by dictionary...
 # Tempoary defition --> need to be checked by Dr.Park....
 
 # Article is stroed in harddisk or DB,... 
-QuaLabel={'eco':0, 'phil':1,'culture':2}
+QuoLabel={'eco':0, 'phil':1,'culture':2}
 
 TotalNum_NewsSources=100
-TotalNum_Quatations=10000
+TotalNum_Quotations=10000
 # class definition : news source. 
 class NewsSource:
     def __init__(self):
@@ -46,13 +46,13 @@ class NewsSource:
         self.data.append(x)
 
 
-class NewsQuation:
+class NewsQuotation:
     def __init__(self):
         self.gth_label = [] # uuid 
-        self.qua_unicode = [] # unicode
-        self.qua_date=[] # date of quations , defined by datetime. 
-        self.qua_nouns = [] # position, need to be initionalized by kkd_functions. 
-        self.qua_article=get_ArticleLabel() # Article Label ...
+        self.quo_unicode = [] # unicode
+        self.quo_date=[] # date of quotations , defined by datetime. 
+        self.quo_nouns = [] # position, need to be initionalized by kkd_functions. 
+        self.quo_article=get_ArticleLabel() # Article Label ...
         # many other featured to beArticleLabel added....
     # sentecne parsing functions. 
     def kkd_funcs(self, x):
@@ -80,17 +80,17 @@ def get_all_NS():
     return all_NS
 
 
-def get_all_Qua():
-    all_Qua=[]
-    total_quo=TotalNum_Quatations
+def get_all_Quo():
+    all_Quo=[]
+    total_quo=TotalNum_Quotations
     for i in range(total_quo):
-        temp_nq=NewsQuation() # create an instance of news quatations
-        all_Qua.append(temp_nq)
+        temp_nq=NewsQuotation() # create an instance of news quotations
+        all_Quo.append(temp_nq)
         # To be manually or automatically (preferred)...
-        temp_nq.gth_label=QuaLabel['eco'] # this is example. 
-        temp_nq.qua_nouns=get_nouns(temp_nq.qua_unicode) # to be done...
+        temp_nq.gth_label=QuoLabel['eco'] # this is example. 
+        temp_nq.quo_nouns=get_nouns(temp_nq.quo_unicode) # to be done...
     # Fill all members and details...
-    return all_Qua
+    return all_Quo
  
     
 if __name__ == "__main__":
@@ -100,7 +100,7 @@ if __name__ == "__main__":
     all_ns=get_all_NS()
     
     # Load class list of Quatation object. 
-    all_qua=get_all_Qua()
+    all_quo=get_all_Quo()
     
 
 
