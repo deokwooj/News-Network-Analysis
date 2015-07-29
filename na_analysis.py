@@ -39,6 +39,7 @@ TotalNum_Quatations=10000
 class NewsSource:
     def __init__(self):
         self.id = [] # uuid 
+        self.name = [] # name
         self.org = [] # orgnizaiton
         self.pos = [] # position
     def add(self, x):
