@@ -32,6 +32,7 @@ from openpyxl.cell import get_column_letter
 
 from openpyxl import load_workbook
 
+import pickle
 
 # defintion of class strutures. 
 # Quotation label classfication defined by dictionary...
@@ -40,15 +41,15 @@ from openpyxl import load_workbook
 # Article is stroed in harddisk or DB,... 
 QuoLabel={'eco':0, 'phil':1,'culture':2}
 
-TotalNum_NewsSources=3
-TotalNum_Quotations=10000
+TotalNum_NewsSources=4
+TotalNum_Quotations=1000
 # class definition : news source. 
 class NewsSource:
-    def __init__(self, id, name, org, pos):
-        self.id = id # uuid 
-        self.name = name # name
-        self.org = org # orgnizaiton
-        self.pos = pos # position
+    def __init__(self):
+        self.id = [] # uuid 
+        self.name = [] # name
+        self.org = [] # orgnizaiton
+        self.pos = [] # position
     def add(self, x):
         self.data.append(x)
 
@@ -65,9 +66,47 @@ class NewsQuotation:
     def kkd_funcs(self, x):
         self.data.append(x)
 
+def get_excel_informers():
+	wb=load_workbook('reference.xlsx')
+	sheetList = wb.get_sheet_names()
+	sheet = wb.get_sheet_by_name('extraction')
+	row_count = sheet.get_highest_row()
+
+	all_cellValue=[]
+
+	for i in range(2,row_count):
+		if sheet.row_dimensions[i].visible :
+			pass
+		else :
+			continue	
+
+		cellValue = sheet.cell(row=i, column=3).value
+		all_cellValue.append(cellValue)
+
+	return all_cellValue 
+
 # get a vector of nones from quatations
-def get_nouns(sentence):
-    return None
+#def get_nouns(i):
+#	return None
+
+def get_excel_nouns():
+	wb=load_workbook('reference.xlsx')
+	sheetList = wb.get_sheet_names()
+	sheet = wb.get_sheet_by_name('extraction')
+	row_count = sheet.get_highest_row()
+
+	all_cellValue=[]
+
+	for i in range(2,row_count):
+		if sheet.row_dimensions[i].visible :
+			pass
+		else :
+			continue	
+
+		cellValue = sheet.cell(row=i, column=3).value
+		all_cellValue.append(cellValue)
+
+	return all_cellValue 
 
 # return artice label.
 def get_ArticleLabel():
@@ -78,61 +117,88 @@ def get_ArticleLabel():
     
 def get_all_NS():
 
-	wb=load_workbook('reference.xlsx')
-	sheetList = wb.get_sheet_names()
-	sheet = wb.get_sheet_by_name(sheetList[0])
-	
 	all_NS=[]
 	# total number of news sources 
 	total_ns=TotalNum_NewsSources
+
+	excel_informers = pickle.load(open("informers.p","rb"))
 	
 	for i in range(2, total_ns):
-		id = str(uuid.uuid4())
-		name = sheet.cell(row=i, column=1).value
-		org = 'test1'
-		pos = 'test2'
+		temp_ns=NewsSource() # create an instance of news sources
+		temp_ns.id = str(uuid.uuid4())
+		temp_ns.name = excel_informers[i].name 
+		temp_ns.org = excel_informers[i].org 
+		temp_ns.pos = excel_informers[i].pos 
 
-		temp_ns=NewsSource(id, name, org, pos) # create an instance of news sources
 		all_NS.append(temp_ns)
 		# to be filled all members and details...
-		return all_NS
+	return all_NS
 
 
 def get_all_Quo():
-    all_Quo=[]
-    total_quo=TotalNum_Quotations
-    for i in range(total_quo):
-        temp_nq=NewsQuotation() # create an instance of news quotations
-        all_Quo.append(temp_nq)
-        # To be manually or automatically (preferred)...
-        temp_nq.gth_label=QuoLabel['eco'] # this is example. 
-        temp_nq.quo_nouns=get_nouns(temp_nq.quo_unicode) # to be done...
-    # Fill all members and details...
-    return all_Quo
+	all_Quo=[]
+	total_quo=TotalNum_Quotations
+
+	excel_nouns = pickle.load(open("noun.p","rb"))
+	
+	for i in range(0, len(excel_nouns) :
+		temp_nq = NewsQuotation() # create an instance of news quotations
+        	# To be manually or automatically (preferred)...
+        	temp_nq.gth_label = QuoLabel['eco'] # this is example. 
+        	#temp_nq.quo_nouns=get_nouns(temp_nq.quo_unicode) # to be done...
+        	temp_nq.quo_nouns = excel_nouns[i] # to be done...
+        	temp_nq.quo_date = '2015/07/30'# date of quotations , defined by datetime. 
+        	temp_nq.quo_article = '1' # Article Label ...
+
+        	all_Quo.append(temp_nq)
+		print all_Quo[i].quo_nouns
+    	# Fill all members and details...
+    	return all_Quo
  
     
 if __name__ == "__main__":
-    print " running news source analysis..... "
-    
-    # Load class list of NewsSource object. 
-    all_ns=get_all_NS()
-    
-    # Load class list of Quatation object. 
-    all_quo=get_all_Quo()
-    
 
+	print " running news source analysis..... "
 
-    #####################################################
-    # Simulation test 
-    # This part is for simulations
-    #####################################################
-    
-    #S-A associatoin matrix 
-    U=np.matrix(np.ones((5,2)))
-    U[3:5,0]=0
-    U[1:3,1]=0
-    S=U*U.T
-    pprint.pprint(S)
+	# excel noun to binary file
+	if os.path.isfile("nouns.p"):
+		print "nouns-binay-file existed" 
+	else:
+		try :
+			excel_nouns = get_excel_nouns() 
+			pickle.dump( excel_nouns, open( "nouns.p", "wb" ) )
+			print "now nouns-binary-file create" 
+		except :
+			print "nouns file make error"
+
+	# excel informers to binary file
+	if os.path.isfile("informers.p"):
+		print "informers-binay-file existed" 
+	else:
+		try :
+			excel_informers = get_excel_informers() 
+			pickle.dump( excel_informers, open( "informers.p", "wb" ) )
+			print "now informers-binary-file create" 
+		except :
+			print "informers file make error"
+
+	# Load class list of NewsSource object. 
+	all_ns=get_all_NS()
+	# Load class list of Quatation object. 
+	all_quo=get_all_Quo()
+	
+	#####################################################
+	# Simulation test 
+	# This part is for simulations
+	#####################################################
+	
+	#S-A associatoin matrix 
+	
+	U=np.matrix(np.ones((5,2)))
+	U[3:5,0]=0
+	U[1:3,1]=0
+	S=U*U.T
+	pprint.pprint(S)
 
     
 
