@@ -26,6 +26,13 @@ import random
 from matplotlib.collections import LineCollection
 import pprint
 
+from openpyxl.workbook import Workbook
+from openpyxl.writer.excel import ExcelWriter
+from openpyxl.cell import get_column_letter
+
+from openpyxl import load_workbook
+
+
 # defintion of class strutures. 
 # Quotation label classfication defined by dictionary...
 # Tempoary defition --> need to be checked by Dr.Park....
@@ -33,15 +40,15 @@ import pprint
 # Article is stroed in harddisk or DB,... 
 QuoLabel={'eco':0, 'phil':1,'culture':2}
 
-TotalNum_NewsSources=100
+TotalNum_NewsSources=3
 TotalNum_Quotations=10000
 # class definition : news source. 
 class NewsSource:
-    def __init__(self):
-        self.id = [] # uuid 
-        self.name = [] # name
-        self.org = [] # orgnizaiton
-        self.pos = [] # position
+    def __init__(self, id, name, org, pos):
+        self.id = id # uuid 
+        self.name = name # name
+        self.org = org # orgnizaiton
+        self.pos = pos # position
     def add(self, x):
         self.data.append(x)
 
@@ -70,14 +77,25 @@ def get_ArticleLabel():
     
     
 def get_all_NS():
-    all_NS=[]
-    # total number of news sources 
-    total_ns=TotalNum_NewsSources
-    for i in range(total_ns):
-        temp_ns=NewsSource() # create an instance of news sources
-        all_NS.append(temp_ns)
-    # to be filled all members and details...
-    return all_NS
+
+	wb=load_workbook('reference.xlsx')
+	sheetList = wb.get_sheet_names()
+	sheet = wb.get_sheet_by_name(sheetList[0])
+	
+	all_NS=[]
+	# total number of news sources 
+	total_ns=TotalNum_NewsSources
+	
+	for i in range(2, total_ns):
+		id = str(uuid.uuid4())
+		name = sheet.cell(row=i, column=1).value
+		org = 'test1'
+		pos = 'test2'
+
+		temp_ns=NewsSource(id, name, org, pos) # create an instance of news sources
+		all_NS.append(temp_ns)
+		# to be filled all members and details...
+		return all_NS
 
 
 def get_all_Quo():
