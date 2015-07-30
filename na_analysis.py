@@ -66,22 +66,24 @@ class NewsQuotation:
     def kkd_funcs(self, x):
         self.data.append(x)
 
+
 def get_excel_informers():
-	wb=load_workbook('reference.xlsx')
+	wb=load_workbook('wholetable.xlsx')
 	sheetList = wb.get_sheet_names()
-	sheet = wb.get_sheet_by_name('extraction')
+	sheet = wb.get_sheet_by_name('wholetable')
 	row_count = sheet.get_highest_row()
 
 	all_cellValue=[]
 
 	for i in range(2,row_count):
-		if sheet.row_dimensions[i].visible :
-			pass
-		else :
-			continue	
+		cell_ns=NewsSource() # create an instance of news sources
+		cell_ns.name = sheet.cell(row=i, column=3).value
+		cell_ns.org = sheet.cell(row=i, column=4).value
+		cell_ns.pos = sheet.cell(row=i, column=6).value
+		
+		print cell_ns.name
 
-		cellValue = sheet.cell(row=i, column=3).value
-		all_cellValue.append(cellValue)
+		all_cellValue.append(cell_ns)
 
 	return all_cellValue 
 
@@ -139,9 +141,9 @@ def get_all_Quo():
 	all_Quo=[]
 	total_quo=TotalNum_Quotations
 
-	excel_nouns = pickle.load(open("noun.p","rb"))
+	excel_nouns = pickle.load(open("nouns.p","rb"))
 	
-	for i in range(0, len(excel_nouns) :
+	for i in range(0, len(excel_nouns)) :
 		temp_nq = NewsQuotation() # create an instance of news quotations
         	# To be manually or automatically (preferred)...
         	temp_nq.gth_label = QuoLabel['eco'] # this is example. 
@@ -185,7 +187,7 @@ if __name__ == "__main__":
 	# Load class list of NewsSource object. 
 	all_ns=get_all_NS()
 	# Load class list of Quatation object. 
-	all_quo=get_all_Quo()
+	#all_quo=get_all_Quo()
 	
 	#####################################################
 	# Simulation test 
