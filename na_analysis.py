@@ -125,7 +125,9 @@ def get_all_NS():
 	total_ns=TotalNum_NewsSources
 
 	excel_informers = pickle.load(open("informers.p","rb"))
-	print excel_informers[0].name
+	print excel_informers[4].name
+	print excel_informers[4].org
+	print excel_informers[4].pos
 	
 	# to be filled all members and details...
 	#return all_NS
@@ -159,25 +161,25 @@ if __name__ == "__main__":
 
 	# excel noun to binary file
 	if os.path.isfile("nouns.p"):
-		print "nouns-binay-file existed" 
+		print " nouns-binay-file existed" 
 	else:
 		try :
 			excel_nouns = get_excel_nouns() 
 			pickle.dump( excel_nouns, open( "nouns.p", "wb" ) )
-			print "now nouns-binary-file create" 
+			print " now nouns-binary-file create " 
 		except :
-			print "nouns file make error"
+			print " nouns file make error "
 
 	# excel informers to binary file
 	if os.path.isfile("informers.p"):
-		print "informers-binay-file existed" 
+		print " informers-binay-file existed " 
 	else:
 		try :
 			excel_informers = get_excel_informers() 
 			pickle.dump( excel_informers, open( "informers.p", "wb" ) )
-			print "now informers-binary-file create" 
+			print " now informers-binary-file create " 
 		except :
-			print "informers file make error"
+			print " informers file make error "
 
 	# Load class list of NewsSource object. 
 	all_ns=get_all_NS()
