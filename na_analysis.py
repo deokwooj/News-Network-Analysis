@@ -77,6 +77,7 @@ def get_excel_informers():
 
 	for i in range(2,row_count):
 		cell_ns=NewsSource() # create an instance of news sources
+		cell_ns.id = str(uuid.uuid4())
 		cell_ns.name = sheet.cell(row=i, column=3).value
 		cell_ns.org = sheet.cell(row=i, column=4).value
 		cell_ns.pos = sheet.cell(row=i, column=6).value
@@ -84,8 +85,8 @@ def get_excel_informers():
 		print cell_ns.name
 
 		all_cellValue.append(cell_ns)
+	return all_cellValue
 
-	return all_cellValue 
 
 # get a vector of nones from quatations
 #def get_nouns(i):
@@ -124,17 +125,11 @@ def get_all_NS():
 	total_ns=TotalNum_NewsSources
 
 	excel_informers = pickle.load(open("informers.p","rb"))
+	print excel_informers[0].name
 	
-	for i in range(2, total_ns):
-		temp_ns=NewsSource() # create an instance of news sources
-		temp_ns.id = str(uuid.uuid4())
-		temp_ns.name = excel_informers[i].name 
-		temp_ns.org = excel_informers[i].org 
-		temp_ns.pos = excel_informers[i].pos 
-
-		all_NS.append(temp_ns)
-		# to be filled all members and details...
-	return all_NS
+	# to be filled all members and details...
+	#return all_NS
+	return None
 
 
 def get_all_Quo():
