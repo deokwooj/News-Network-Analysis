@@ -37,6 +37,7 @@ import pickle
 # TODO:  define output data structures after processing input files 
 # TODO: import pasring module 
 # TODO: parsing quation excel files. 
+# TODo: define data structures after parsing 
 
 
 
