@@ -44,12 +44,30 @@ QuoLabel={'eco':0, 'phil':1,'culture':2}
 TotalNum_NewsSources=4
 TotalNum_Quotations=1000
 # class definition : news source. 
+
+# Dicitonary Definition
+# Using 'set' data structure to extract a set of elements in each column of excel file. 
+#Org_Name={1:'외무부', 2:'신한국당':,3:'서울대':,...}
+#Job_Title={1: '변호사', 2:'사장':,3:'교수':,...};
+# Function to extract sets from excel file. 
+def get_excel_sets(excel_dict):
+	# load excel_dict
+	name_set={} # Source's name
+	org_set={} # Organization affiliated. 
+	pos_set={} # Position held in the organization. 
+	src_set={} # explain what it is  ???
+	isc_set{} # explain what it is  ???
+	return org_set,pos_set,src_set,isc_set
+	
+
 class NewsSource:
     def __init__(self):
         self.id = [] # uuid 
-        self.name = [] # name
-        self.org = [] # orgnizaiton
-        self.pos = [] # position
+        self.name = [] # name_set
+        self.org = [] # org_set
+        self.pos = [] # pos_set
+        self.src=[] # ???
+        self.isc=[] # ???
     def add(self, x):
         self.data.append(x)
 
