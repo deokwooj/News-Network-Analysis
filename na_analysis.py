@@ -33,6 +33,10 @@ from openpyxl.cell import get_column_letter
 from openpyxl import load_workbook
 
 import pickle
+# Two stages :
+# Stg 1. Excel files -->  Python data structure --> store binary format in hard disk as *.bin
+# Stg 2. Load binary files, *.bin files into memory and performs data analytics with the loaded bin files. 
+#
 # TODO: define INPUT files with formatting definition
 # TODO:  define output data structures after processing input files 
 # TODO: import pasring module 
