@@ -33,6 +33,12 @@ from openpyxl.cell import get_column_letter
 from openpyxl import load_workbook
 
 import pickle
+# TODO: define INPUT files with formatting definition
+# TODO:  define output data structures after processing input files 
+# TODO: import pasring module 
+# TODO: parsing quation excel files. 
+
+
 
 # defintion of class strutures. 
 # Quotation label classfication defined by dictionary...
