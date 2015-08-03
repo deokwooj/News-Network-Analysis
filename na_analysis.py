@@ -1,3 +1,5 @@
+#-*- coding: utf-8 -*-
+
 # this is news source analyis program. 
 # read articles and discover network structure of news sources based on quataions in artticles. 
 
