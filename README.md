@@ -5,5 +5,7 @@
 
 #### 설치방법
   - pip install konlpy
+  - pip install numpy
+  - pip install pylab
   - pip install openpyxl
   - pip install xlsxwriter
