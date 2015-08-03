@@ -43,9 +43,7 @@ import pickle
 # TODO:  define output data structures after processing input files 
 # TODO: import pasring module 
 # TODO: parsing quation excel files. 
-# TODo: define data structures after parsing 
-
-
+# TODo: define data structures after parsing
 
 # defintion of class strutures. 
 # Quotation label classfication defined by dictionary...
@@ -69,10 +67,9 @@ def get_excel_sets(excel_dict):
 	org_set={} # Organization affiliated. 
 	pos_set={} # Position held in the organization. 
 	src_set={} # explain what it is  ???
-	isc_set{} # explain what it is  ???
+	isc_set={} # explain what it is  ???
 	return org_set,pos_set,src_set,isc_set
 	
-
 class NewsSource:
     def __init__(self):
         self.id = [] # uuid 
@@ -84,19 +81,17 @@ class NewsSource:
     def add(self, x):
         self.data.append(x)
 
-
 class NewsQuotation:
     def __init__(self):
-        self.gth_label = [] # uuid 
-        self.quo_unicode = [] # unicode
-        self.quo_date=[] # date of quotations , defined by datetime. 
-        self.quo_nouns = [] # position, need to be initionalized by kkd_functions. 
+        self.gth_label = [] 	# uuid 
+        self.quo_unicode = [] 	# unicode
+        self.quo_date=[] 		# date of quotations , defined by datetime. 
+        self.quo_nouns = [] 	# position, need to be initionalized by kkd_functions. 
         self.quo_article=get_ArticleLabel() # Article Label ...
         # many other featured to beArticleLabel added....
     # sentecne parsing functions. 
     def kkd_funcs(self, x):
         self.data.append(x)
-
 
 def get_excel_informers():
 	wb=load_workbook('wholetable.xlsx')
@@ -229,8 +224,3 @@ if __name__ == "__main__":
 	U[1:3,1]=0
 	S=U*U.T
 	pprint.pprint(S)
-
-    
-
-    
-    
