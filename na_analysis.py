@@ -65,6 +65,7 @@ TotalNum_Quotations=1000
 #Org_Name={1:'외무부', 2:'신한국당':,3:'서울대':,...}
 #Job_Title={1: '변호사', 2:'사장':,3:'교수':,...};
 # Function to extract sets from excel file. 
+
 def get_excel_sets(excel_dict):
 	# load excel_dict
 	name_set={} # Source's name
@@ -104,6 +105,7 @@ def get_excel_informers():
 	row_count = sheet.get_highest_row()
 
 	dic_id_name={}
+	dic_org={}
 
 	org_items = set() 
 
@@ -114,11 +116,15 @@ def get_excel_informers():
 		org = sheet.cell(row=i, column=6).value
 		dic_id_name[id] = name
 
-		test = org_items.add(org)
+		org_items.add(org)
 
-	print org_items
+	org_items = list(org_items)
 
-	return dic_id_name 
+	for i in range(0, len(org_items)):
+		dic_org[i] = org_items[i] 
+		#print str(i) + ':' + org_items[i]
+
+	return dic_id_name, dic_org 
 
 
 # get a vector of nones from quatations
@@ -226,7 +232,11 @@ if __name__ == "__main__":
 			print " informers file make error "
 	'''
 
-	excel_informers = get_excel_informers() 
+	excel_id_name, excel_org = get_excel_informers() 
+	print excel_id_name
+	print excel_org
+	pickle.dump( excel_id_name, open( "dict_id_name.p", "wb" ) )
+	pickle.dump( excel_org, open( "dict_org.p", "wb" ) )
 
 	# Load class list of NewsSource object. 
 	#all_ns=get_all_NS()
