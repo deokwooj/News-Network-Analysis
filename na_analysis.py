@@ -34,7 +34,11 @@ from openpyxl.cell import get_column_letter
 
 from openpyxl import load_workbook
 
-import pickle
+from extraction import *
+import cPickle as pickle
+
+from sets import Set
+
 # Two stages :
 # Stg 1. Excel files -->  Python data structure --> store binary format in hard disk as *.bin
 # Stg 2. Load binary files, *.bin files into memory and performs data analytics with the loaded bin files. 
@@ -99,19 +103,22 @@ def get_excel_informers():
 	sheet = wb.get_sheet_by_name('wholetable')
 	row_count = sheet.get_highest_row()
 
-	all_cellValue=[]
+	dic_id_name={}
+
+	org_items = set() 
 
 	for i in range(2,row_count):
-		cell_ns=NewsSource() # create an instance of news sources
-		cell_ns.id = str(uuid.uuid4())
-		cell_ns.name = sheet.cell(row=i, column=3).value
-		cell_ns.org = sheet.cell(row=i, column=4).value
-		cell_ns.pos = sheet.cell(row=i, column=6).value
-		
-		print cell_ns.name
+		#cell_ns=NewsSource() # create an instance of news sources
+		id = sheet.cell(row=i, column=1).value
+		name = sheet.cell(row=i, column=3).value
+		org = sheet.cell(row=i, column=6).value
+		dic_id_name[id] = name
 
-		all_cellValue.append(cell_ns)
-	return all_cellValue
+		test = org_items.add(org)
+
+	print org_items
+
+	return dic_id_name 
 
 
 # get a vector of nones from quatations
@@ -185,6 +192,16 @@ if __name__ == "__main__":
 
 	print " running news source analysis..... "
 
+	# excel_noun processing
+	try : 
+		wb = load_workbook('reference.xlsx')
+		sheet = wb.get_sheet_by_name('extraction')
+
+		print "excel_noun existed"
+	except :
+		excel_noun()
+		#print "no reference.xlsx"
+	
 	# excel noun to binary file
 	if os.path.isfile("nouns.p"):
 		print " nouns-binay-file existed" 
@@ -197,6 +214,7 @@ if __name__ == "__main__":
 			print " nouns file make error "
 
 	# excel informers to binary file
+	'''
 	if os.path.isfile("informers.p"):
 		print " informers-binay-file existed " 
 	else:
@@ -206,9 +224,12 @@ if __name__ == "__main__":
 			print " now informers-binary-file create " 
 		except :
 			print " informers file make error "
+	'''
+
+	excel_informers = get_excel_informers() 
 
 	# Load class list of NewsSource object. 
-	all_ns=get_all_NS()
+	#all_ns=get_all_NS()
 	# Load class list of Quatation object. 
 	#all_quo=get_all_Quo()
 	
@@ -224,3 +245,5 @@ if __name__ == "__main__":
 	U[1:3,1]=0
 	S=U*U.T
 	pprint.pprint(S)
+
+	
