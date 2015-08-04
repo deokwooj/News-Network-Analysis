@@ -90,7 +90,7 @@ class NewsQuotation:
     def __init__(self):
         self.gth_label = [] 	# uuid 
         self.quo_unicode = [] 	# unicode
-        self.quo_date=[] 		# date of quotations , defined by datetime. 
+        self.quo_date=[] 	# date of quotations , defined by datetime. 
         self.quo_nouns = [] 	# position, need to be initionalized by kkd_functions. 
         self.quo_article=get_ArticleLabel() # Article Label ...
         # many other featured to beArticleLabel added....
@@ -111,17 +111,17 @@ def get_excel_informers():
 
 	for i in range(2,row_count):
 		#cell_ns=NewsSource() # create an instance of news sources
-		id = sheet.cell(row=i, column=1).value
-		name = sheet.cell(row=i, column=3).value
-		org = sheet.cell(row=i, column=6).value
-		dic_id_name[id] = name
+		id = sheet.cell(row=i, column=1).value   # id
+		name = sheet.cell(row=i, column=3).value   # name
+		org = sheet.cell(row=i, column=6).value   # organization
+		dic_id_name[id] = name   # dictionary   id : name
 
 		org_items.add(org)
 
 	org_items = list(org_items)
 
 	for i in range(0, len(org_items)):
-		dic_org[i] = org_items[i] 
+		dic_org[i] = org_items[i]    # dictiionary   index : organization
 		#print str(i) + ':' + org_items[i]
 
 	return dic_id_name, dic_org 
@@ -164,9 +164,6 @@ def get_all_NS():
 	total_ns=TotalNum_NewsSources
 
 	excel_informers = pickle.load(open("informers.p","rb"))
-	print excel_informers[4].name
-	print excel_informers[4].org
-	print excel_informers[4].pos
 	
 	# to be filled all members and details...
 	#return all_NS
@@ -189,7 +186,7 @@ def get_all_Quo():
         	temp_nq.quo_article = '1' # Article Label ...
 
         	all_Quo.append(temp_nq)
-		print all_Quo[i].quo_nouns
+		#print all_Quo[i].quo_nouns
     	# Fill all members and details...
     	return all_Quo
  
@@ -203,40 +200,37 @@ if __name__ == "__main__":
 		wb = load_workbook('reference.xlsx')
 		sheet = wb.get_sheet_by_name('extraction')
 
-		print "excel_noun existed"
+		print " excel_noun existed"
 	except :
 		excel_noun()
 		#print "no reference.xlsx"
 	
-	# excel noun to binary file
-	if os.path.isfile("nouns.p"):
-		print " nouns-binay-file existed" 
+
+	# nouns.p file check
+	if os.path.isfile("./file/nouns.p"):
+		print " nouns.p file existed" 
 	else:
 		try :
 			excel_nouns = get_excel_nouns() 
-			pickle.dump( excel_nouns, open( "nouns.p", "wb" ) )
-			print " now nouns-binary-file create " 
+			pickle.dump( excel_nouns, open( "./file/nouns.p", "wb" ) )
+			print " now nouns.p file create " 
 		except :
-			print " nouns file make error "
+			print " nouns.p file make error "
 
-	# excel informers to binary file
-	'''
-	if os.path.isfile("informers.p"):
-		print " informers-binay-file existed " 
+
+	# dictionary fiel check
+	if os.path.isfile("./file/dict_id_name.p") and os.path.isfile("./file/dict_org.p"):
+		print " dict_id_name.p file existed " 
+		print " dict_org.p file existed " 
 	else:
 		try :
-			excel_informers = get_excel_informers() 
-			pickle.dump( excel_informers, open( "informers.p", "wb" ) )
-			print " now informers-binary-file create " 
+			excel_id_name, excel_org = get_excel_informers() 
+			pickle.dump( excel_id_name, open( "./file/dict_id_name.p", "wb" ) )
+			pickle.dump( excel_org, open( "./file/dict_org.p", "wb" ) )
+			print " now dict_id_name.p file create " 
+			print " now dict_org.p file create " 
 		except :
 			print " informers file make error "
-	'''
-
-	excel_id_name, excel_org = get_excel_informers() 
-	print excel_id_name
-	print excel_org
-	pickle.dump( excel_id_name, open( "dict_id_name.p", "wb" ) )
-	pickle.dump( excel_org, open( "dict_org.p", "wb" ) )
 
 	# Load class list of NewsSource object. 
 	#all_ns=get_all_NS()
