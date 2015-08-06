@@ -56,7 +56,6 @@ from sets import Set
 # Article is stroed in harddisk or DB,... 
 QuoLabel={'eco':0, 'phil':1,'culture':2}
 
-TotalNum_NewsSources=4
 TotalNum_Quotations=1000
 # class definition : news source. 
 
@@ -65,6 +64,7 @@ TotalNum_Quotations=1000
 #Org_Name={1:'외무부', 2:'신한국당':,3:'서울대':,...}
 #Job_Title={1: '변호사', 2:'사장':,3:'교수':,...};
 # Function to extract sets from excel file. 
+
 
 def get_excel_sets(excel_dict):
 	# load excel_dict
@@ -98,15 +98,25 @@ class NewsQuotation:
     def kkd_funcs(self, x):
         self.data.append(x)
 
-def get_excel_informers():
+def excel_open():
 	wb=load_workbook('wholetable.xlsx')
 	sheetList = wb.get_sheet_names()
 	sheet = wb.get_sheet_by_name('wholetable')
+	return sheet
+
+
+
+def get_excel_informers():
+	#wb=load_workbook('wholetable.xlsx')
+	#sheetList = wb.get_sheet_names()
+	#sheet = wb.get_sheet_by_name('wholetable')
+
+	sheet = excel_open()
 	row_count = sheet.get_highest_row()
 
-	dic_id_name={}
-	dic_org={}
-	dic_pos={}
+	dict_id_name={}
+	dict_org={}
+	dict_pos={}
 
 	org_items = set() 
 	pos_items = set() 
@@ -117,7 +127,12 @@ def get_excel_informers():
 		name = sheet.cell(row=i, column=3).value   # name
 		org = sheet.cell(row=i, column=4).value   # organization
 		pos = sheet.cell(row=i, column=6).value   # position
-		dic_id_name[id] = name   # dictionary   id : name
+		dict_id_name[id] = name   # dictionary   id : name
+
+		if org=='null':
+			org=None
+		if pos=='null':
+			pos=None
 
 		org_items.add(org)
 		pos_items.add(pos)
@@ -125,17 +140,36 @@ def get_excel_informers():
 	org_items = list(org_items)
 	pos_items = list(pos_items)
 
-	for i in range(0, len(org_items)):
-		dic_org[i] = org_items[i]    # dictiionary   index : organization
-		print str(i) + ':' + org_items[i]
+	for j in range(0, len(org_items)):
+		dict_org[j] = org_items[j]    # dictiionary   index : organization
+		#print str(j) + ':' + org_items[j]
 
-	for j in range(0, len(pos_items)):
-		dic_pos[j] = pos_items[j]    # dictiionary   index : position
-		print str(j) + ':' + pos_items[j]
+	for k in range(0, len(pos_items)):
+		dict_pos[k] = pos_items[k]    # dictiionary   index : position
+		#print str(k) + " : "+pos_items[k]
+
+	return dict_id_name, dict_org, dict_pos 
 
 
-	return dic_id_name, dic_org, dic_pos 
+def imformer_save():
+	id_name_load = pickle.load(open("./file/dict_id_name.p","rb"))
+	org_load = pickle.load(open("./file/dict_org.p","rb"))
+	pos_load = pickle.load(open("./file/dict_pos.p","rb"))
 
+	sheet = excel_open()
+
+	#id = sheet.cell(row=i, column=1).value   # id
+
+	#for i in range(2, len(id_name_load)):
+	for i in range(2, 5):
+		org = sheet.cell(row=i, column=4).value   # org
+		if org == 'null':
+			org = None
+
+		for j in range(0, len(org_load)):
+			if org == org_load[j]:
+				#print str(org) +' :' + str(org_load[j]) + ' : ' + str(org_load.keys()[j])
+				print org_load[j]
 
 # get a vector of nones from quatations
 #def get_nouns(i):
@@ -170,10 +204,17 @@ def get_ArticleLabel():
 def get_all_NS():
 
 	all_NS=[]
-	# total number of news sources 
-	total_ns=TotalNum_NewsSources
 
-	excel_informers = pickle.load(open("informers.p","rb"))
+	id_name_load = pickle.load(open("./file/dict_id_name.p","rb"))
+	org_load = pickle.load(open("./file/dict_org.p","rb"))
+	pos_load = pickle.load(open("./file/dict_pos.p","rb"))
+
+	ins_ns=NewsSource() # create an instance of news sources
+
+	for i in range(0, len(id_name_load)):
+		ins_ns=NewsSource() # create an instance of news sources
+
+	#print len(id_name_load)
 	
 	# to be filled all members and details...
 	#return all_NS
@@ -228,7 +269,9 @@ if __name__ == "__main__":
 			print " nouns.p file make error "
 
 
-	# dictionary fiel check
+	# dictionary file check
+	excel_id_name, excel_org, excel_pos = get_excel_informers() 
+
 	if os.path.isfile("./file/dict_id_name.p") and os.path.isfile("./file/dict_org.p") and os.path.isfile("./file/dict_pos.p"):
 		print " dict_id_name.p file existed " 
 		print " dict_org.p file existed " 
@@ -246,8 +289,11 @@ if __name__ == "__main__":
 		except :
 			print " informers file make error "
 
+
+	imformer_save()
 	# Load class list of NewsSource object. 
 	#all_ns=get_all_NS()
+
 	# Load class list of Quatation object. 
 	#all_quo=get_all_Quo()
 	
