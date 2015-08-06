@@ -106,25 +106,35 @@ def get_excel_informers():
 
 	dic_id_name={}
 	dic_org={}
+	dic_pos={}
 
 	org_items = set() 
+	pos_items = set() 
 
 	for i in range(2,row_count):
 		#cell_ns=NewsSource() # create an instance of news sources
 		id = sheet.cell(row=i, column=1).value   # id
 		name = sheet.cell(row=i, column=3).value   # name
-		org = sheet.cell(row=i, column=6).value   # organization
+		org = sheet.cell(row=i, column=4).value   # organization
+		pos = sheet.cell(row=i, column=6).value   # position
 		dic_id_name[id] = name   # dictionary   id : name
 
 		org_items.add(org)
+		pos_items.add(pos)
 
 	org_items = list(org_items)
+	pos_items = list(pos_items)
 
 	for i in range(0, len(org_items)):
 		dic_org[i] = org_items[i]    # dictiionary   index : organization
-		#print str(i) + ':' + org_items[i]
+		print str(i) + ':' + org_items[i]
 
-	return dic_id_name, dic_org 
+	for j in range(0, len(pos_items)):
+		dic_pos[j] = pos_items[j]    # dictiionary   index : position
+		print str(j) + ':' + pos_items[j]
+
+
+	return dic_id_name, dic_org, dic_pos 
 
 
 # get a vector of nones from quatations
@@ -219,16 +229,20 @@ if __name__ == "__main__":
 
 
 	# dictionary fiel check
-	if os.path.isfile("./file/dict_id_name.p") and os.path.isfile("./file/dict_org.p"):
+	if os.path.isfile("./file/dict_id_name.p") and os.path.isfile("./file/dict_org.p") and os.path.isfile("./file/dict_pos.p"):
 		print " dict_id_name.p file existed " 
 		print " dict_org.p file existed " 
+		print " dict_pos.p file existed " 
 	else:
 		try :
-			excel_id_name, excel_org = get_excel_informers() 
+			excel_id_name, excel_org, excel_pos = get_excel_informers() 
 			pickle.dump( excel_id_name, open( "./file/dict_id_name.p", "wb" ) )
 			pickle.dump( excel_org, open( "./file/dict_org.p", "wb" ) )
+			pickle.dump( excel_pos, open( "./file/dict_pos.p", "wb" ) )
+
 			print " now dict_id_name.p file create " 
 			print " now dict_org.p file create " 
+			print " now dict_pos.p file create " 
 		except :
 			print " informers file make error "
 
