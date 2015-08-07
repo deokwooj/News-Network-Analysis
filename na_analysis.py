@@ -54,17 +54,20 @@ from sets import Set
 # Tempoary defition --> need to be checked by Dr.Park....
 
 # Article is stroed in harddisk or DB,... 
-QuoLabel={'eco':0, 'phil':1,'culture':2}
+QuoLabel={'pol':1, 'eco':2, 'tec':2,'cul':3, 'ent':3,'soc':4,'int':5, 'spo':6, 'etc':7}
 
 TotalNum_Quotations=1000
 # class definition : news source. 
 
 # Dicitonary Definition
 # Using 'set' data structure to extract a set of elements in each column of excel file. 
-#Org_Name={1:'외무부', 2:'신한국당':,3:'서울대':,...}
-#Job_Title={1: '변호사', 2:'사장':,3:'교수':,...};
+# Org_Name={1:'외무부', 2:'신한국당':,3:'서울대':,...}
+# Job_Title={1: '변호사', 2:'사장':,3:'교수':,...};
 # Function to extract sets from excel file. 
 
+
+# R : no name yes org,    I : yes name yes org,    N : yes name no org,    O : org,    s : only last name
+# NewsSource Type = {1:R, 2:I, 3:N ,4:O, 5:s}
 
 def get_excel_sets(excel_dict):
 	# load excel_dict
@@ -81,8 +84,8 @@ class NewsSource:
         self.name = [] # name_set
         self.org = [] # org_set
         self.pos = [] # pos_set
-        self.src=[] # ???
-        self.isc=[] # ???
+	self.type=[] # check name or organization 
+	self.code=[] # organization code
     def add(self, x):
         self.data.append(x)
 
@@ -99,7 +102,7 @@ class NewsQuotation:
         self.data.append(x)
 
 def excel_open():
-	wb=load_workbook('wholetable.xlsx')
+	wb=load_workbook('./file/wholetable.xlsx')
 	sheetList = wb.get_sheet_names()
 	sheet = wb.get_sheet_by_name('wholetable')
 	return sheet
@@ -151,32 +154,49 @@ def get_excel_informers():
 	return dict_id_name, dict_org, dict_pos 
 
 
-def imformer_save():
+def informer_save():
 	id_name_load = pickle.load(open("./file/dict_id_name.p","rb"))
 	org_load = pickle.load(open("./file/dict_org.p","rb"))
 	pos_load = pickle.load(open("./file/dict_pos.p","rb"))
 
 	sheet = excel_open()
+	row_count = sheet.get_highest_row()
+
+	all_ns = []
 
 	#id = sheet.cell(row=i, column=1).value   # id
 
-	#for i in range(2, len(id_name_load)):
-	for i in range(2, 5):
+	for i in range(2, row_count):
+		ns_ins = NewsSource() # create an instance of news sources
+
+		 
+		id = sheet.cell(row=i, column=1).value   # id 
 		org = sheet.cell(row=i, column=4).value   # org
+		pos = sheet.cell(row=i, column=6).value   # pos
+
+		ns_ins.id = id
+
 		if org == 'null':
 			org = None
+		if pos == 'null':
+			pos = None
 
 		for j in range(0, len(org_load)):
 			if org == org_load[j]:
-				#print str(org) +' :' + str(org_load[j]) + ' : ' + str(org_load.keys()[j])
-				print org_load[j]
+				ns_ins.org = org_load.keys()[j]
+
+		for k in range(0, len(pos_load)):
+			if pos == pos_load[k]:
+				ns_ins.pos = pos_load.keys()[k]
+
+		all_ns.append(ns_ins)
 
 # get a vector of nones from quatations
 #def get_nouns(i):
 #	return None
 
 def get_excel_nouns():
-	wb=load_workbook('reference.xlsx')
+	wb=load_workbook('./file/reference.xlsx')
 	sheetList = wb.get_sheet_names()
 	sheet = wb.get_sheet_by_name('extraction')
 	row_count = sheet.get_highest_row()
@@ -225,7 +245,7 @@ def get_all_Quo():
 	all_Quo=[]
 	total_quo=TotalNum_Quotations
 
-	excel_nouns = pickle.load(open("nouns.p","rb"))
+	excel_nouns = pickle.load(open("./file/nouns.p","rb"))
 	
 	for i in range(0, len(excel_nouns)) :
 		temp_nq = NewsQuotation() # create an instance of news quotations
@@ -248,7 +268,7 @@ if __name__ == "__main__":
 
 	# excel_noun processing
 	try : 
-		wb = load_workbook('reference.xlsx')
+		wb = load_workbook('./file/reference.xlsx')
 		sheet = wb.get_sheet_by_name('extraction')
 
 		print " excel_noun existed"
@@ -290,7 +310,7 @@ if __name__ == "__main__":
 			print " informers file make error "
 
 
-	imformer_save()
+	informer_save()
 	# Load class list of NewsSource object. 
 	#all_ns=get_all_NS()
 
