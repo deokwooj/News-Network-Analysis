@@ -79,15 +79,19 @@ def get_excel_sets(excel_dict):
 	return org_set,pos_set,src_set,isc_set
 	
 class NewsSource:
-    def __init__(self):
-        self.id = [] # uuid 
-        self.name = [] # name_set
-        self.org = [] # org_set
-        self.pos = [] # pos_set
-	self.type=[] # check name or organization 
-	self.code=[] # organization code
-    def add(self, x):
-        self.data.append(x)
+	def __init__(self):
+		self.id = [] # uuid 
+        	self.name = [] # name_set
+        	self.org = [] # org_set
+        	self.pos = [] # pos_set
+		#self.type=[] # check name or organization 
+		self.code=[] # organization code
+
+	def _str_(self):
+		return self.id, self.name, self.org, self.pos, self.code
+
+	def add(self, x):
+        	self.data.append(x)
 
 class NewsQuotation:
     def __init__(self):
@@ -108,11 +112,13 @@ def excel_open():
 	return sheet
 
 
+def print_dictionary(items):
+	for i in range(0, len(items)):
+		if items[i] != None:
+			print str(i) + " : "+ items[i]
+
 
 def get_excel_informers():
-	#wb=load_workbook('wholetable.xlsx')
-	#sheetList = wb.get_sheet_names()
-	#sheet = wb.get_sheet_by_name('wholetable')
 
 	sheet = excel_open()
 	row_count = sheet.get_highest_row()
@@ -144,12 +150,18 @@ def get_excel_informers():
 	pos_items = list(pos_items)
 
 	for j in range(0, len(org_items)):
-		dict_org[j] = org_items[j]    # dictiionary   index : organization
-		#print str(j) + ':' + org_items[j]
+		dict_org[j] = org_items[j]    # dictionary   index : organization
+		#print dict_org[j]
+
 
 	for k in range(0, len(pos_items)):
 		dict_pos[k] = pos_items[k]    # dictiionary   index : position
-		#print str(k) + " : "+pos_items[k]
+		#print str(k) + dict_pos[k]
+
+	print_dictionary(dict_org)
+	print ""
+	print_dictionary(dict_pos)
+	print ""
 
 	return dict_id_name, dict_org, dict_pos 
 
@@ -174,7 +186,10 @@ def informer_save():
 		org = sheet.cell(row=i, column=4).value   # org
 		pos = sheet.cell(row=i, column=6).value   # pos
 
+		code = sheet.cell(row=i, column=7).value   # organization type
+
 		ns_ins.id = id
+		ns_ins.code = code
 
 		if org == 'null':
 			org = None
@@ -190,6 +205,29 @@ def informer_save():
 				ns_ins.pos = pos_load.keys()[k]
 
 		all_ns.append(ns_ins)
+
+	return all_ns
+
+	
+def get_all_NS():
+	all_ns = pickle.load(open("./file/dict_informer.p","rb"))
+
+	U=np.matrix(np.ones((len(all_ns),4)))
+
+	for i in range(0, len(all_ns)):
+		#print all_ns[i].id, all_ns[i].org, all_ns[i].pos
+		a=i
+		b=i+1
+
+		U[a:b,0]=all_ns[i].id
+		U[a:b,1]=all_ns[i].org
+		U[a:b,2]=all_ns[i].pos
+		U[a:b,3]=all_ns[i].code
+	print U
+
+	return U
+		
+
 
 # get a vector of nones from quatations
 #def get_nouns(i):
@@ -220,26 +258,6 @@ def get_ArticleLabel():
     return None
     # to be filled...     
     
-    
-def get_all_NS():
-
-	all_NS=[]
-
-	id_name_load = pickle.load(open("./file/dict_id_name.p","rb"))
-	org_load = pickle.load(open("./file/dict_org.p","rb"))
-	pos_load = pickle.load(open("./file/dict_pos.p","rb"))
-
-	ins_ns=NewsSource() # create an instance of news sources
-
-	for i in range(0, len(id_name_load)):
-		ins_ns=NewsSource() # create an instance of news sources
-
-	#print len(id_name_load)
-	
-	# to be filled all members and details...
-	#return all_NS
-	return None
-
 
 def get_all_Quo():
 	all_Quo=[]
@@ -289,8 +307,7 @@ if __name__ == "__main__":
 			print " nouns.p file make error "
 
 
-	# dictionary file check
-	excel_id_name, excel_org, excel_pos = get_excel_informers() 
+	# id, org, pos dictionary file check
 
 	if os.path.isfile("./file/dict_id_name.p") and os.path.isfile("./file/dict_org.p") and os.path.isfile("./file/dict_pos.p"):
 		print " dict_id_name.p file existed " 
@@ -307,12 +324,20 @@ if __name__ == "__main__":
 			print " now dict_org.p file create " 
 			print " now dict_pos.p file create " 
 		except :
-			print " informers file make error "
+			print " get_excel_informers file make error "
+
+	if os.path.isfile("./file/dict_informer.p"):
+		print " dict_informer.p file existed"
+
+	else :
+		try:
+			informer_tmp = informer_save()
+			pickle.dump( informer_tmp, open( "./file/dict_informer.p", "wb" ) )
+		except :
+			print " informer save  error"
 
 
-	informer_save()
-	# Load class list of NewsSource object. 
-	#all_ns=get_all_NS()
+	all_ns=get_all_NS()
 
 	# Load class list of Quatation object. 
 	#all_quo=get_all_Quo()
