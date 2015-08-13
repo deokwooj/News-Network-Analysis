@@ -10,7 +10,7 @@
 
 
 
-# Code Description# Functions
+# Code Description 
 - 사용되는 함수에 대한 설명
 
 - 전체 코드 파일들 리뷰. 
@@ -25,7 +25,7 @@
  
  
 # Output Description 
-- Script 파일 실행 결과
+- Script 파일 실행 결과
 
 
 
