@@ -3,8 +3,12 @@
 - table_define.xlsx
 - wholetable.xlsx
 
-#  Bin  Source File
-- 원본 소스 변환 파일 (bin 파일) 에 대한 설명. 
+#  Bin  Source File(원본 소스 변환 파일 (bin 파일) 에 대한 설명)
+-  nouns.p
+-  dict_id_name.p
+-  dict_informer.p
+-  dict_org.p
+-  dict_pos.p
 
 # Data Structure 
 - 사용되는 Class 에 대한 설명
