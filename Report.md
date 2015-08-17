@@ -1,5 +1,7 @@
-#  Excel Source File 
-- 원본 소스  엑셀 파일에 대한 설명
+#  Excel Source File (원본 소스  엑셀 파일에 대한 설명)
+- reference.xlsx
+- table_define.xlsx
+- wholetable.xlsx
 
 #  Bin  Source File
 - 원본 소스 변환 파일 (bin 파일) 에 대한 설명. 
