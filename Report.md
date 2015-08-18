@@ -1,4 +1,4 @@
-#  Excel Source File (원본 소스  엑셀 파일에 대한 설명)
+##  Excel Source File (원본 소스  엑셀 파일에 대한 설명)
 - reference.xlsx (분단에 대한 자료 엑셀 파일)
       - Reference sheet : '분단'이 포함되어 있는 인용문 정리
       ```
@@ -76,7 +76,7 @@
       ```
 
 
-#  Bin  Source File(원본 소스 변환 파일에 대한 설명)
+##  Bin  Source File(원본 소스 변환 파일에 대한 설명)
 -  nouns.p
        - reference 엑셀파일 중 extraction sheet에 있는 명사들을 리스트로 저장한 파일
 
@@ -94,7 +94,7 @@
 
 
 
-# Data Structure (사용되는 Class/Dictionary 에 대한 설명)
+## Data Structure (사용되는 Class/Dictionary 에 대한 설명)
 - wholetable 엑셀파일에 나와있는 정보원 소스를 바탕으로 구성
 - class NewsSource :
        - id = [] 
@@ -110,14 +110,14 @@
 
 
 
-# Code Description 
+## Code Description 
 - 사용되는 함수에 대한 설명
 
 - 전체 코드 파일들 리뷰. 
 - 코드에 대한 설명
 - 클래스, 함수 등등
 
-# Functions
+## Functions
 - excel_noun()
        - 엑셀 인용문에서 명사 분리 코드
 
@@ -133,12 +133,12 @@
 - get_all_NS()
        - NewsSource 클래스가 dictionary로 저장되어있는 dict_informers.p 파일을 활용하여 메트릭스 생성
  
-# How to use
+## How to use
 - git clone "http://github.com/kowonsik/NLP.git"
 - python na_analysis.py
  
  
-# Output Description 
+## Output Description 
 - Script 파일 실행 결과
 
 
