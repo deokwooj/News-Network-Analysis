@@ -6,7 +6,8 @@
       ```
       - Article sheet : '분단' 관련 기사의 집합
       ```
-            | ART_ID | ART_HEADLINE | ART_DATE | ART_PROVIDER | ART_CONTENT | 
+            | ART_ID | ART_HEADLINE | ART_DATE | ART_PROVIDER | ART_CONTENT |
+      ```
       ```
       - Query_Info: '분단' 기사 분류를 위한 쿼리
       ```
@@ -19,6 +20,7 @@
       ```
 
 - table_define.xlsx
+
 - wholetable.xlsx
 
 #  Bin  Source File(원본 소스 변환 파일에 대한 설명)
