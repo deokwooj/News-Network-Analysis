@@ -94,9 +94,19 @@
 
 
 
-# Data Structure 
-- 사용되는 Class 에 대한 설명
-- Dictionary에 대한 설명 등등
+# Data Structure (사용되는 Class/Dictionary 에 대한 설명)
+- wholetable 엑셀파일에 나와있는 정보원 소스를 바탕으로 구성
+- class NewsSource :
+       - id = [] 
+       - name = [] 
+       - org = [] 
+       - type=[]
+       - pos = [] 
+       - code = []
+       - isclassified =[]
+
+- all NewSource Dictionary
+       - 모든 정보원의 NewsSource 구조체를 value로 하는 dict_informer.p dictionary 파일을 사용
 
 
 
