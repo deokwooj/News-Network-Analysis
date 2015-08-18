@@ -27,6 +27,8 @@
 - wholetable.xlsx (정보원 자료 엑셀 파일)
       ```
             | infosrc_id_whole | infosrc_id_day | infosrc_name | infosrc_org | infosrc_type | infosrc_pos | infosrc_code | infosrc_isclassified |
+            | ---------------- | -------------- | ------------ | ----------- | ------------ | ----------- | ----------- | ---------------- |
+                        | infosrc_id_whole | infosrc_id_day | infosrc_name | infosrc_org | infosrc_type | infosrc_pos | infosrc_code | infosrc_isclassified |
       ```
 
 #  Bin  Source File(원본 소스 변환 파일에 대한 설명)
