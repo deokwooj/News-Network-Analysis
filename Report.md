@@ -111,11 +111,7 @@
 
 
 ## Code Description 
-- 사용되는 함수에 대한 설명
-
-- 전체 코드 파일들 리뷰. 
-- 코드에 대한 설명
-- 클래스, 함수 등등
+![NLP Flow](https://raw.githubusercontent.com/kowonsik/NLP/master/file/NLP_flow.png)
 
 ## Functions
 - excel_noun()
