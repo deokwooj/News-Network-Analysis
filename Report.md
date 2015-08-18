@@ -78,10 +78,21 @@
 
 #  Bin  Source File(원본 소스 변환 파일에 대한 설명)
 -  nouns.p
+       - reference 엑셀파일 중 extraction sheet에 있는 명사들을 리스트로 저장한 파일
+
 -  dict_id_name.p
--  dict_informer.p
+       - whole_table 엑셀파일에서 id를 key 값으로 name 을 value 로 하여 dictionary 형태로 저장한 파일
+
 -  dict_org.p
+       - whole_table 엑셀파일에서 org 을 value 로 하여 dictionary 형태로 저장한 파일(key 값은 0부터 자동 증가)
+
 -  dict_pos.p
+       - whole_table 엑셀파일에서 position을 value 로 하여 dictionary 형태로 저장한 파일(key 값은 0부터 자동 증가)
+
+-  dict_informer.p
+       - whole_table 엑셀파일과 생성된 dictionary 파일을 활용하여 생성한 정보원 dictionary 파일
+
+
 
 # Data Structure 
 - 사용되는 Class 에 대한 설명
