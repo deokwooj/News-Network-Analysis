@@ -4,7 +4,7 @@
 ```
        | INFOSRC_NAME | STN_CONTENT |
 ```
-      - Article sheet : '분단' 관련 기사의 집합
+        - Article sheet : '분단' 관련 기사의 집합    
 ```
        | ART_ID | ART_HEADLINE | ART_DATE | ART_PROVIDER | ART_CONTENT | 
 ```
