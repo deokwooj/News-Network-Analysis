@@ -1,9 +1,18 @@
 #  Excel Source File (원본 소스  엑셀 파일에 대한 설명)
-- reference.xlsx
+- reference.xlsx (분단에 대한 자료 엑셀 파일)
+  - sheet
+   - Reference : '분단'이 포함되어 있는 인용문 정리
+    - column : INFOSRC_NAME / STN_CONTENT
+   - Article : '분단' 관련 기사의 집합
+    - column : ART_ID / ART_HEAD / ART_DATE / ART_PROVIDER / ART_CONTENT  
+   - Query_Info: '분단' 기사 분류를 위한 쿼리
+    - column : QUERY / BEGINE / END / PROVIDERS
+   - extraction : '분단' 인용문에서 명사 분리
+   
 - table_define.xlsx
 - wholetable.xlsx
 
-#  Bin  Source File(원본 소스 변환 파일 (bin 파일) 에 대한 설명)
+#  Bin  Source File(원본 소스 변환 파일에 대한 설명)
 -  nouns.p
 -  dict_id_name.p
 -  dict_informer.p
