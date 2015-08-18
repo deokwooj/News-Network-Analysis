@@ -1,5 +1,5 @@
 #  Excel Source File (원본 소스  엑셀 파일에 대한 설명)
-- reference.xlsx (분단에 대한 자료 엑셀 파일)
+## reference.xlsx (분단에 대한 자료 엑셀 파일)
       - Reference sheet : '분단'이 포함되어 있는 인용문 정리
       ```
             | INFOSRC_NAME | 홍성미 |
@@ -30,7 +30,7 @@
             | NOUN         | 중심,작가,다양,작품,분단,현실,이슈,예술,역할,문제의식 |
       ```
 
-- wholetable.xlsx (정보원 자료 엑셀 파일)
+## wholetable.xlsx (정보원 자료 엑셀 파일)
       ```
             | infosrc_id_whole    | 5 |
             | infosrc_id_day      | 2003/10/10_408 |
@@ -43,7 +43,7 @@
       ```
 
 
-- table_define.xlsx : 정보원 정의
+## table_define.xlsx : 정보원 정의
 
       ```
             | infoSrc_ID                   | 정보원 ID |
