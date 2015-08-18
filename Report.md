@@ -6,6 +6,13 @@
 | INFOSRC_NAME    | STN_CONTENT   |
 |:---------------:|:-------------:|
 '''
+
+```
+| column | column | column | 
+|:-------|-------:|:------:|
+|   a    |   b    |   c    |
+```
+
      - Article : '분단' 관련 기사의 집합
        - column : ART_ID // ART_HEAD // ART_DATE // ART_PROVIDER // ART_CONTENT  
 
