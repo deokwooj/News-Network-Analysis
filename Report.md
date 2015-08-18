@@ -3,6 +3,8 @@
       - Reference sheet : '분단'이 포함되어 있는 인용문 정리
       ```
             | INFOSRC_NAME | STN_CONTENT |
+            | ------------ | ----------- |
+            | INFOSRC_NAME | STN_CONTENT |
       ```
 
       - Article sheet : '분단' 관련 기사의 집합
