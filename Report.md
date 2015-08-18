@@ -34,9 +34,14 @@
 
 - wholetable.xlsx (정보원 자료 엑셀 파일)
       ```
-| infosrc_id_whole | infosrc_id_day | infosrc_name | infosrc_org | infosrc_type | infosrc_pos | infosrc_code | infosrc_isclassified |
-| ---------------- | -------------- | ------------ | ----------- | ------------ | ----------- | ------------ | -------------------- |
-| infosrc_id_whole | infosrc_id_day | infosrc_name | infosrc_org | infosrc_type | infosrc_pos | infosrc_code | infosrc_isclassified |
+| infosrc_id_whole    | 5 |
+| infosrc_id_day      | 2003/10/10_408 |
+| infosrc_name        | 김수행 |
+| infosrc_org         | 서울대 |
+| infosrc_type        | I |
+| infosrc_pos         | 교수 |
+| infosrc_code        | 13 |
+| infosrc_isclassified| \N |
       ```
 
 #  Bin  Source File(원본 소스 변환 파일에 대한 설명)
