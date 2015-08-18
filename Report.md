@@ -30,6 +30,19 @@
             | NOUN         | 중심,작가,다양,작품,분단,현실,이슈,예술,역할,문제의식 |
       ```
 
+- wholetable.xlsx (정보원 자료 엑셀 파일)
+      ```
+            | infosrc_id_whole    | 5 |
+            | infosrc_id_day      | 2003/10/10_408 |
+            | infosrc_name        | 김수행 |
+            | infosrc_org         | 서울대 |
+            | infosrc_type        | I |
+            | infosrc_pos         | 교수 |
+            | infosrc_code        | 13 |
+            | infosrc_isclassified| \N |
+      ```
+
+
 - table_define.xlsx : 정보원 정의
 
       ```
@@ -62,17 +75,6 @@
             | N | 본 정보원이 직함이나, 소속에 의해 코딩이 된 것 |
       ```
 
-- wholetable.xlsx (정보원 자료 엑셀 파일)
-      ```
-            | infosrc_id_whole    | 5 |
-            | infosrc_id_day      | 2003/10/10_408 |
-            | infosrc_name        | 김수행 |
-            | infosrc_org         | 서울대 |
-            | infosrc_type        | I |
-            | infosrc_pos         | 교수 |
-            | infosrc_code        | 13 |
-            | infosrc_isclassified| \N |
-      ```
 
 #  Bin  Source File(원본 소스 변환 파일에 대한 설명)
 -  nouns.p
