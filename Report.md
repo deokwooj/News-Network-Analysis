@@ -2,9 +2,10 @@
 - reference.xlsx (분단에 대한 자료 엑셀 파일)
    - sheet
      - Reference : '분단'이 포함되어 있는 인용문 정리
-       - column : INFOSRC_NAME // 
+'''
 | INFOSRC_NAME    | STN_CONTENT   |
-|-----------------|-----------------------|
+|:---------------:|:-------------:|
+'''
      - Article : '분단' 관련 기사의 집합
        - column : ART_ID // ART_HEAD // ART_DATE // ART_PROVIDER // ART_CONTENT  
 
