@@ -118,10 +118,24 @@
 - 클래스, 함수 등등
 
 # Functions
-- 사용되는 함수에 대한 설명
+- excel_noun()
+       - 엑셀 인용문에서 명사 분리 코드
+
+- excel_excel_nouns()
+       - 분리된 명사를 dictionary로 변환
+
+- get_excel_informers()
+       - dict_id_name.p, dict_org.p, dict_pos.p dictionary 파일 생성
+
+- informer_save()
+       - dictionary 파일과 excel 파일을 활용하여 NewsSource 클래스를 dictionary로 저장
+
+- get_all_NS()
+       - NewsSource 클래스가 dictionary로 저장되어있는 dict_informers.p 파일을 활용하여 메트릭스 생성
  
 # How to use
-- Script 파일을 어떻게 사용할 건가 ?>
+- git clone "http://github.com/kowonsik/NLP.git"
+- python na_analysis.py
  
  
 # Output Description 
