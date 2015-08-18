@@ -30,7 +30,37 @@
             | NOUN         | 중심,작가,다양,작품,분단,현실,이슈,예술,역할,문제의식 |
       ```
 
-- table_define.xlsx
+- table_define.xlsx : 정보원 정의
+
+      ```
+            | infoSrc_ID                   | 정보원 ID |
+            | name                         | 이름 |
+            | orgName                      | 소속이름 |
+            | type                         | 정보원 구분 |
+            | position                     | 직함 |
+            | etc_position                 | 기타 직함 정보 |
+            | yearOfBirth                  | 생년 |
+            | person_id(FK)                | 사전의 인물 ID |
+            | code                         | 인물의 소속 분류 |
+            | is_classified_paper_category | 신문 지면 정보에 의해 정보원의 분류되었는지 여부 |
+            | INFOSRC_GLOBAL_ID            | 전기간에 걸친 UniqueID |
+      ```
+
+      - type
+      ```
+            | S | 익명 - 소속 없는 사람 |
+            | R | 익명 - 소속 있는 사람 |
+            | I | 실명 개인 - 소속 있음 |
+            | N | 무속속 실명 |
+            | O | 조직 |
+            | s | 성만 나와 있는 익명 |
+      ```
+
+      - is_classified_paper_category
+      ```
+            | Y | 본 정보원이 나온 신문지면의 분류에 의해 코딩 |
+            | N | 본 정보원이 직함이나, 소속에 의해 코딩이 된 것 |
+      ```
 
 - wholetable.xlsx (정보원 자료 엑셀 파일)
       ```
