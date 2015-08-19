@@ -136,13 +136,27 @@
 
 ## Functions
 - excel_noun()
-       - 엑셀 인용문에서 명사 분리 코드
+       - extraction.py 코드
+       - reference 엑셀파일에서 extraction sheet 생성하고 명사 분리하여 저장
 
-- excel_excel_nouns()
-       - 분리된 명사를 dictionary로 변환
+- get_excel_nouns()
+       - reference 엑셀파일에서 extraction sheet 에 저장되어 있는 분리된 명사를 dictionary로 변환
 
 - get_excel_informers()
-       - dict_id_name.p, dict_org.p, dict_pos.p dictionary 파일 생성
+       - whloletable의 id, name, org, pos 참고하여 dictionary 파일 생성
+       - 생성된 파일 이름 : dict_id_name.p, dict_org.p, dict_pos.p
+
+- get_excel_type()
+       - 정보원을 구분하여 type dictionary 파일 생성
+       - 생성된 파일 이름 : dict_type.p
+
+- get_excel_code()
+       - 정보원의 소속을 구분하여 code dictionary 파일 생성
+       - 생성된 파일 이름 : dict_code.p
+
+- get_excel_classified()
+       - 정보원의 카테고리를 구분하여 classified dictionary 파일 생성
+       - 생성된 파일 이름 : dict_classified.p
 
 - informer_save()
        - dictionary 파일과 excel 파일을 활용하여 NewsSource 클래스를 dictionary로 저장
