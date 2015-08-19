@@ -67,7 +67,7 @@ TotalNum_Quotations=1000
 
 
 # R : no name yes org,    I : yes name yes org,    N : yes name no org,    O : org,    s : only last name
-# NewsSource Type = {1:R, 2:I, 3:N ,4:O, 5:s}
+# NewsSource Type = {1:S, 2:R, 3:I, 4:N ,5:O, 6:s}
 
 def get_excel_sets(excel_dict):
 	# load excel_dict
@@ -83,9 +83,10 @@ class NewsSource:
 		self.id = [] # uuid 
         	self.name = [] # name_set
         	self.org = [] # org_set
+		self.type=[] # check name or organization 
         	self.pos = [] # pos_set
-		#self.type=[] # check name or organization 
 		self.code=[] # organization code
+		self.classified=[] # isclassified 
 
 	def _str_(self):
 		return self.id, self.name, self.org, self.pos, self.code
@@ -111,11 +112,117 @@ def excel_open():
 	sheet = wb.get_sheet_by_name('wholetable')
 	return sheet
 
-
 def print_dictionary(items):
 	for i in range(0, len(items)):
 		if items[i] != None:
-			print str(i) + " : "+ items[i]
+			print str(i) + " : " + items[i]
+
+def get_excel_org():
+
+	sheet = excel_open()
+	row_count = sheet.get_highest_row()
+
+	dict_org={}
+	org_items = set() 
+
+	for i in range(2,row_count):
+		#cell_ns=NewsSource() # create an instance of news sources
+		org = sheet.cell(row=i, column=4).value   # organization
+
+		if org=='null':
+			org=None
+
+		org_items.add(org)
+
+	org_items = list(org_items)
+
+	for j in range(0, len(org_items)):
+		dict_org[j] = org_items[j]    # dictionary   index : organization
+		#print dict_org[j]
+
+	#print_dictionary(dict_org)
+
+	return dict_org 
+
+
+def get_excel_type():
+
+	sheet = excel_open()
+	row_count = sheet.get_highest_row()
+
+	dict_type={}
+	count = 0
+
+	for i in range(2,row_count):
+		#cell_ns=NewsSource() # create an instance of news sources
+		type_tmp = sheet.cell(row=i, column=5).value   # type
+		if type_tmp == 'S':
+			dict_type[str(count)] = 1 
+		elif type_tmp == 'R':
+			dict_type[str(count)] = 2 
+		elif type_tmp == 'I':
+			dict_type[str(count)] = 3 
+		elif type_tmp == 'N':
+			dict_type[str(count)] = 4 
+		elif type_tmp == 'O':
+			dict_type[str(count)] = 5 
+		elif type_tmp == 's':
+			dict_type[str(count)] = 6 
+		#print type_tmp + " " + str(dict_type[str(count)])
+		count = count + 1
+
+	#print_dictionary(dict_type)
+	count = 0
+	return dict_type 
+
+
+def get_excel_code():
+
+	sheet = excel_open()
+	row_count = sheet.get_highest_row()
+
+	dict_code={}
+	count = 0
+
+	for i in range(2,row_count):
+		#cell_ns=NewsSource() # create an instance of news sources
+		code_tmp = sheet.cell(row=i, column=7).value   # type
+		dict_code[str(count)] = str(code_tmp) 
+
+		#print code_tmp , dict_code[str(count)] 
+		count = count + 1
+
+	#print_dictionary(dict_classified)
+
+	count = 0
+	return dict_code
+
+
+
+def get_excel_classified():
+
+	sheet = excel_open()
+	row_count = sheet.get_highest_row()
+
+	dict_classified={}
+	count = 0
+
+	for i in range(2,row_count):
+		#cell_ns=NewsSource() # create an instance of news sources
+		classified_tmp = sheet.cell(row=i, column=8).value   # type
+		if classified_tmp == '\\N':
+			dict_classified[str(count)] = 0 
+		elif classified_tmp == '\\Y':
+			dict_classified[str(count)] = 1 
+
+		#print classified_tmp + " " + str(dict_classified[str(count)])
+		count = count + 1
+
+	#print_dictionary(dict_classified)
+
+	count = 0
+	return dict_classified
+
 
 
 def get_excel_informers():
@@ -169,7 +276,10 @@ def get_excel_informers():
 def informer_save():
 	id_name_load = pickle.load(open("./file/dict_id_name.p","rb"))
 	org_load = pickle.load(open("./file/dict_org.p","rb"))
+	type_load = pickle.load(open("./file/dict_type.p","rb"))
 	pos_load = pickle.load(open("./file/dict_pos.p","rb"))
+	code_load = pickle.load(open("./file/dict_code.p","rb"))
+	classified_load = pickle.load(open("./file/dict_classified.p","rb"))
 
 	sheet = excel_open()
 	row_count = sheet.get_highest_row()
@@ -177,6 +287,7 @@ def informer_save():
 	all_ns = []
 
 	#id = sheet.cell(row=i, column=1).value   # id
+	count = 0
 
 	for i in range(2, row_count):
 		ns_ins = NewsSource() # create an instance of news sources
@@ -189,7 +300,9 @@ def informer_save():
 		code = sheet.cell(row=i, column=7).value   # organization type
 
 		ns_ins.id = id
-		ns_ins.code = code
+		ns_ins.code = code_load[str(count)]
+		ns_ins.type = type_load[str(count)]
+		ns_ins.classified = classified_load[str(count)]
 
 		if org == 'null':
 			org = None
@@ -203,8 +316,10 @@ def informer_save():
 		for k in range(0, len(pos_load)):
 			if pos == pos_load[k]:
 				ns_ins.pos = pos_load.keys()[k]
-
+		count = count + 1
 		all_ns.append(ns_ins)
+
+	count = 0
 
 	return all_ns
 
@@ -212,7 +327,7 @@ def informer_save():
 def get_all_NS():
 	all_ns = pickle.load(open("./file/dict_informer.p","rb"))
 
-	U=np.matrix(np.ones((len(all_ns),4)))
+	U=np.matrix(np.ones((len(all_ns),6)))
 
 	for i in range(0, len(all_ns)):
 		#print all_ns[i].id, all_ns[i].org, all_ns[i].pos
@@ -221,8 +336,11 @@ def get_all_NS():
 
 		U[a:b,0]=all_ns[i].id
 		U[a:b,1]=all_ns[i].org
-		U[a:b,2]=all_ns[i].pos
-		U[a:b,3]=all_ns[i].code
+		U[a:b,2]=all_ns[i].type
+		U[a:b,3]=all_ns[i].pos
+		U[a:b,4]=all_ns[i].code
+		U[a:b,5]=all_ns[i].classified
+
 	print U
 
 	return U
@@ -326,6 +444,28 @@ if __name__ == "__main__":
 		except :
 			print " get_excel_informers file make error "
 
+	if os.path.isfile("./file/dict_type.p") and os.path.isfile("./file/dict_code.p") and os.path.isfile("./file/dict_classified.p") :
+		print " dict_type.p file existed " 
+		print " dict_code.p file existed " 
+		print " dict_classified.p file existed " 
+	else:
+		try :
+			excel_type = get_excel_type() 
+			pickle.dump( excel_type, open( "./file/dict_type.p", "wb" ) )
+
+			excel_code = get_excel_code() 
+			pickle.dump( excel_code, open( "./file/dict_code.p", "wb" ) )
+
+			excel_classified = get_excel_classified() 
+			pickle.dump( excel_classified, open( "./file/dict_classified.p", "wb" ) )
+
+			print " now dict_type.p file create " 
+			print " now dict_code.p file create " 
+			print " now dict_classified.p file create " 
+		except :
+			print " dict_type, code, classified file make error "
+
+
 	if os.path.isfile("./file/dict_informer.p"):
 		print " dict_informer.p file existed"
 
@@ -336,6 +476,12 @@ if __name__ == "__main__":
 		except :
 			print " informer save  error"
 
+	#excel_org = get_excel_org()
+	#pickle.dump( excel_org, open( "./file/dict_org.p", "wb" ) )
+	#org_load = pickle.load(open("./file/dict_org.p","rb"))
+	#print org_load[1]
+	#get_excel_code()
+	informer_save()
 
 	all_ns=get_all_NS()
 
@@ -354,5 +500,3 @@ if __name__ == "__main__":
 	U[1:3,1]=0
 	S=U*U.T
 	pprint.pprint(S)
-
-	
