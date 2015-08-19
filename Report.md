@@ -81,13 +81,34 @@
        - reference 엑셀파일 중 extraction sheet에 있는 명사들을 리스트로 저장한 파일
 
 -  dict_id_name.p
-       - whole_table 엑셀파일에서 id를 key 값으로 name 을 value 로 하여 dictionary 형태로 저장한 파일
+       - whole_table 엑셀파일에서 infosrc_id_whole를 key 값으로 infosrc_name 을 value 로 하여 dictionary 형태로 저장한 파일
 
 -  dict_org.p
-       - whole_table 엑셀파일에서 org 을 value 로 하여 dictionary 형태로 저장한 파일(key 값은 0부터 자동 증가)
+       - whole_table 엑셀파일에서 infosrc_org를 value 로 하여 dictionary 형태로 저장한 파일(key 값은 0부터 자동 증가)
+
+-  dict_type.p
+       - whole_table 엑셀파일에서 infosrc_type을 value 로 하여 dictionary 형태로 저장한 파일(key 값은 0부터 자동 증가)
+
+      ```
+            | S | 1 |
+            | R | 2 |
+            | I | 3 |
+            | N | 4 |
+            | O | 5 |
+            | s | 6 |
+      ```
 
 -  dict_pos.p
-       - whole_table 엑셀파일에서 position을 value 로 하여 dictionary 형태로 저장한 파일(key 값은 0부터 자동 증가)
+       - whole_table 엑셀파일에서 infosrc_pos을 value 로 하여 dictionary 형태로 저장한 파일(key 값은 0부터 자동 증가)
+
+-  dict_code.p
+       - whole_table 엑셀파일에서 infosrc_code를 value 로 하여 dictionary 형태로 저장한 파일(key 값은 0부터 자동 증가)
+
+-  dict_classified.p
+       - whole_table 엑셀파일에서 infosrc_isclassified를 value 로 하여 dictionary 형태로 저장한 파일(key 값은 0부터 자동 증가)
+       - is_classified_paper_category
+       - Y : 0
+       - N : 1
 
 -  dict_informer.p
        - whole_table 엑셀파일과 생성된 dictionary 파일을 활용하여 생성한 정보원 dictionary 파일
