@@ -107,8 +107,11 @@
 -  dict_classified.p
        - whole_table 엑셀파일에서 infosrc_isclassified를 value 로 하여 dictionary 형태로 저장한 파일(key 값은 0부터 자동 증가)
        - is_classified_paper_category
-       - Y : 0
-       - N : 1
+
+      ```
+            | N | 0 |
+            | Y | 1 |
+      ```
 
 -  dict_informer.p
        - whole_table 엑셀파일과 생성된 dictionary 파일을 활용하여 생성한 정보원 dictionary 파일
@@ -129,6 +132,12 @@
 - all NewSource Dictionary
        - 모든 정보원의 NewsSource 구조체를 value로 하는 dict_informer.p dictionary 파일을 사용
 
+- class NewsQuotation :
+       - gth_label = []      # uuid 
+       - quo_unicode = []    # unicode 
+       - quo_date = []       # date of quotations , defined by datetime. 
+       - quo_nouns=[]        # position, need to be initionalized by kkd_functions. 
+       - quo_article=get_ArticleLabel() = []    # Article Label ...
 
 
 ## Code Description 
