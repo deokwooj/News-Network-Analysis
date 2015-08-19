@@ -1,5 +1,5 @@
 ##  Excel Source File (원본 소스  엑셀 파일에 대한 설명)
-- reference.xlsx (분단에 대한 자료 엑셀 파일)
+- reference.xlsx ('분단'에 대한 자료 엑셀 파일)
       - Reference sheet : '분단'이 포함되어 있는 인용문 정리
       ```
             | INFOSRC_NAME | 홍성미 |
@@ -132,7 +132,14 @@
 ## How to use
 - git clone "http://github.com/kowonsik/NLP.git"
 - python na_analysis.py
- 
+
+- na_analysis.py
+       - main 코드
+       - 엑셀 파일과 dictionary 파일로 현재 정보원 메트릭스 생성 코드
+- extraction.py
+       - reference.xlxs 엑셀파일 중 Reference sheet 의 STN_CONTENT 퀄럼에서 인용문을 분리하고 인용문에서 명사 분리한 코드
+- file directory
+       - 사용되고 있는 엑셀파일과 dictionary 파일이 존재하는 디렉토리
  
 ## Output Description (Script 파일 실행 결과)
 - 100개 클래스에 대한 메트릭스 예
