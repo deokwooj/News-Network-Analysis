@@ -130,9 +130,10 @@
        - NewsSource 클래스가 dictionary로 저장되어있는 dict_informers.p 파일을 활용하여 메트릭스 생성
  
 ## How to use
-- git clone "http://github.com/kowonsik/NLP.git"
-- python na_analysis.py
-
+- 소스 다운로드
+       - git clone "http://github.com/kowonsik/NLP.git"
+- 실행 방법
+       - python na_analysis.py
 - na_analysis.py
        - main 코드
        - 엑셀 파일과 dictionary 파일로 현재 정보원 메트릭스 생성 코드
