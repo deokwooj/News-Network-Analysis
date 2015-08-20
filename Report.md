@@ -141,7 +141,7 @@
 
 
 ## Code Description 
-![NLP Flow](https://raw.githubusercontent.com/kowonsik/NLP/master/file/NLP_flow.png)
+![NLP Flow](https://raw.githubusercontent.com/kowonsik/NLP/master/png/NLP_flow.png)
 
 ## Functions
 - excel_noun()
