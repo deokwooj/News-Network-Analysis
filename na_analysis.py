@@ -500,3 +500,5 @@ if __name__ == "__main__":
 	U[1:3,1]=0
 	S=U*U.T
 	pprint.pprint(S)
+
+	
