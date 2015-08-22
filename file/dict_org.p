@@ -27,10 +27,10 @@ sI8
 V\uc804\uacbd\ub828
 p10
 sI9
-NsI10
 V\ucf54\uc624\ub871\uac74\uc124
 p11
-sI11
+sI10
+NsI11
 V\ud55c\uc9c4\uad00\uad11
 p12
 s.
