@@ -96,16 +96,16 @@ class NewsSource:
         	self.data.append(x)
 
 class NewsQuotation:
-    def __init__(self):
-        self.gth_label = [] 	# uuid 
-        self.quo_unicode = [] 	# unicode
-        self.quo_date=[] 	# date of quotations , defined by datetime. 
-        self.quo_nouns = [] 	# position, need to be initionalized by kkd_functions. 
-        self.quo_article=get_ArticleLabel() # Article Label ...
+	def __init__(self):
+        	self.gth_label = [] 	# uuid 
+        	self.quo_unicode = [] 	# unicode
+        	self.quo_date=[] 	# date of quotations , defined by datetime. 
+        	self.quo_nouns = [] 	# position, need to be initionalized by kkd_functions. 
+        	self.quo_article=get_ArticleLabel() # Article Label ...
         # many other featured to beArticleLabel added....
     # sentecne parsing functions. 
-    def kkd_funcs(self, x):
-        self.data.append(x)
+	def kkd_funcs(self, x):
+        	self.data.append(x)
 
 def excel_open():
 	wb=load_workbook('./file/wholetable.xlsx')
