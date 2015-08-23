@@ -3,7 +3,7 @@
 # this is news source analyis program. 
 # read articles and discover network structure of news sources based on quataions in artticles. 
 
-# Deokwoo Jung 's update 23 Aug. 
+# Deokwoo Jung 's update 23 Aug by jdw. 
 # modules to be imported
 from __future__ import division # To forace float point division
 import os
