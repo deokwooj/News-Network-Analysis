@@ -286,12 +286,13 @@ def get_excel_informers():
 
 
 def informer_save():
-    id_name_load = pickle.load(open("./file/dict_id_name.p","rb"))
-    org_load = pickle.load(open("./file/dict_org.p","rb"))
-    type_load = pickle.load(open("./file/dict_type.p","rb"))
-    pos_load = pickle.load(open("./file/dict_pos.p","rb"))
-    code_load = pickle.load(open("./file/dict_code.p","rb"))
-    classified_load = pickle.load(open("./file/dict_classified.p","rb"))
+
+    id_name_load = pickle.load(open(DICT_ID_NAME,"rb"))
+    org_load = pickle.load(open(DICT_ORG,"rb"))
+    type_load = pickle.load(open(DICT_TYPE,"rb"))
+    pos_load = pickle.load(open(DICT_POS,"rb"))
+    code_load = pickle.load(open(DICT_CODE,"rb"))
+    classified_load = pickle.load(open(DICT_CLASSIFIED,"rb"))
 
     sheet = excel_open()
     row_count = sheet.get_highest_row()
@@ -337,7 +338,7 @@ def informer_save():
 
     
 def get_all_NS():
-    all_ns = pickle.load(open("./file/dict_informer.p","rb"))
+    all_ns = pickle.load(open(DICT_INFORMER,"rb"))
     #TODO: dont hardcode constant, replace 6 with constant variables or get from class functions.   
     U=np.matrix(np.ones((len(all_ns),6)))
     for i in range(0, len(all_ns)):
@@ -364,9 +365,11 @@ def get_all_NS():
 #    return None
 
 def get_excel_nouns():
-    wb=load_workbook('./file/reference.xlsx')
+    #wb=load_workbook('./file/reference.xlsx')
+    wb=load_workbook(REFERENCE_EXCEL)
     sheetList = wb.get_sheet_names()
-    sheet = wb.get_sheet_by_name('extraction')
+    #sheet = wb.get_sheet_by_name('extraction')
+    sheet = wb.get_sheet_by_name(EXTRACTION_SHEET)
     row_count = sheet.get_highest_row()
 
     all_cellValue=[]
@@ -391,7 +394,8 @@ def get_ArticleLabel():
 def get_all_Quo():
     all_Quo=[]
     total_quo=TotalNum_Quotations
-    excel_nouns = pickle.load(open("./file/nouns.p","rb"))
+    #excel_nouns = pickle.load(open("./file/nouns.p","rb"))
+    excel_nouns = pickle.load(open(DICT_NOUNS,"rb"))
     
     for i in range(0, len(excel_nouns)) :
         temp_nq = NewsQuotation() # create an instance of news quotations
@@ -415,35 +419,38 @@ if __name__ == "__main__":
 
     # excel_noun processing
     try : 
-        wb = load_workbook('./file/reference.xlsx')
-        sheet = wb.get_sheet_by_name('extraction')
+        #wb = load_workbook('./file/reference.xlsx')
+        wb = load_workbook(REFERENCE_EXCEL)
+        #sheet = wb.get_sheet_by_name('extraction')
+        sheet = wb.get_sheet_by_name(EXTRACTION_SHEET)
         print " excel_noun existed"
     except :
         excel_noun()
         #print "no reference.xlsx"
     
     # nouns.p file check
-    if os.path.isfile("./file/nouns.p"):
+    #if os.path.isfile("./file/nouns.p"):
+    if os.path.isfile(DICT_NOUNS):
         print " nouns.p file existed" 
     else:
         try :
             excel_nouns = get_excel_nouns() 
-            pickle.dump( excel_nouns, open( "./file/nouns.p", "wb" ) )
+            pickle.dump( excel_nouns, open( DICT_NOUNS, "wb" ) )
             print " now nouns.p file create " 
         except :
             print " nouns.p file make error "
 
     # id, org, pos dictionary file check
-    if os.path.isfile("./file/dict_id_name.p") and os.path.isfile("./file/dict_org.p") and os.path.isfile("./file/dict_pos.p"):
+    if os.path.isfile(DICT_ID_NAME) and os.path.isfile(DICT_ORG) and os.path.isfile(DICT_POS):
         print " dict_id_name.p file existed " 
         print " dict_org.p file existed " 
         print " dict_pos.p file existed " 
     else:
         try :
             excel_id_name, excel_org, excel_pos = get_excel_informers() 
-            pickle.dump( excel_id_name, open( "./file/dict_id_name.p", "wb" ) )
-            pickle.dump( excel_org, open( "./file/dict_org.p", "wb" ) )
-            pickle.dump( excel_pos, open( "./file/dict_pos.p", "wb" ) )
+            pickle.dump( excel_id_name, open( DICT_ID_NAME, "wb" ) )
+            pickle.dump( excel_org, open( DICT_ORG, "wb" ) )
+            pickle.dump( excel_pos, open( DICT_POS, "wb" ) )
 
             print " now dict_id_name.p file create " 
             print " now dict_org.p file create " 
@@ -451,20 +458,20 @@ if __name__ == "__main__":
         except :
             print " get_excel_informers file make error "
 
-    if os.path.isfile("./file/dict_type.p") and os.path.isfile("./file/dict_code.p") and os.path.isfile("./file/dict_classified.p") :
+    if os.path.isfile(DICT_TYPE) and os.path.isfile(DICT_CODE) and os.path.isfile(DICT_CLASSIFIED) :
         print " dict_type.p file existed " 
         print " dict_code.p file existed " 
         print " dict_classified.p file existed " 
     else:
         try :
             excel_type = get_excel_type() 
-            pickle.dump( excel_type, open( "./file/dict_type.p", "wb" ) )
+            pickle.dump( excel_type, open( DICT_TYPE, "wb" ) )
 
             excel_code = get_excel_code() 
-            pickle.dump( excel_code, open( "./file/dict_code.p", "wb" ) )
+            pickle.dump( excel_code, open( DICT_CODE, "wb" ) )
 
             excel_classified = get_excel_classified() 
-            pickle.dump( excel_classified, open( "./file/dict_classified.p", "wb" ) )
+            pickle.dump( excel_classified, open( DICT_CLASSIFIED, "wb" ) )
 
             print " now dict_type.p file create " 
             print " now dict_code.p file create " 
@@ -473,13 +480,13 @@ if __name__ == "__main__":
             print " dict_type, code, classified file make error "
 
 
-    if os.path.isfile("./file/dict_informer.p"):
+    if os.path.isfile(DICT_INFORMER):
         print " dict_informer.p file existed"
 
     else :
         try:
             informer_tmp = informer_save()
-            pickle.dump( informer_tmp, open( "./file/dict_informer.p", "wb" ) )
+            pickle.dump( informer_tmp, open( DICT_INFORMER, "wb" ) )
         except :
             print " informer save  error"
 
