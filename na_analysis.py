@@ -50,6 +50,7 @@ import cPickle as pickle
 from sets import Set
 # newly imported
 from na_config import *
+import na_tools as nt
 
 # Two stages :
 # Stg 1. Excel files -->  Python data structure --> store binary format in hard disk as *.bin
@@ -240,9 +241,8 @@ def get_excel_classified():
 
 
 def get_excel_informers():
-
     sheet = load_wholetable_excel()
-    row_count = sheet.get_highest_row()
+    row_count = sheet.get_highest_row() 
 
     dict_id_name = {}
     dict_org = {}
@@ -301,7 +301,6 @@ def get_excel_informers():
     return dict_id_name, dict_org, dict_type, dict_pos, dict_code, dict_classified 
 
 def informer_save():
-
     id_name_load = pickle.load(open(DICT_ID_NAME,"rb"))
     org_load = pickle.load(open(DICT_ORG,"rb"))
     type_load = pickle.load(open(DICT_TYPE,"rb"))
@@ -315,7 +314,7 @@ def informer_save():
     all_ns = []
 
     #id = sheet.cell(row=i, column=1).value   # id
-    count = 0
+    count = 0 
 
     for i in range(2, row_count):
         ns_ins = NewsSource() # create an instance of news sources
@@ -373,7 +372,6 @@ def get_all_NS():
 
     return U
         
-
 
 # get a vector of nones from quatations
 #def get_nouns(i):
@@ -449,55 +447,122 @@ if __name__ == "__main__":
         print " nouns.p file existed" 
     else:
         try :
-            excel_nouns = get_excel_nouns() 
+            excel_nouns = get_excel_nouns()  
             pickle.dump( excel_nouns, open( DICT_NOUNS, "wb" ) )
             print " now nouns.p file create " 
         except :
-            print " nouns.p file make error "
+            print " nouns.p file make error " 
 
     # id, org, pos dictionary file check
-    if os.path.isfile(DICT_ID_NAME) and os.path.isfile(DICT_ORG) and os.path.isfile(DICT_TYPE) and os.path.isfile(DICT_POS) and os.path.isfile(DICT_CODE) and os.path.isfile(DICT_CLASSIFIED):
-        print " dict_id_name.p file existed " 
-        print " dict_org.p file existed " 
-        print " dict_pos.p file existed " 
-        print " dict_type.p file existed " 
-        print " dict_code.p file existed " 
-        print " dict_classified.p file existed " 
+    if os.path.isfile(DICT_ID_NAME) and os.path.isfile(DICT_ORG) \
+    and os.path.isfile(DICT_TYPE) and os.path.isfile(DICT_POS) \
+    and os.path.isfile(DICT_CODE)  and os.path.isfile(DICT_CLASSIFIED): 
+        print  'Found a dictionary for news sources'
+        """
+        table_define.xlsx : 정보원 정의
+        | infoSrc_ID                   | 정보원 ID |
+        | name                         | 이름 |
+        | orgName                      | 소속이름 |
+        | type                         | 정보원 구분 |
+        | position                     | 직함 |
+        | etc_position                 | 기타 직함 정보 |
+        | yearOfBirth                  | 생년 |
+        | person_id(FK)                | 사전의 인물 ID |
+        | code                         | 인물의 소속 분류 |
+        | is_classified_paper_category | 신문 지면 정보에 의해 정보원의 분류되었는지 여부 |
+        | INFOSRC_GLOBAL_ID            | 전기간
+        | infosrc_id_whole    | 5 |
+        | infosrc_id_day      | 2003/10/10_408 |
+        | infosrc_name        | 김수행 |
+        | infosrc_org         | 서울대 |
+        | infosrc_type        | I |
+        | infosrc_pos         | 교수 |
+        | infosrc_code        | 13 |
+        | infosrc_isclassified| \N |        에 걸친 UniqueID |
+        
+        Each column is extracted from wholetable.xlsx (정보원 자료 엑셀 파일)
+        """
+        
+        src_name=nt.loadObjectBinaryFast(DICT_ID_NAME)
+        src_org=nt.loadObjectBinaryFast(DICT_ORG)
+        """ 
+        type
+      | S | 익명 - 소속 없는 사람 |
+      | R | 익명 - 소속 있는 사람 |
+      | I | 실명 개인 - 소속 있음 |
+      | N | 무속속 실명 |
+      | O | 조직 |
+      | s | 성만 나와 있는 익명 |        
+       """
+       # dictionary of type
+        src_type=nt.loadObjectBinaryFast(DICT_TYPE)
+        # dictionary of position 
+        src_pos=nt.loadObjectBinaryFast(DICT_POS)
+        # dictionary of code
+        src_code=nt.loadObjectBinaryFast(DICT_CODE)
+        """
+        is_classified_paper_category
+      | Y | 본 정보원이 나온 신문지면의 분류에 의해 코딩 |
+      | N | 본 정보원이 직함이나, 소속에 의해 코딩이 된 것 |
+        """
+        src_classifed=nt.loadObjectBinaryFast(DICT_CLASSIFIED) 
+        
     else:
         try :
-            excel_id_name, excel_org, excel_type, excel_pos, excel_code, excel_classified = get_excel_informers() 
-            pickle.dump( excel_id_name, open( DICT_ID_NAME, "wb" ) )
-            pickle.dump( excel_org, open( DICT_ORG, "wb" ) )
-            pickle.dump( excel_type, open( DICT_TYPE, "wb" ) )
-            pickle.dump( excel_pos, open( DICT_POS, "wb" ) )
-            pickle.dump( excel_code, open( DICT_CODE, "wb" ) )
-            pickle.dump( excel_classified, open( DICT_CLASSIFIED, "wb" ) )
-
-            print " now dict_id_name.p file create " 
-            print " now dict_org.p file create " 
-            print " now dict_type.p file create " 
-            print " now dict_pos.p file create " 
-            print " now dict_code.p file create " 
-            print " now dict_classified.p file create " 
+            print  'Save a dictionary for news sources'
+            excel_id_name, excel_org, excel_type, excel_pos, excel_code, excel_classified \
+            = get_excel_informers()
+            nt.saveObjectBinaryFast(excel_id_name, DICT_ID_NAME )
+            nt.saveObjectBinaryFast(excel_org, DICT_ORG )
+            nt.saveObjectBinaryFast(excel_type, DICT_TYPE )
+            nt.saveObjectBinaryFast(excel_pos,  DICT_POS )
+            nt.saveObjectBinaryFast( excel_code, DICT_CODE)
+            nt.saveObjectBinaryFast(excel_classified,  DICT_CLASSIFIED  )
+            
         except :
             print " get_excel_informers file make error "
 
 
+    # Print list dictionary for news source. 
+    print '------------------------------------'    
+    print ' List of names in news sources '
+    print '------------------------------------'
+    for key in src_name.keys(): 
+        print src_name[key]
+    print '------------------------------------'
+    
+    print '------------------------------------'    
+    print ' List of organizations in news sources '
+    print '------------------------------------'
+    for key in src_org.keys():
+        print src_org[key]
+    print '------------------------------------'
+   
+    print '------------------------------------'    
+    print ' List of positions in news sources '
+    print '------------------------------------'
+    for key in src_pos.keys(): 
+        print src_pos[key]
+    print '------------------------------------'
+
+
     if os.path.isfile(DICT_INFORMER):
-        print " dict_informer.p file existed"
+        print " Found a class  list for news sources "
+        # News Source Matrix        
+        src_mat=nt.loadObjectBinaryFast(DICT_INFORMER)
 
     else :
         try:
             informer_tmp = informer_save()
-            pickle.dump( informer_tmp, open( DICT_INFORMER, "wb" ) )
+            nt.saveObjectBinaryFast(informer_tmp,DICT_INFORMER) # replace with a shorter func.       
         except :
             print " informer save  error"
-
+    
     #all_ns=get_all_NS()
 
 
 
-    # News Article by a = {a_1 , · · · , a_l }  
+    # News Article by a = {a_1 , · · · , a_l }
 
 
     

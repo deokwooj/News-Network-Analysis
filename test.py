@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-
+"""
 all_ns = pickle.load(open("./file/dict_informer.p","rb"))
 U=np.matrix(np.ones((len(all_ns),6)))
 
@@ -18,4 +18,11 @@ for i in range(0, len(all_ns)):
     U[a:b,5]=all_ns[i].classified
 
 print U
+"""
 
+
+
+print ' List of names in news sources '
+print '------------------------------------'
+for key in src_name.keys(): 
+    print src_name[key]
