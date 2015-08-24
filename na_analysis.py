@@ -257,7 +257,7 @@ def get_excel_informers():
 
     #for row in sheet.iter_rows():
     #    for cell in row:
-    #		print sheet.cell('A1') 
+    #        print sheet.cell('A1') 
 
     for i in range(2,row_count):
         id = sheet.cell(row=i, column=1).value   # id
@@ -497,6 +497,65 @@ if __name__ == "__main__":
 
 
 
+    # News Article by a = {a_1 , · · · , a_l }  
+
+
+    
+
+    
+    # News Sources by s = {s_1 , · · · , s_m }
+
+
+
+
+    # Quotations in articles  by q = {q_1 , · · · , a_n }
+    
+
+
+    # U_{lxm} ~ Association matrix between News Sources S and Articles A
+
+
+
+
+    # V_{mxn} ~ Association matrix  between News Sources S and Quotations Q.
+    
+    
+    
+    
+    # Z_{nxl}~ Association matrix  between Quotations − Articles.
+    
+    
+    
+    # Q_v = V*V' 
+    
+    
+    
+    # Q_z = Z*Z'
+    
+    
+    
+    # \hat{q}_i ~ Projection of q_i into n-dimensional Euclidian space E_n    
+    
+    
+    # D_q ~ Distance of matrix for \hat{q}_i s
+        
+    
+    
+    # D^_q = w_d D_q + w_v* Q_v + w_z*Q_z
+    
+    
+    
+    
+    
+    
+
+
+
+
+
+
+
+
     # Load class list of Quatation object. 
     #all_quo=get_all_Quo()
     
@@ -506,6 +565,7 @@ if __name__ == "__main__":
     
     #####################################################
     # Simulation test 
+
     # This part is for simulations
     #####################################################
     
