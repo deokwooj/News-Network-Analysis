@@ -240,16 +240,11 @@ def get_excel_classified(classified_tmp):
 
 def get_excel_informers():
 
-<<<<<<< HEAD
     src_org_set = nt.loadObjectBinaryFast(DICT_ORG_SET)
     src_pos_set = nt.loadObjectBinaryFast(DICT_POS_SET)
 
     inv_src_org_set = {v: k for k, v in src_org_set.items()}
     inv_src_pos_set = {a: b for b, a in src_pos_set.items()}
-=======
-    inv_src_org = {v: k for k, v in src_org.items()}
-    inv_src_pos = {a: b for b, a in src_pos.items()}
->>>>>>> origin/master
 
     sheet = load_wholetable_excel()
     row_count = sheet.get_highest_row() 
@@ -273,29 +268,15 @@ def get_excel_informers():
         dict_id_name[id] = name   # dictionary id : name
         dict_type[id] = get_excel_type(i_type)   # dictionary   id : type
         dict_code[id] = code   # dictionary   id : code
-<<<<<<< HEAD
         dict_classified[id] = get_excel_classified(classified)   # dictionary   id : classified
-=======
-        dict_classified[id] = classified   # dictionary   id : classified
 
->>>>>>> origin/master
 
-        try:
-	    idx_org = sorted(inv_src_org.keys()).index(org)
-	    dict_org[id] = idx_org
-	except ValueError:
-	    idx_org = -1
-
-<<<<<<< HEAD
         try:
 	    idx_org = inv_src_org_set.keys().index(org)
 	    dict_org[id] = idx_org
 	    print dict_org[id]
 	except ValueError:
 	    idx_org = -1
-=======
-	
->>>>>>> origin/master
 
         try:
 	    idx_pos = inv_src_pos_set.keys().index(pos)
@@ -335,6 +316,7 @@ def get_all_NS():
     for i in range(0, len(src_mat)):
         #print all_ns[i].id, all_ns[i].org, all_ns[i].pos
         #TODO: it is bad to use a, b in this for loop. 
+
         a=i
         b=i+1
 
