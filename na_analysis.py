@@ -241,6 +241,10 @@ def get_excel_classified():
 
 
 def get_excel_informers():
+
+    inv_src_org = {v: k for k, v in src_org.items()}
+    inv_src_pos = {a: b for b, a in src_pos.items()}
+
     sheet = load_wholetable_excel()
     row_count = sheet.get_highest_row() 
 
@@ -250,14 +254,6 @@ def get_excel_informers():
     dict_pos = {}
     dict_code = {}
     dict_classified = {}
-
-    org_items = set() 
-    pos_items = set() 
-
-
-    #for row in sheet.iter_rows():
-    #    for cell in row:
-    #        print sheet.cell('A1') 
 
     for i in range(2,row_count):
         id = sheet.cell(row=i, column=1).value   # id
@@ -273,25 +269,14 @@ def get_excel_informers():
         dict_code[id] = code   # dictionary   id : code
         dict_classified[id] = classified   # dictionary   id : classified
 
-        if org=='null':
-            org=None
-        if pos=='null':
-            pos=None
 
-        org_items.add(org)
-        pos_items.add(pos)
+        try:
+	    idx_org = sorted(inv_src_org.keys()).index(org)
+	    dict_org[id] = idx_org
+	except ValueError:
+	    idx_org = -1
 
-    org_items = list(org_items)
-    pos_items = list(pos_items)
-
-    for j in range(0, len(org_items)):
-        dict_org[j] = org_items[j]    # dictionary   index : organization
-        #print dict_org[j]
-
-
-    for k in range(0, len(pos_items)):
-        dict_pos[k] = pos_items[k]    # dictiionary   index : position
-        #print str(k) + dict_pos[k]
+	
 
     print_dictionary(dict_org)
     print ""
