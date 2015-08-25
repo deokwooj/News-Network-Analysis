@@ -16,7 +16,7 @@
 # modules to be imported
 from __future__ import division # To forace float point division
 import os
-import sys
+import sys, traceback
 import numpy as np
 from numpy.linalg import inv
 from numpy.linalg import norm
@@ -98,13 +98,13 @@ class NewsSource:
         self.id = [] # uuid 
         self.name = [] # name_set
         self.org = [] # org_set
-        self.type=[] # check name or organization 
+        self.i_type=[] # check name or organization 
         self.pos = [] # pos_set
         self.code=[] # organization code
         self.classified=[] # isclassified 
 
     def _str_(self):
-        return self.id, self.name, self.org, self.pos, self.code,self.classified
+        return self.id, self.name, self.org, self.i_type, self.pos, self.code,self.classified
 
     def add(self, x):
             self.data.append(x)
@@ -121,6 +121,17 @@ class NewsQuotation:
     def kkd_funcs(self, x):
             self.data.append(x)
 
+# for print key value
+class MyPrettyPrinter(pprint.PrettyPrinter):
+    def format(self, _object, context, maxlevels, level):
+        if isinstance(_object, unicode):
+            return "'%s'" % _object.encode('utf8'), True, False
+        elif isinstance(_object, str):
+            _object = unicode(_object,'utf8')
+            return "'%s'" % _object.encode('utf8'), True, False
+        return pprint.PrettyPrinter.format(self, _object, context, maxlevels, level)
+
+
 def load_wholetable_excel():
     #wb=load_workbook('./file/wholetable.xlsx')
     wb=load_workbook(WHOLETABLE_EXCEL)
@@ -129,67 +140,64 @@ def load_wholetable_excel():
     sheet = wb.get_sheet_by_name(WHOLETABLE_SHEET)
     return sheet
 
-def print_dictionary(items):
-    for i in range(0, len(items)):
-        if items[i] != None:
-            print str(i) + " : " + items[i]
 
-def get_excel_org():
+def org_set_dict():
 
-    sheet = excel_open()
+    sheet = load_wholetable_excel()
     row_count = sheet.get_highest_row()
 
-    dict_org={}
-    org_items = set() 
+    dict_org_set={}
+    org_items = set()
 
     for i in range(2,row_count):
-        #cell_ns=NewsSource() # create an instance of news sources
         org = sheet.cell(row=i, column=4).value   # organization
-
-        if org=='null':
-            org=None
-
         org_items.add(org)
 
     org_items = list(org_items)
 
     for j in range(0, len(org_items)):
-        dict_org[j] = org_items[j]    # dictionary   index : organization
-        #print dict_org[j]
+        dict_org_set[j] = org_items[j]    # dictionary   index : organization
+        #print dict_org_set[j]
+        #print_dictionary(dict_org_set)
 
-    #print_dictionary(dict_org)
+    return dict_org_set
 
-    return dict_org 
+def pos_set_dict():
 
-
-def get_excel_type():
-    sheet = excel_open()
+    sheet = load_wholetable_excel()
     row_count = sheet.get_highest_row()
 
-    dict_type={}
-    count = 0
+    dict_pos_set={}
+    pos_items = set()
 
     for i in range(2,row_count):
-        #cell_ns=NewsSource() # create an instance of news sources
-        type_tmp = sheet.cell(row=i, column=5).value   # type
-        if type_tmp == 'S':
-            dict_type[str(count)] = 1 
-        elif type_tmp == 'R':
-            dict_type[str(count)] = 2 
-        elif type_tmp == 'I':
-            dict_type[str(count)] = 3 
-        elif type_tmp == 'N':
-            dict_type[str(count)] = 4 
-        elif type_tmp == 'O':
-            dict_type[str(count)] = 5 
-        elif type_tmp == 's':
-            dict_type[str(count)] = 6 
-        #print type_tmp + " " + str(dict_type[str(count)])
-        count = count + 1
+        pos = sheet.cell(row=i, column=6).value   # 
+        pos_items.add(pos)
 
-    #print_dictionary(dict_type)
-    count = 0
-    return dict_type 
+    pos_items = list(pos_items)
+
+    for j in range(0, len(pos_items)):
+        dict_pos_set[j] = pos_items[j]    # dictionary   index : position 
+        #print dict_org_set[j]
+    #print_dictionary(dict_org_set)
+
+    return dict_pos_set
+
+
+def get_excel_type(type):
+    if type == 'S':
+        re_type = 1
+    elif type == 'R':
+        re_type = 2 
+    elif type == 'I':
+        re_type = 3
+    elif type == 'N':
+        re_type = 4
+    elif type == 'O':
+        re_type = 5
+    elif type == 's':
+        re_type = 6
+    return re_type 
 
 
 def get_excel_code():
@@ -214,33 +222,30 @@ def get_excel_code():
 
 
 
-def get_excel_classified():
+def get_excel_classified(classified_tmp):
 
-    sheet = excel_open()
-    row_count = sheet.get_highest_row()
 
-    dict_classified={}
-    count = 0
+    if classified_tmp == '\\N':
+        re_classified = 0 
+    elif classified_tmp == '\\Y':
+        re_classified= 1 
 
-    for i in range(2,row_count):
-        #cell_ns=NewsSource() # create an instance of news sources
-        classified_tmp = sheet.cell(row=i, column=8).value   # type
-        if classified_tmp == '\\N':
-            dict_classified[str(count)] = 0 
-        elif classified_tmp == '\\Y':
-            dict_classified[str(count)] = 1 
-
-        #print classified_tmp + " " + str(dict_classified[str(count)])
-        count = count + 1
+    #print classified_tmp + " " + str(dict_classified[str(count)])
 
     #print_dictionary(dict_classified)
 
-    count = 0
-    return dict_classified
+    return re_classified 
 
 
 
 def get_excel_informers():
+
+    src_org_set = nt.loadObjectBinaryFast(DICT_ORG_SET)
+    src_pos_set = nt.loadObjectBinaryFast(DICT_POS_SET)
+
+    inv_src_org_set = {v: k for k, v in src_org_set.items()}
+    inv_src_pos_set = {a: b for b, a in src_pos_set.items()}
+
     sheet = load_wholetable_excel()
     row_count = sheet.get_highest_row() 
 
@@ -251,122 +256,75 @@ def get_excel_informers():
     dict_code = {}
     dict_classified = {}
 
-    org_items = set() 
-    pos_items = set() 
-
-
-    #for row in sheet.iter_rows():
-    #    for cell in row:
-    #        print sheet.cell('A1') 
-
     for i in range(2,row_count):
         id = sheet.cell(row=i, column=1).value   # id
         name = sheet.cell(row=i, column=3).value   # name
         org = sheet.cell(row=i, column=4).value   # organization
-        type = sheet.cell(row=i, column=5).value   # organization
+        i_type = sheet.cell(row=i, column=5).value   # organization
         pos = sheet.cell(row=i, column=6).value   # position
         code = sheet.cell(row=i, column=7).value   # organization
         classified = sheet.cell(row=i, column=8).value   # organization
 
         dict_id_name[id] = name   # dictionary id : name
-        dict_type[id] = type   # dictionary   id : type
+        dict_type[id] = get_excel_type(i_type)   # dictionary   id : type
         dict_code[id] = code   # dictionary   id : code
-        dict_classified[id] = classified   # dictionary   id : classified
-
-        if org=='null':
-            org=None
-        if pos=='null':
-            pos=None
-
-        org_items.add(org)
-        pos_items.add(pos)
-
-    org_items = list(org_items)
-    pos_items = list(pos_items)
-
-    for j in range(0, len(org_items)):
-        dict_org[j] = org_items[j]    # dictionary   index : organization
-        #print dict_org[j]
+        dict_classified[id] = get_excel_classified(classified)   # dictionary   id : classified
 
 
-    for k in range(0, len(pos_items)):
-        dict_pos[k] = pos_items[k]    # dictiionary   index : position
-        #print str(k) + dict_pos[k]
+        try:
+	    idx_org = inv_src_org_set.keys().index(org)
+	    dict_org[id] = idx_org
+	    print dict_org[id]
+	except ValueError:
+	    idx_org = -1
 
-    print_dictionary(dict_org)
-    print ""
-    print_dictionary(dict_pos)
-    print ""
+        try:
+	    idx_pos = inv_src_pos_set.keys().index(pos)
+	    dict_pos[id] = idx_pos
+	except ValueError:
+	    idx_pos = -1
 
     return dict_id_name, dict_org, dict_type, dict_pos, dict_code, dict_classified 
 
-def informer_save():
-    id_name_load = pickle.load(open(DICT_ID_NAME,"rb"))
-    org_load = pickle.load(open(DICT_ORG,"rb"))
-    type_load = pickle.load(open(DICT_TYPE,"rb"))
-    pos_load = pickle.load(open(DICT_POS,"rb"))
-    code_load = pickle.load(open(DICT_CODE,"rb"))
-    classified_load = pickle.load(open(DICT_CLASSIFIED,"rb"))
 
-    sheet = excel_open()
-    row_count = sheet.get_highest_row()
+def informer_class_dict():
 
     all_ns = []
 
-    #id = sheet.cell(row=i, column=1).value   # id
-    count = 0 
-
-    for i in range(2, row_count):
+    for i in range(0, len(src_name)):
         ns_ins = NewsSource() # create an instance of news sources
 
-         
-        id = sheet.cell(row=i, column=1).value   # id 
-        org = sheet.cell(row=i, column=4).value   # org
-        pos = sheet.cell(row=i, column=6).value   # pos
+        #ns_ins.id = src_name.keys.index[i] 
+        #ns_ins.id = src.org.values()[i] 
+        ns_ins.id = i 
+        ns_ins.org = src_org.values()[i] 
+        ns_ins.code = src_code.values()[i] 
+        ns_ins.pos = src_pos.values()[i]
+        ns_ins.i_type = src_type.values()[i] 
+        ns_ins.classified = src_classified.values()[i]
 
-        code = sheet.cell(row=i, column=7).value   # organization type
-
-        ns_ins.id = id
-        ns_ins.code = code_load[str(count)]
-        ns_ins.type = type_load[str(count)]
-        ns_ins.classified = classified_load[str(count)]
-
-        if org == 'null':
-            org = None
-        if pos == 'null':
-            pos = None
-
-        for j in range(0, len(org_load)):
-            if org == org_load[j]:
-                ns_ins.org = org_load.keys()[j]
-
-        for k in range(0, len(pos_load)):
-            if pos == pos_load[k]:
-                ns_ins.pos = pos_load.keys()[k]
-        count = count + 1
         all_ns.append(ns_ins)
-
-    count = 0
 
     return all_ns
 
     
 def get_all_NS():
-    all_ns = pickle.load(open(DICT_INFORMER,"rb"))
+    #all_ns = pickle.load(open(DICT_INFORMER,"rb"))
     #TODO: dont hardcode constant, replace 6 with constant variables or get from class functions.   
-    U=np.matrix(np.ones((len(all_ns),6)))
-    for i in range(0, len(all_ns)):
+    U=np.matrix(np.ones((len(src_mat),6)))
+
+    for i in range(0, len(src_mat)):
         #print all_ns[i].id, all_ns[i].org, all_ns[i].pos
         #TODO: it is bad to use a, b in this for loop. 
         a=i
         b=i+1
 
-        U[a:b,0]=all_ns[i].id
-        U[a:b,1]=all_ns[i].org
-        U[a:b,2]=all_ns[i].type
-        U[a:b,3]=all_ns[i].pos
-        U[a:b,4]=all_ns[i].code
-        U[a:b,5]=all_ns[i].classified
+        U[a:b,0]=src_mat[i].id
+        U[a:b,1]=src_mat[i].org
+        U[a:b,2]=src_mat[i].i_type
+        U[a:b,3]=src_mat[i].pos
+        U[a:b,4]=src_mat[i].code
+        U[a:b,5]=src_mat[i].classified
 
     print U
 
@@ -458,6 +416,12 @@ if __name__ == "__main__":
     and os.path.isfile(DICT_TYPE) and os.path.isfile(DICT_POS) \
     and os.path.isfile(DICT_CODE)  and os.path.isfile(DICT_CLASSIFIED): 
         print  'Found a dictionary for news sources'
+
+        # organization set dict
+        src_org_set=nt.loadObjectBinaryFast(DICT_ORG_SET)
+        # position set dict
+        src_pos_set=nt.loadObjectBinaryFast(DICT_POS_SET)
+
         """
         table_define.xlsx : 정보원 정의
         | infoSrc_ID                   | 정보원 ID |
@@ -505,45 +469,78 @@ if __name__ == "__main__":
       | Y | 본 정보원이 나온 신문지면의 분류에 의해 코딩 |
       | N | 본 정보원이 직함이나, 소속에 의해 코딩이 된 것 |
         """
-        src_classifed=nt.loadObjectBinaryFast(DICT_CLASSIFIED) 
+        src_classified=nt.loadObjectBinaryFast(DICT_CLASSIFIED) 
         
     else:
         try :
             print  'Save a dictionary for news sources'
+
+            # organization set()
+            org_set = org_set_dict()
+            nt.saveObjectBinaryFast(org_set, DICT_ORG_SET )
+
+            # position set()
+            pos_set = pos_set_dict()
+            nt.saveObjectBinaryFast(pos_set, DICT_POS_SET )
+
             excel_id_name, excel_org, excel_type, excel_pos, excel_code, excel_classified \
             = get_excel_informers()
             nt.saveObjectBinaryFast(excel_id_name, DICT_ID_NAME )
             nt.saveObjectBinaryFast(excel_org, DICT_ORG )
             nt.saveObjectBinaryFast(excel_type, DICT_TYPE )
             nt.saveObjectBinaryFast(excel_pos,  DICT_POS )
-            nt.saveObjectBinaryFast( excel_code, DICT_CODE)
+            nt.saveObjectBinaryFast(excel_code, DICT_CODE)
             nt.saveObjectBinaryFast(excel_classified,  DICT_CLASSIFIED  )
             
         except :
+	    traceback.print_exc()
             print " get_excel_informers file make error "
 
 
+    get_excel_informers()
     # Print list dictionary for news source. 
     print '------------------------------------'    
     print ' List of names in news sources '
     print '------------------------------------'
-    for key in src_name.keys(): 
-        print src_name[key]
+    #for key in src_name.keys(): 
+    #    print src_name[key]
+    print MyPrettyPrinter().pprint(src_name)
     print '------------------------------------'
-    
+
+
+    print '------------------------------------'    
+    print ' List of organizations set '
+    print '------------------------------------'
+    print MyPrettyPrinter().pprint(src_org_set)
+    print '------------------------------------'
+
+    print '------------------------------------'    
+    print ' List of position set '
+    print '------------------------------------'
+    print MyPrettyPrinter().pprint(src_pos_set)
+    print '------------------------------------'
+
     print '------------------------------------'    
     print ' List of organizations in news sources '
     print '------------------------------------'
-    for key in src_org.keys():
-        print src_org[key]
+    #for key in src_org.keys():
+    #    print src_org[key]
+    print MyPrettyPrinter().pprint(src_org)
     print '------------------------------------'
    
     print '------------------------------------'    
     print ' List of positions in news sources '
     print '------------------------------------'
-    for key in src_pos.keys(): 
-        print src_pos[key]
+    #for key in src_pos.keys(): 
+    #    print src_pos[key]
+    print MyPrettyPrinter().pprint(src_pos)
     print '------------------------------------'
+
+    print '------------------------------------'    
+    print ' List of informer class in news sources '
+    print '------------------------------------'
+    #for key in src_pos.keys(): 
+    #    print src_pos[key]
 
 
     if os.path.isfile(DICT_INFORMER):
@@ -553,12 +550,14 @@ if __name__ == "__main__":
 
     else :
         try:
-            informer_tmp = informer_save()
+            informer_tmp = informer_class_dict()
             nt.saveObjectBinaryFast(informer_tmp,DICT_INFORMER) # replace with a shorter func.       
         except :
+	    traceback.print_exc()
             print " informer save  error"
     
-    #all_ns=get_all_NS()
+
+    all_ns=get_all_NS()
 
 
 
@@ -607,16 +606,6 @@ if __name__ == "__main__":
     
     
     # D^_q = w_d D_q + w_v* Q_v + w_z*Q_z
-    
-    
-    
-    
-    
-    
-
-
-
-
 
 
 
