@@ -185,6 +185,7 @@ def pos_set_dict():
 
 
 def get_excel_type(type):
+	# TODO :  type는 python 키워드 입니다. 다른 이름으로 바꾸어 주세요 
     if type == 'S':
         re_type = 1
     elif type == 'R':
