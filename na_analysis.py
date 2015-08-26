@@ -291,7 +291,7 @@ def get_excel_informers():
 def informer_class_dict():
 
     all_ns = []
-
+# TODO: src_name is defined outside this function, !! please correct it
     for i in range(0, len(src_name)):
         ns_ins = NewsSource() # create an instance of news sources
 
