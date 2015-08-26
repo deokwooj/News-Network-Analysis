@@ -384,7 +384,21 @@ def get_all_Quo():
         # Fill all members and details...
         return all_Quo
  
+# Return diatance matrix of Quatations
+def generate_Qdist (w_param):
+	# using w_param (weight coefficients for various distance matrix for Quatations 
+	# w_param is given by DM's excel table ...
+	return D_q
 
+
+def quo_network_analysis(D_q,ns_param):
+	# discover the best network structure given ns_param
+	# D_q: Distance matrix for quoatations. 
+	# 1. Clustering using D_q
+	# 2. Applying na_param and cutoff neighbor max number of neighbor. 
+	# 3. generate ns_structure = n by n binaryt matrix. 
+	return ns_structutre
+	
 
 if __name__ == "__main__":
 
