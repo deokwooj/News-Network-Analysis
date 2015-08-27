@@ -8,18 +8,19 @@ from openpyxl.cell import get_column_letter
 
 from openpyxl import load_workbook
 
+from na_config import *
 
 def excel_noun():
 
 	def excel_write(row_val, column_val, data):
 		new_sheet.cell(row = row_val, column = column_val, value="%s" %data)
 
-	wb=load_workbook('reference.xlsx')
+	wb=load_workbook(REFERENCE_EXCEL)
 	sheetList = wb.get_sheet_names()
 	sheet = wb.get_sheet_by_name(sheetList[0])
 	row_count = sheet.get_highest_row()
 	
-	new_sheet = wb.create_sheet(title='extraction')
+	new_sheet = wb.create_sheet(title=EXTRACTION_SHEET)
 	
 	for i in range(2, row_count):
 		if sheet.row_dimensions[i].visible :
@@ -35,6 +36,7 @@ def excel_noun():
 
 		cellValue_name = sheet.cell(row=i, column=1).value
 		cellValue = sheet.cell(row=i, column=2).value
+		cellValue_article_id = sheet.cell(row=i, column=3).value
 
 		try :
 			QUA = cellValue.count(u'\u201c')
@@ -62,6 +64,7 @@ def excel_noun():
 				excel_write(i, 1, cellValue_name)
 				excel_write(i, 2, cellValue_final)
 				excel_write(i, 3, noun_val)
+				excel_write(i, 4, cellValue_article_id)
 
 			elif QUA == 0 :
 				#print str(i) + " " + cellValue
@@ -83,6 +86,7 @@ def excel_noun():
 				excel_write(i, 1, cellValue_name)
 				excel_write(i, 2, another_cellValue_final)
 				excel_write(i, 3, noun_val)
+				excel_write(i, 4, cellValue_article_id)
 
 			elif QUA > 1 :
 				#print str(i) + " " + str(QUA)
@@ -106,8 +110,9 @@ def excel_noun():
 					excel_write(i, 1, cellValue_name)
 					excel_write(i, 2, full_qua)
 					excel_write(i, 3, noun_val)
+					excel_write(i, 4, cellValue_article_id)
 
-	wb.save('reference.xlsx')
+	wb.save(REFERENCE_EXCEL)
 
 
 if __name__=="__main__":
