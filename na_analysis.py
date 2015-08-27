@@ -184,19 +184,19 @@ def pos_set_dict():
     return dict_pos_set
 
 
-def get_excel_type(type):
+def get_excel_type(i_type):
 	# TODO :  type는 python 키워드 입니다. 다른 이름으로 바꾸어 주세요 
-    if type == 'S':
+    if i_type == 'S':
         re_type = 1
-    elif type == 'R':
+    elif i_type == 'R':
         re_type = 2 
-    elif type == 'I':
+    elif i_type == 'I':
         re_type = 3
-    elif type == 'N':
+    elif i_type == 'N':
         re_type = 4
-    elif type == 'O':
+    elif i_type == 'O':
         re_type = 5
-    elif type == 's':
+    elif i_type == 's':
         re_type = 6
     return re_type 
 
