@@ -344,20 +344,22 @@ def get_all_NS():
 
 def matrix_U():
     #all_ns = pickle.load(open(DICT_INFORMER,"rb"))
-
+    # 메트릭스 0으로 초기화 
     U=np.matrix(np.zeros((len(src_n_informer_set),len(src_article_id_set))))
 
     sheet = load_reference_excel()
     row_count = sheet.get_highest_row()
 
+    # 정보원이 속한 기사 ID 리스트
     test=[]
 
+    # 중복되지 않은 정보원을 기중으로 for 루프
     for i in range(0, len(src_n_informer_set)):
-    	informer_tmp = src_n_informer_set[i]
+    	informer_tmp = src_n_informer_set[i]    # 정보원 set 딕션어리에 1번째 정보원 
 	#print informer_tmp
         a = i
 	b = i+1
-
+        # 엑셀 파일에 정보원 비교하여 딕션어리 정보원과 같으면 그때의 기사 ID를 얻음
         for j in range(2,row_count):
            cell_informer = sheet.cell(row=j, column=1).value   # 
 	   if cell_informer is None:
@@ -365,7 +367,7 @@ def matrix_U():
 	   if informer_tmp == cell_informer:
                cell_article_id = sheet.cell(row=j, column=4).value   # 
                test.append(cell_article_id)
-
+        # 생성된 메트릭스에 정보원이 기사 ID에 있으면 1을 넣음
 	for k in range(0, len(src_article_id_set)):
 
 	    article_id_tmp = src_article_id_set[k]
