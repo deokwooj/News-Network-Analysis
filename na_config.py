@@ -19,10 +19,21 @@ DICT_CODE = "./file/dict_code.p"
 DICT_CLASSIFIED = "./file/dict_classified.p"
 DICT_INFORMER = "./file/dict_informer.p"
 
+DICT_ORG_SET = "./file/dict_org_set.p"
+DICT_POS_SET = "./file/dict_pos_set.p"
+
+DICT_E_INFORMER_SET = "./file/dict_e_informer_set.p"
+
 DICT_NOUNS = "./file/nouns.p"
 
-REFERENCE_EXCEL = './file/reference.xlsx'
-EXTRACTION_SHEET = 'extraction' 
+DICT_ARTICLE_ID_SET = "./file/dict_article_id_set.p"
+DICT_N_INFORMER_SET = "./file/dict_n_informer_set.p"
+
+REFERENCE_EXCEL = "./file/reference.xlsx"
+EXTRACTION_SHEET = "extraction" 
 
 WHOLETABLE_EXCEL = './file/wholetable.xlsx'
 WHOLETABLE_SHEET = 'wholetable'
+
+
+

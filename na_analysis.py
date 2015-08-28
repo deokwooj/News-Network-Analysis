@@ -82,7 +82,7 @@ TotalNum_Quotations=1000
 # R : no name yes org,    I : yes name yes org,    N : yes name no org,    O : org,    s : only last name
 # NewsSource Type = {1:S, 2:R, 3:I, 4:N ,5:O, 6:s}
 
-
+'''
 def get_excel_sets(excel_dict):
     # load excel_dict
     name_set={} # Source's name
@@ -91,7 +91,7 @@ def get_excel_sets(excel_dict):
     src_set={} # explain what it is  ???
     isc_set={} # explain what it is  ???
     return org_set,pos_set,src_set,isc_set
-
+'''
 
 class NewsSource:
     def __init__(self):
@@ -141,6 +141,15 @@ def load_wholetable_excel():
     return sheet
 
 
+def load_reference_excel():
+    #wb=load_workbook('./file/wholetable.xlsx')
+    wb=load_workbook(REFERENCE_EXCEL)
+    sheetList = wb.get_sheet_names()
+    #sheet = wb.get_sheet_by_name('wholetable')
+    sheet = wb.get_sheet_by_name(EXTRACTION_SHEET)
+    return sheet
+
+
 def org_set_dict():
 
     sheet = load_wholetable_excel()
@@ -185,7 +194,6 @@ def pos_set_dict():
 
 
 def get_excel_type(i_type):
-	# TODO :  type는 python 키워드 입니다. 다른 이름으로 바꾸어 주세요 
     if i_type == 'S':
         re_type = 1
     elif i_type == 'R':
@@ -333,6 +341,51 @@ def get_all_NS():
     return U
         
 
+
+def matrix_U():
+    #all_ns = pickle.load(open(DICT_INFORMER,"rb"))
+
+    U=np.matrix(np.zeros((len(src_n_informer_set),len(src_article_id_set))))
+
+    sheet = load_reference_excel()
+    row_count = sheet.get_highest_row()
+
+    test=[]
+
+    for i in range(0, len(src_n_informer_set)):
+    	informer_tmp = src_n_informer_set[i]
+	#print informer_tmp
+        a = i
+	b = i+1
+
+        for j in range(2,row_count):
+           cell_informer = sheet.cell(row=j, column=1).value   # 
+	   if cell_informer is None:
+	       continue
+	   if informer_tmp == cell_informer:
+               cell_article_id = sheet.cell(row=j, column=4).value   # 
+               test.append(cell_article_id)
+
+	for k in range(0, len(src_article_id_set)):
+
+	    article_id_tmp = src_article_id_set[k]
+
+	    for m in range(0,len(test)):
+	        if article_id_tmp == test[m]:
+	            U[a:b, k] = 1
+
+	test[:] = [] #리스트 초기화  
+
+    print U
+    #print len(src_article_id_set)
+
+    #for i in range(0, len(src_article_id_set)):
+   # 	print U
+
+    return U
+        
+
+
 # get a vector of nones from quatations
 #def get_nouns(i):
 #    return None
@@ -356,6 +409,49 @@ def get_excel_nouns():
     cellValue = sheet.cell(row=i, column=3).value
     all_cellValue.append(cellValue)
     return all_cellValue 
+
+
+def article_id_set_dict():
+
+    sheet = load_reference_excel()
+    row_count = sheet.get_highest_row()
+
+    dict_article_id_set={}
+    article_items = set()
+
+    for i in range(2,row_count):
+        cell_article_id = sheet.cell(row=i, column=4).value   # 
+        article_items.add(cell_article_id)
+
+    article_items = list(article_items)
+
+    for j in range(0, len(article_items)):
+        dict_article_id_set[j] = article_items[j]    # dictionary   index : position 
+
+    #print dict_article_id_set
+    return dict_article_id_set
+
+def n_informer_set_dict():
+
+    sheet = load_reference_excel()
+    row_count = sheet.get_highest_row()
+
+    dict_n_informer_set={}
+    n_informer_items = set()
+
+    for i in range(2,row_count):
+        cell_n_informer = sheet.cell(row=i, column=1).value   # 
+	if cell_n_informer is None:
+            continue 
+        n_informer_items.add(cell_n_informer)
+
+    n_informer_items = list(n_informer_items)
+
+    for j in range(0, len(n_informer_items)):
+        dict_n_informer_set[j] = n_informer_items[j] 
+
+    #print dict_article_id_set
+    return dict_n_informer_set
 
 # return artice label.
 def get_ArticleLabel():
@@ -410,10 +506,9 @@ if __name__ == "__main__":
         wb = load_workbook(REFERENCE_EXCEL)
         #sheet = wb.get_sheet_by_name('extraction')
         sheet = wb.get_sheet_by_name(EXTRACTION_SHEET)
-        print " excel_noun existed"
     except :
+	traceback.print_exc()
         excel_noun()
-        #print "no reference.xlsx"
     
     # nouns.p file check
     #if os.path.isfile("./file/nouns.p"):
@@ -512,8 +607,6 @@ if __name__ == "__main__":
 	    traceback.print_exc()
             print " get_excel_informers file make error "
 
-
-    get_excel_informers()
     # Print list dictionary for news source. 
     print '------------------------------------'    
     print ' List of names in news sources '
@@ -571,64 +664,64 @@ if __name__ == "__main__":
         except :
 	    traceback.print_exc()
             print " informer save  error"
+
     
+    # article id in extraction sheet
+    if os.path.isfile(DICT_ARTICLE_ID_SET):
+        print " Found a class  list for news sources "
+        # News Source Matrix        
+        src_article_id_set=nt.loadObjectBinaryFast(DICT_ARTICLE_ID_SET)
 
-    all_ns=get_all_NS()
+    else :
+        try:
+            article_id_set_tmp = article_id_set_dict()
+            nt.saveObjectBinaryFast(article_id_set_tmp,DICT_ARTICLE_ID_SET) # replace with a shorter func.       
+        except :
+	    traceback.print_exc()
+            print " article id set save  error"
 
+    # informers in extraction sheet
+    if os.path.isfile(DICT_N_INFORMER_SET):
+        print " Found a class  list for news sources "
+        # News Source Matrix        
+        src_n_informer_set=nt.loadObjectBinaryFast(DICT_N_INFORMER_SET)
 
+    else :
+        try:
+            n_informer_tmp = n_informer_set_dict()
+            nt.saveObjectBinaryFast(n_informer_tmp,DICT_N_INFORMER_SET) # replace with a shorter func.       
+        except :
+	    traceback.print_exc()
+            print " n informer set save  error"
+
+    #all_ns=get_all_NS()
+    #n_informer_set_dict()
+    matrix_U()
 
     # News Article by a = {a_1 , · · · , a_l }
-
-
-    
-
     
     # News Sources by s = {s_1 , · · · , s_m }
 
-
-
-
     # Quotations in articles  by q = {q_1 , · · · , a_n }
-    
-
 
     # U_{lxm} ~ Association matrix between News Sources S and Articles A
 
-
-
-
     # V_{mxn} ~ Association matrix  between News Sources S and Quotations Q.
-    
-    
-    
     
     # Z_{nxl}~ Association matrix  between Quotations − Articles.
     
-    
-    
     # Q_v = V*V' 
-    
-    
     
     # Q_z = Z*Z'
     
-    
-    
     # \hat{q}_i ~ Projection of q_i into n-dimensional Euclidian space E_n    
     
-    
     # D_q ~ Distance of matrix for \hat{q}_i s
-        
-    
     
     # D^_q = w_d D_q + w_v* Q_v + w_z*Q_z
 
-
-
-
     # Load class list of Quatation object. 
     #all_quo=get_all_Quo()
-    
     
     # TODO: Create U, V, Z matrix here, (sample is ok ) --> check for paper. 
     # note: must be done after you clean your code with complete comments , 
