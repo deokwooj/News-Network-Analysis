@@ -95,31 +95,31 @@ def get_excel_sets(excel_dict):
 
 class NewsSource:
     def __init__(self):
-        self.id = [] # uuid 
-        self.name = [] # name_set
-        self.org = [] # org_set
-        self.i_type=[] # check name or organization 
-        self.pos = [] # pos_set
-        self.code=[] # organization code
-        self.classified=[] # isclassified 
+    self.id = [] # uuid 
+    self.name = [] # name_set
+    self.org = [] # org_set
+    self.i_type=[] # check name or organization 
+    self.pos = [] # pos_set
+    self.code=[] # organization code
+    self.classified=[] # isclassified 
 
     def _str_(self):
-        return self.id, self.name, self.org, self.i_type, self.pos, self.code,self.classified
+    return self.id, self.name, self.org, self.i_type, self.pos, self.code,self.classified
 
     def add(self, x):
-            self.data.append(x)
+        self.data.append(x)
 
 class NewsQuotation:
     def __init__(self):
-            self.gth_label = []     # uuid 
-            self.quo_unicode = []     # unicode
-            self.quo_date=[]     # date of quotations , defined by datetime. 
-            self.quo_nouns = []     # position, need to be initionalized by kkd_functions. 
-            self.quo_article=get_ArticleLabel() # Article Label ...
-        # many other featured to beArticleLabel added....
+        self.gth_label = []     # uuid 
+        self.quo_unicode = []     # unicode
+        self.quo_date=[]     # date of quotations , defined by datetime. 
+        self.quo_nouns = []     # position, need to be initionalized by kkd_functions. 
+        self.quo_article=get_ArticleLabel() # Article Label ...
+    # many other featured to beArticleLabel added....
     # sentecne parsing functions. 
     def kkd_funcs(self, x):
-            self.data.append(x)
+        self.data.append(x)
 
 # for print key value
 class MyPrettyPrinter(pprint.PrettyPrinter):
@@ -151,7 +151,6 @@ def load_reference_excel():
 
 
 def org_set_dict():
-
     sheet = load_wholetable_excel()
     row_count = sheet.get_highest_row()
 
@@ -229,10 +228,7 @@ def get_excel_code():
     count = 0
     return dict_code
 
-
-
 def get_excel_classified(classified_tmp):
-
 
     if classified_tmp == '\\N':
         re_classified = 0 
@@ -240,7 +236,6 @@ def get_excel_classified(classified_tmp):
         re_classified= 1 
 
     #print classified_tmp + " " + str(dict_classified[str(count)])
-
     #print_dictionary(dict_classified)
 
     return re_classified 
@@ -265,33 +260,32 @@ def get_excel_informers():
     dict_code = {}
     dict_classified = {}
 
-    for i in range(2,row_count):
-        id = sheet.cell(row=i, column=1).value   # id
-        name = sheet.cell(row=i, column=3).value   # name
-        org = sheet.cell(row=i, column=4).value   # organization
-        i_type = sheet.cell(row=i, column=5).value   # organization
-        pos = sheet.cell(row=i, column=6).value   # position
-        code = sheet.cell(row=i, column=7).value   # organization
-        classified = sheet.cell(row=i, column=8).value   # organization
+for i in range(2,row_count):
+    id = sheet.cell(row=i, column=1).value   # id
+    name = sheet.cell(row=i, column=3).value   # name
+    org = sheet.cell(row=i, column=4).value   # organization
+    i_type = sheet.cell(row=i, column=5).value   # organization
+    pos = sheet.cell(row=i, column=6).value   # position
+    code = sheet.cell(row=i, column=7).value   # organization
+    classified = sheet.cell(row=i, column=8).value   # organization
 
-        dict_id_name[id] = name   # dictionary id : name
-        dict_type[id] = get_excel_type(i_type)   # dictionary   id : type
-        dict_code[id] = code   # dictionary   id : code
-        dict_classified[id] = get_excel_classified(classified)   # dictionary   id : classified
+    dict_id_name[id] = name   # dictionary id : name
+    dict_type[id] = get_excel_type(i_type)   # dictionary   id : type
+    dict_code[id] = code   # dictionary   id : code
+    dict_classified[id] = get_excel_classified(classified)   # dictionary   id : classified
 
+    try:
+        idx_org = inv_src_org_set.keys().index(org)
+        dict_org[id] = idx_org
+        print dict_org[id]
+    except ValueError:
+        idx_org = -1
 
-        try:
-	    idx_org = inv_src_org_set.keys().index(org)
-	    dict_org[id] = idx_org
-	    print dict_org[id]
-	except ValueError:
-	    idx_org = -1
-
-        try:
-	    idx_pos = inv_src_pos_set.keys().index(pos)
-	    dict_pos[id] = idx_pos
-	except ValueError:
-	    idx_pos = -1
+    try:
+        idx_pos = inv_src_pos_set.keys().index(pos)
+        dict_pos[id] = idx_pos
+    except ValueError:
+        idx_pos = -1
 
     return dict_id_name, dict_org, dict_type, dict_pos, dict_code, dict_classified 
 
@@ -336,10 +330,9 @@ def get_all_NS():
         U[a:b,4]=src_mat[i].code
         U[a:b,5]=src_mat[i].classified
 
-    print U
+        print U
 
     return U
-        
 
 
 def matrix_U():
@@ -355,28 +348,27 @@ def matrix_U():
 
     # 중복되지 않은 정보원을 기중으로 for 루프
     for i in range(0, len(src_n_informer_set)):
-    	informer_tmp = src_n_informer_set[i]    # 정보원 set 딕션어리에 1번째 정보원 
-	#print informer_tmp
+        informer_tmp = src_n_informer_set[i]    # 정보원 set 딕션어리에 1번째 정보원 
+        #print informer_tmp
         a = i
-	b = i+1
+        b = i+1
         # 엑셀 파일에 정보원 비교하여 딕션어리 정보원과 같으면 그때의 기사 ID를 얻음
         for j in range(2,row_count):
-           cell_informer = sheet.cell(row=j, column=1).value   # 
-	   if cell_informer is None:
-	       continue
-	   if informer_tmp == cell_informer:
-               cell_article_id = sheet.cell(row=j, column=4).value   # 
-               test.append(cell_article_id)
+            cell_informer = sheet.cell(row=j, column=1).value   # 
+            if cell_informer is None:
+                continue
+            if informer_tmp == cell_informer:
+                cell_article_id = sheet.cell(row=j, column=4).value   # 
+                test.append(cell_article_id)
         # 생성된 메트릭스에 정보원이 기사 ID에 있으면 1을 넣음
-	for k in range(0, len(src_article_id_set)):
+        for k in range(0, len(src_article_id_set)):
+            article_id_tmp = src_article_id_set[k]
 
-	    article_id_tmp = src_article_id_set[k]
+            for m in range(0,len(test)):
+                if article_id_tmp == test[m]:
+                    U[a:b, k] = 1
 
-	    for m in range(0,len(test)):
-	        if article_id_tmp == test[m]:
-	            U[a:b, k] = 1
-
-	test[:] = [] #리스트 초기화  
+        test[:] = [] #리스트 초기화  
 
     print U
     #print len(src_article_id_set)
@@ -412,9 +404,7 @@ def get_excel_nouns():
     all_cellValue.append(cellValue)
     return all_cellValue 
 
-
 def article_id_set_dict():
-
     sheet = load_reference_excel()
     row_count = sheet.get_highest_row()
 
@@ -443,7 +433,7 @@ def n_informer_set_dict():
 
     for i in range(2,row_count):
         cell_n_informer = sheet.cell(row=i, column=1).value   # 
-	if cell_n_informer is None:
+        if cell_n_informer is None:
             continue 
         n_informer_items.add(cell_n_informer)
 
@@ -486,7 +476,7 @@ def get_all_Quo():
 def generate_Qdist (w_param):
 	# using w_param (weight coefficients for various distance matrix for Quatations 
 	# w_param is given by DM's excel table ...
-	return D_q
+    return D_q
 
 
 def quo_network_analysis(D_q,ns_param):
@@ -495,7 +485,7 @@ def quo_network_analysis(D_q,ns_param):
 	# 1. Clustering using D_q
 	# 2. Applying na_param and cutoff neighbor max number of neighbor. 
 	# 3. generate ns_structure = n by n binaryt matrix. 
-	return ns_structutre
+    return ns_structutre
 	
 
 if __name__ == "__main__":
@@ -509,7 +499,7 @@ if __name__ == "__main__":
         #sheet = wb.get_sheet_by_name('extraction')
         sheet = wb.get_sheet_by_name(EXTRACTION_SHEET)
     except :
-	traceback.print_exc()
+        traceback.print_exc()
         excel_noun()
     
     # nouns.p file check
@@ -604,9 +594,8 @@ if __name__ == "__main__":
             nt.saveObjectBinaryFast(excel_pos,  DICT_POS )
             nt.saveObjectBinaryFast(excel_code, DICT_CODE)
             nt.saveObjectBinaryFast(excel_classified,  DICT_CLASSIFIED  )
-            
         except :
-	    traceback.print_exc()
+            traceback.print_exc()
             print " get_excel_informers file make error "
 
     # Print list dictionary for news source. 
@@ -658,15 +647,13 @@ if __name__ == "__main__":
         print " Found a class  list for news sources "
         # News Source Matrix        
         src_mat=nt.loadObjectBinaryFast(DICT_INFORMER)
-
     else :
         try:
             informer_tmp = informer_class_dict()
             nt.saveObjectBinaryFast(informer_tmp,DICT_INFORMER) # replace with a shorter func.       
         except :
-	    traceback.print_exc()
+            traceback.print_exc()
             print " informer save  error"
-
     
     # article id in extraction sheet
     if os.path.isfile(DICT_ARTICLE_ID_SET):
@@ -679,7 +666,7 @@ if __name__ == "__main__":
             article_id_set_tmp = article_id_set_dict()
             nt.saveObjectBinaryFast(article_id_set_tmp,DICT_ARTICLE_ID_SET) # replace with a shorter func.       
         except :
-	    traceback.print_exc()
+            traceback.print_exc()
             print " article id set save  error"
 
     # informers in extraction sheet
@@ -687,13 +674,12 @@ if __name__ == "__main__":
         print " Found a class  list for news sources "
         # News Source Matrix        
         src_n_informer_set=nt.loadObjectBinaryFast(DICT_N_INFORMER_SET)
-
     else :
         try:
             n_informer_tmp = n_informer_set_dict()
             nt.saveObjectBinaryFast(n_informer_tmp,DICT_N_INFORMER_SET) # replace with a shorter func.       
         except :
-	    traceback.print_exc()
+            traceback.print_exc()
             print " n informer set save  error"
 
     #all_ns=get_all_NS()
@@ -741,5 +727,4 @@ if __name__ == "__main__":
     #U[1:3,1]=0
     #S=U*U.T
     #pprint.pprint(S)
-
     
