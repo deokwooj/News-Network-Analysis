@@ -95,16 +95,16 @@ def get_excel_sets(excel_dict):
 
 class NewsSource:
     def __init__(self):
-    self.id = [] # uuid 
-    self.name = [] # name_set
-    self.org = [] # org_set
-    self.i_type=[] # check name or organization 
-    self.pos = [] # pos_set
-    self.code=[] # organization code
-    self.classified=[] # isclassified 
+        self.id = [] # uuid 
+        self.name = [] # name_set
+        self.org = [] # org_set
+        self.i_type=[] # check name or organization 
+        self.pos = [] # pos_set
+        self.code=[] # organization code
+        self.classified=[] # isclassified 
 
     def _str_(self):
-    return self.id, self.name, self.org, self.i_type, self.pos, self.code,self.classified
+        return self.id, self.name, self.org, self.i_type, self.pos, self.code,self.classified
 
     def add(self, x):
         self.data.append(x)
@@ -260,19 +260,19 @@ def get_excel_informers():
     dict_code = {}
     dict_classified = {}
 
-for i in range(2,row_count):
-    id = sheet.cell(row=i, column=1).value   # id
-    name = sheet.cell(row=i, column=3).value   # name
-    org = sheet.cell(row=i, column=4).value   # organization
-    i_type = sheet.cell(row=i, column=5).value   # organization
-    pos = sheet.cell(row=i, column=6).value   # position
-    code = sheet.cell(row=i, column=7).value   # organization
-    classified = sheet.cell(row=i, column=8).value   # organization
+    for i in range(2,row_count):
+        id = sheet.cell(row=i, column=1).value   # id
+        name = sheet.cell(row=i, column=3).value   # name
+        org = sheet.cell(row=i, column=4).value   # organization
+        i_type = sheet.cell(row=i, column=5).value   # organization
+        pos = sheet.cell(row=i, column=6).value   # position
+        code = sheet.cell(row=i, column=7).value   # organization
+        classified = sheet.cell(row=i, column=8).value   # organization
 
-    dict_id_name[id] = name   # dictionary id : name
-    dict_type[id] = get_excel_type(i_type)   # dictionary   id : type
-    dict_code[id] = code   # dictionary   id : code
-    dict_classified[id] = get_excel_classified(classified)   # dictionary   id : classified
+        dict_id_name[id] = name   # dictionary id : name
+        dict_type[id] = get_excel_type(i_type)   # dictionary   id : type
+        dict_code[id] = code   # dictionary   id : code
+        dict_classified[id] = get_excel_classified(classified)   # dictionary   id : classified
 
     try:
         idx_org = inv_src_org_set.keys().index(org)
@@ -367,6 +367,7 @@ def matrix_U():
             for m in range(0,len(test)):
                 if article_id_tmp == test[m]:
                     U[a:b, k] = 1
+		    print b
 
         test[:] = [] #리스트 초기화  
 
