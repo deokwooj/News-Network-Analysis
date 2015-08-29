@@ -268,24 +268,24 @@ def get_excel_informers():
         pos = sheet.cell(row=i, column=6).value   # position
         code = sheet.cell(row=i, column=7).value   # organization
         classified = sheet.cell(row=i, column=8).value   # organization
+	print code
 
         dict_id_name[id] = name   # dictionary id : name
         dict_type[id] = get_excel_type(i_type)   # dictionary   id : type
         dict_code[id] = code   # dictionary   id : code
         dict_classified[id] = get_excel_classified(classified)   # dictionary   id : classified
 
-    try:
-        idx_org = inv_src_org_set.keys().index(org)
-        dict_org[id] = idx_org
-        print dict_org[id]
-    except ValueError:
-        idx_org = -1
+        try:
+            idx_org = inv_src_org_set.keys().index(org)
+            dict_org[id] = idx_org
+        except ValueError:
+            idx_org = -1
 
-    try:
-        idx_pos = inv_src_pos_set.keys().index(pos)
-        dict_pos[id] = idx_pos
-    except ValueError:
-        idx_pos = -1
+        try:
+            idx_pos = inv_src_pos_set.keys().index(pos)
+            dict_pos[id] = idx_pos
+        except ValueError:
+            idx_pos = -1
 
     return dict_id_name, dict_org, dict_type, dict_pos, dict_code, dict_classified 
 
@@ -296,7 +296,6 @@ def informer_class_dict():
 # TODO: src_name is defined outside this function, !! please correct it
     for i in range(0, len(src_name)):
         ns_ins = NewsSource() # create an instance of news sources
-
         #ns_ins.id = src_name.keys.index[i] 
         #ns_ins.id = src.org.values()[i] 
         ns_ins.id = i 
@@ -330,8 +329,7 @@ def get_all_NS():
         U[a:b,4]=src_mat[i].code
         U[a:b,5]=src_mat[i].classified
 
-        print U
-
+        #print U
     return U
 
 
@@ -349,7 +347,6 @@ def matrix_U():
     # 중복되지 않은 정보원을 기중으로 for 루프
     for i in range(0, len(src_n_informer_set)):
         informer_tmp = src_n_informer_set[i]    # 정보원 set 딕션어리에 1번째 정보원 
-        #print informer_tmp
         a = i
         b = i+1
         # 엑셀 파일에 정보원 비교하여 딕션어리 정보원과 같으면 그때의 기사 ID를 얻음
@@ -369,7 +366,9 @@ def matrix_U():
                     U[a:b, k] = 1
 
         test[:] = [] #리스트 초기화  
+    #dump_matrix_U(U)
 
+def dump_matrix_U(U):
     # dump matrix
     class bcolors:
         HEADER = '\033[95m'
@@ -465,6 +464,7 @@ def n_informer_set_dict():
 
     for j in range(0, len(n_informer_items)):
         dict_n_informer_set[j] = n_informer_items[j] 
+        #dict_n_informer_set[n_informer_items[j]] = j 
 
     #print dict_article_id_set
     return dict_n_informer_set
@@ -701,6 +701,7 @@ if __name__ == "__main__":
     else :
         try:
             n_informer_tmp = n_informer_set_dict()
+            #print sorted(n_informer_tmp.keys())
             nt.saveObjectBinaryFast(n_informer_tmp,DICT_N_INFORMER_SET) # replace with a shorter func.       
         except :
             traceback.print_exc()
