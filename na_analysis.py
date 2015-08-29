@@ -367,15 +367,38 @@ def matrix_U():
             for m in range(0,len(test)):
                 if article_id_tmp == test[m]:
                     U[a:b, k] = 1
-		    print b
 
         test[:] = [] #리스트 초기화  
 
-    print U
-    #print len(src_article_id_set)
+    # dump matrix
+    class bcolors:
+        HEADER = '\033[95m'
+        OKBLUE = '\033[94m'
+        OKGREEN = '\033[92m'
+        WARNING = '\033[93m'
+        FAIL = '\033[91m'
+        ENDC = '\033[0m'
+        BOLD = '\033[1m'
+        UNDERLINE = '\033[4m'    
 
-    #for i in range(0, len(src_article_id_set)):
-   # 	print U
+    print '=' * 80
+    print "matrix U dump"
+    for r in range(len(src_n_informer_set)):
+        s = ''
+        for c in range(len(src_article_id_set)):
+            if U[r,c]:
+                s += bcolors.OKBLUE
+                s += bcolors.BOLD
+                s += '%d' % U[r,c]
+                s += bcolors.ENDC
+
+            else:
+                s += bcolors.FAIL
+                s += '%d' % U[r,c]
+                s += bcolors.ENDC
+
+        print s
+    print '=' * 80
 
     return U
         
