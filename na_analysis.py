@@ -369,17 +369,20 @@ def matrix_U():
         test[:] = [] #리스트 초기화  
     dump_matrix_U(U)
 
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'    
+
+
 def dump_matrix_U(U):
     # dump matrix
-    class bcolors:
-        HEADER = '\033[95m'
-        OKBLUE = '\033[94m'
-        OKGREEN = '\033[92m'
-        WARNING = '\033[93m'
-        FAIL = '\033[91m'
-        ENDC = '\033[0m'
-        BOLD = '\033[1m'
-        UNDERLINE = '\033[4m'    
 
     print '=' * 80
     print "matrix U dump"
@@ -401,8 +404,6 @@ def dump_matrix_U(U):
     print '=' * 80
 
     return U
-        
-
 
 def make_nouns_set():
     #dict_nouns_set = {}
@@ -419,27 +420,65 @@ def make_nouns_set():
 	        noun_items.add(split_val[noun_val]) 
 	    #for noun in range(split_val):
 	    #noun_items.add(split_val)
-    MyPrettyPrinter().pprint(noun_items)
-    print len(noun_items)
+    #MyPrettyPrinter().pprint(noun_items)
+    #print len(noun_items)
     return noun_items
 
+def dump_matrix_V(U,y,x):
+    # dump matrix
+
+    print '=' * 80
+    print "matrix V dump"
+    for r in range(len(y)):
+        s = ''
+        for c in range(len(x)):
+            if U[r,c]:
+                s += bcolors.OKBLUE
+                s += bcolors.BOLD
+                s += '%d' % U[r,c]
+                s += bcolors.ENDC
+
+            else:
+                s += bcolors.FAIL
+                s += '%d' % U[r,c]
+                s += bcolors.ENDC
+
+        print s
+    print '=' * 80
+
+    return U
 
 def matrix_V():
     make_nouns_set_test = make_nouns_set()
 
-    print len(src_split_arr_nouns)
-    print len(make_nouns_set_test)
-
+    #print make_nouns_set_test
     U=np.matrix(np.zeros((len(src_split_arr_nouns),len(make_nouns_set_test))))
 
     V_test=[]
 
+    #MyPrettyPrinter().pprint(src_split_arr_nouns[0])
+    #print len(src_split_arr_nouns)
+
     for i in range(0, len(src_split_arr_nouns)):
-        for j in range(0, len(make_nouns_set_test)):
-	    for compare in src_split_arr_nouns[0].values:
-	        if compare == make_nouns_set_test[j]:
-		    print "ok"
-	        
+        a = i
+        b = i+1
+        try:
+            for idx, set_items in enumerate(make_nouns_set_test):
+	        #print set_items
+                for split_items in src_split_arr_nouns[i]:
+                    #print split_items
+		    if set_items == split_items:
+                        U[a:b, idx] = 1
+		    else :
+		        pass
+		        #print "no"
+		        #print set_items
+		        #print split_items
+	except:
+            traceback.print_exc()
+	    pass
+
+    dump_matrix_V(U, src_split_arr_nouns, make_nouns_set_test)
 
 def split_arr_nouns():
     split_nouns = {}
@@ -678,20 +717,20 @@ if __name__ == "__main__":
     print '------------------------------------'
     #for key in src_name.keys(): 
     #    print src_name[key]
-    print MyPrettyPrinter().pprint(src_name)
+    #print MyPrettyPrinter().pprint(src_name)
     print '------------------------------------'
 
 
     print '------------------------------------'    
     print ' List of organizations set '
     print '------------------------------------'
-    print MyPrettyPrinter().pprint(src_org_set)
+    #print MyPrettyPrinter().pprint(src_org_set)
     print '------------------------------------'
 
     print '------------------------------------'    
     print ' List of position set '
     print '------------------------------------'
-    print MyPrettyPrinter().pprint(src_pos_set)
+    #print MyPrettyPrinter().pprint(src_pos_set)
     print '------------------------------------'
 
     print '------------------------------------'    
@@ -699,7 +738,7 @@ if __name__ == "__main__":
     print '------------------------------------'
     #for key in src_org.keys():
     #    print src_org[key]
-    print MyPrettyPrinter().pprint(src_org)
+    #print MyPrettyPrinter().pprint(src_org)
     print '------------------------------------'
    
     print '------------------------------------'    
@@ -707,7 +746,7 @@ if __name__ == "__main__":
     print '------------------------------------'
     #for key in src_pos.keys(): 
     #    print src_pos[key]
-    print MyPrettyPrinter().pprint(src_pos)
+    #print MyPrettyPrinter().pprint(src_pos)
     print '------------------------------------'
 
     print '------------------------------------'    
@@ -770,12 +809,12 @@ if __name__ == "__main__":
             print " dict split arr nouns save  error"
     #all_ns=get_all_NS()
     #n_informer_set_dict()
-    matrix_U()
+    #matrix_U()
 
     #make_nouns_set()
     #split_arr_nouns()
 
-    #matrix_V()
+    matrix_V()
 
     # News Article by a = {a_1 , · · · , a_l }
     

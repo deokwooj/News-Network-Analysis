@@ -29,6 +29,8 @@ DICT_NOUNS = "./file/nouns.p"
 DICT_ARTICLE_ID_SET = "./file/dict_article_id_set.p"
 DICT_N_INFORMER_SET = "./file/dict_n_informer_set.p"
 
+DICT_SPLIT_ARR_NOUNS = "./file/dict_split_arr_nouns.p"
+
 REFERENCE_EXCEL = "./file/reference.xlsx"
 EXTRACTION_SHEET = "extraction" 
 
