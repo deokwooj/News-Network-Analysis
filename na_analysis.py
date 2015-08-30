@@ -52,6 +52,7 @@ from sets import Set
 from na_config import *
 import na_tools as nt
 
+
 # Two stages :
 # Stg 1. Excel files -->  Python data structure --> store binary format in hard disk as *.bin
 # Stg 2. Load binary files, *.bin files into memory and performs data analytics with the loaded bin files. 
@@ -366,7 +367,7 @@ def matrix_U():
                     U[a:b, k] = 1
 
         test[:] = [] #리스트 초기화  
-    #dump_matrix_U(U)
+    dump_matrix_U(U)
 
 def dump_matrix_U(U):
     # dump matrix
@@ -403,9 +404,56 @@ def dump_matrix_U(U):
         
 
 
-# get a vector of nones from quatations
-#def get_nouns(i):
-#    return None
+def make_nouns_set():
+    #dict_nouns_set = {}
+    noun_items = set()
+    dict_nouns = {}
+
+    for i in range(0, len(excel_nouns_dict)):
+        if excel_nouns_dict[i] is None:
+	    continue
+	else :
+            #print excel_nouns_dict[i].split(",")
+            split_val = excel_nouns_dict[i].split(",")
+	    for noun_val in range(0, len(split_val)):
+	        noun_items.add(split_val[noun_val]) 
+	    #for noun in range(split_val):
+	    #noun_items.add(split_val)
+    MyPrettyPrinter().pprint(noun_items)
+    print len(noun_items)
+    return noun_items
+
+
+def matrix_V():
+    make_nouns_set_test = make_nouns_set()
+
+    print len(src_split_arr_nouns)
+    print len(make_nouns_set_test)
+
+    U=np.matrix(np.zeros((len(src_split_arr_nouns),len(make_nouns_set_test))))
+
+    V_test=[]
+
+    for i in range(0, len(src_split_arr_nouns)):
+        for j in range(0, len(make_nouns_set_test)):
+	    for compare in src_split_arr_nouns[0].values:
+	        if compare == make_nouns_set_test[j]:
+		    print "ok"
+	        
+
+def split_arr_nouns():
+    split_nouns = {}
+
+    for i in range(0, len(excel_nouns_dict)):
+        if excel_nouns_dict[i] is None:
+	    continue
+	else :
+            split_val = excel_nouns_dict[i].split(",")
+	    split_nouns[i] = split_val
+    print split_nouns
+    return split_nouns
+	     
+    
 
 def get_excel_nouns():
     #wb=load_workbook('./file/reference.xlsx')
@@ -419,12 +467,12 @@ def get_excel_nouns():
 
     for i in range(2,row_count):
         if sheet.row_dimensions[i].visible :
+            cellValue = sheet.cell(row=i, column=3).value
+            all_cellValue.append(cellValue)
             pass
         else :
             continue    
 
-    cellValue = sheet.cell(row=i, column=3).value
-    all_cellValue.append(cellValue)
     return all_cellValue 
 
 def article_id_set_dict():
@@ -530,10 +578,12 @@ if __name__ == "__main__":
     #if os.path.isfile("./file/nouns.p"):
     if os.path.isfile(DICT_NOUNS):
         print " nouns.p file existed" 
+        excel_nouns_dict = nt.loadObjectBinaryFast(DICT_NOUNS)
     else:
         try :
             excel_nouns = get_excel_nouns()  
             pickle.dump( excel_nouns, open( DICT_NOUNS, "wb" ) )
+            #nt.saveObjectBinaryFast(excel_nouns, DICT_ORG_SET )
             print " now nouns.p file create " 
         except :
             print " nouns.p file make error " 
@@ -707,9 +757,25 @@ if __name__ == "__main__":
             traceback.print_exc()
             print " n informer set save  error"
 
+    if os.path.isfile(DICT_SPLIT_ARR_NOUNS):
+        print " Found a dict_split_arr_nouns  "
+        src_split_arr_nouns=nt.loadObjectBinaryFast(DICT_SPLIT_ARR_NOUNS)
+    else :
+        try:
+            split_arr_nouns_tmp = split_arr_nouns()
+            #print sorted(n_informer_tmp.keys())
+            nt.saveObjectBinaryFast(split_arr_nouns_tmp,DICT_SPLIT_ARR_NOUNS) # replace with a shorter func.       
+        except :
+            traceback.print_exc()
+            print " dict split arr nouns save  error"
     #all_ns=get_all_NS()
     #n_informer_set_dict()
     matrix_U()
+
+    #make_nouns_set()
+    #split_arr_nouns()
+
+    #matrix_V()
 
     # News Article by a = {a_1 , · · · , a_l }
     
