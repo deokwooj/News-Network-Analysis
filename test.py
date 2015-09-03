@@ -21,8 +21,23 @@ print U
 """
 
 
+class NewsQuotation:
+    def __init__(self):
+        self.article_id ='000000000' # 9 digit number 
+        self.media_id = '00000000'  # 8 digit number 
+        self.date=dt.datetime(1999,12,31,23) #  quotations data,1999년 12월 31일 23시.
+        self.news_src=NewsSource()
+        self.quo_nouns = []     # position, need utcto be initionalized by kkd_functions. 
+    def whoami(self):
+        for key in self.__dict__.items():
+            if key[0]=='news_src':
+                import pdb;pdb.set_trace()
+                temp=key[1]
+                print key[0],'name : ', temp.name
+            else:
+                print key[0],': ', key[1]
 
-print ' List of names in news sources '
-print '------------------------------------'
-for key in src_name.keys(): 
-    print src_name[key]
+
+aa=NewsQuotation()
+aa.whoami()
+

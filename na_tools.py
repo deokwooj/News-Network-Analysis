@@ -16,6 +16,7 @@ import pickle
 import cPickle
 import random
 import resource
+import pprint
 ##################################################
 # SERIAL TOOL
 ##################################################
@@ -253,3 +254,13 @@ def print_report(start_time):
     elap = time.time() - start_time
     print "Elapse time: %d min %.3f sec"%(int(elap / 60), elap % 60)
     print "Mem usage  : %.3f MB"%(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1000)
+    
+
+class MyPrettyPrinter(pprint.PrettyPrinter):
+    def format(self, _object, context, maxlevels, level):
+        if isinstance(_object, unicode):
+            return "'%s'" % _object.encode('utf8'), True, False
+        elif isinstance(_object, str):
+            _object = unicode(_object,'utf8')
+            return "'%s'" % _object.encode('utf8'), True, False
+    return pprint.PrettyPrinter.format(self, _object, context, maxlevels, level)

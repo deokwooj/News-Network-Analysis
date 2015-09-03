@@ -1,15 +1,72 @@
 #-*- coding: utf-8 -*-
 
+#########################################################
+# Authors
+#########################################################
+# bla. bla...
+#
+#########################################################
+
+#########################################################
+# Liscence
+#########################################################
+# bla bla..
+#
+#########################################################
+
+#########################################################
+# Program Decsription
+#########################################################
 # this is news source analyis program. 
 # read articles and discover network structure of news sources based on quataions in artticles. 
+# Two stages :
+# Stg 1. Excel files -->  Python data structure --> store binary format in hard disk as *.bin
+# Stg 2. Load binary files, *.bin files into memory and performs data analytics with the loaded bin files. 
 #
-# Below a general TODO lists are suggested by deokwooj
-# TODO : Put detailed comments on alll functions and variables. 
-# TODO : briefly summrize all functions and global variables here below. 
-# functions....
-# global variables....
-# TODO: change all variables and function names to more intuitive one that corresponds to contexts in use. 
-# TODO: use na_config.py to set default configuration for all global constants.
+# bla bla...
+#########################################################
+
+#########################################################
+# News Article Excel file source 
+#########################################################
+#1. reference.xlsx ('분단'에 대한 자료 엑셀 파일)
+#2. wholetable.xlsx (정보원 자료 엑셀 파일)
+#3. table_define.xlsx : 정보원 정의
+#########################################################
+"""
+        table_define.xlsx : 정보원 정의
+        | infoSrc_ID                   | 정보원 ID |
+        | name                         | 이름 |
+        | orgName                      | 소속이름 |
+        | type                         | 정보원 구분 |
+        | position                     | 직함 |
+        | etc_position                 | 기타 직함 정보 |
+        | yearOfBirth                  | 생년 |
+        | person_id(FK)                | 사전의 인물 ID |
+        | code                         | 인물의 소속 분류 |
+        | is_classified_paper_category | 신문 지면 정보에 의해 정보원의 분류되었는지 여부 |
+        | INFOSRC_GLOBAL_ID            | 전기간
+        | infosrc_id_whole    | 5 |
+        | infosrc_id_day      | 2003/10/10_408 |
+        | infosrc_name        | 김수행 |
+        | infosrc_org         | 서울대 |
+        | infosrc_type        | I |
+        | infosrc_pos         | 교수 |
+        | infosrc_code        | 13 |
+        | infosrc_isclassified| \N |        에 걸친 UniqueID |
+        
+Each column is extracted from wholetable.xlsx (정보원 자료 엑셀 파일)
+ """
+ 
+""" 
+type
+| S | 익명 - 소속 없는 사람 |
+| R | 익명 - 소속 있는 사람 |
+| I | 실명 개인 - 소속 있음 |
+| N | 무속속 실명 |
+| O | 조직 |
+| s | 성만 나와 있는 익명 |        
+"""
 
 
 # Deokwoo Jung 's update 23 Aug by jdw-2. 
@@ -50,22 +107,9 @@ import cPickle as pickle
 from sets import Set
 # newly imported
 from na_config import *
+from na_const import * 
 import na_tools as nt
 
-
-# Two stages :
-# Stg 1. Excel files -->  Python data structure --> store binary format in hard disk as *.bin
-# Stg 2. Load binary files, *.bin files into memory and performs data analytics with the loaded bin files. 
-#
-#TODO: define INPUT files with formatting definition
-#TODO: define output data structures after processing input files 
-#TODO: import pasring module 
-#TODO: parsing quation excel files. 
-#TODO: define data structures after parsing
-
-# defintion of class strutures. 
-# Quotation label classfication defined by dictionary...
-# Tempoary defition --> need to be checked by Dr.Park....
 
 # Article is stroed in harddisk or DB,... 
 QuoLabel={'pol':1, 'eco':2, 'tec':2,'cul':3, 'ent':3,'soc':4,'int':5, 'spo':6, 'etc':7}
@@ -82,7 +126,7 @@ TotalNum_Quotations=1000
 
 # R : no name yes org,    I : yes name yes org,    N : yes name no org,    O : org,    s : only last name
 # NewsSource Type = {1:S, 2:R, 3:I, 4:N ,5:O, 6:s}
-
+utc
 '''
 def get_excel_sets(excel_dict):
     # load excel_dict
@@ -93,44 +137,42 @@ def get_excel_sets(excel_dict):
     isc_set={} # explain what it is  ???
     return org_set,pos_set,src_set,isc_set
 '''
-
+######################################
+# table_define.xlsx
+# Field.... 설명.... 
+######################################
 class NewsSource:
     def __init__(self):
         self.id = [] # uuid 
         self.name = [] # name_set
         self.org = [] # org_set
-        self.i_type=[] # check name or organization 
-        self.pos = [] # pos_set
+        self.srctype=[] #~ {S,R,I,N,O,s}, (e.g. S ~ 익명 - 소속 없는 사람)
+        self.pos = [] #  Position 
         self.code=[] # organization code
         self.classified=[] # isclassified 
+    def whoami(self): # print the current information for news source object
+        for key in self.__dict__.items():
+            print key[0],': ', key[1]
 
-    def _str_(self):
-        return self.id, self.name, self.org, self.i_type, self.pos, self.code,self.classified
-
-    def add(self, x):
-        self.data.append(x)
-
+######################################
+# refere... xlsx
+# 설명....            
+######################################
+# Art.ID (meta_data_id) :"01101001[-->매체정보].20130527[-->날짜]100000112[-->기사ID] 
 class NewsQuotation:
     def __init__(self):
-        self.gth_label = []     # uuid 
-        self.quo_unicode = []     # unicode
-        self.quo_date=[]     # date of quotations , defined by datetime. 
-        self.quo_nouns = []     # position, need to be initionalized by kkd_functions. 
-        self.quo_article=get_ArticleLabel() # Article Label ...
-    # many other featured to beArticleLabel added....
-    # sentecne parsing functions. 
-    def kkd_funcs(self, x):
-        self.data.append(x)
-
-# for print key value
-class MyPrettyPrinter(pprint.PrettyPrinter):
-    def format(self, _object, context, maxlevels, level):
-        if isinstance(_object, unicode):
-            return "'%s'" % _object.encode('utf8'), True, False
-        elif isinstance(_object, str):
-            _object = unicode(_object,'utf8')
-            return "'%s'" % _object.encode('utf8'), True, False
-        return pprint.PrettyPrinter.format(self, _object, context, maxlevels, level)
+        self.article_id ='000000000' # 9 digit number 
+        self.media_id = '00000000'  # 8 digit number 
+        self.date=dt.datetime(1999,12,31,23) #  quotations data,1999년 12월 31일 23시.
+        self.news_src=NewsSource()
+        self.quotation = []     # position, need utcto be initionalized by kkd_functions. 
+        self.nounvec = []     # position, need utcto be initionalized by kkd_functions. 
+    def whoami(self):
+        for key in self.__dict__.items():
+            if key[0]=='news_src':
+                print key[0],'name : ', key[1].name
+            else:
+                print key[0],': ', key[1]
 
 
 def load_wholetable_excel():
@@ -269,8 +311,7 @@ def get_excel_informers():
         pos = sheet.cell(row=i, column=6).value   # position
         code = sheet.cell(row=i, column=7).value   # organization
         classified = sheet.cell(row=i, column=8).value   # organization
-	print code
-
+        print code
         dict_id_name[id] = name   # dictionary id : name
         dict_type[id] = get_excel_type(i_type)   # dictionary   id : type
         dict_code[id] = code   # dictionary   id : code
@@ -292,7 +333,6 @@ def get_excel_informers():
 
 
 def informer_class_dict():
-
     all_ns = []
 # TODO: src_name is defined outside this function, !! please correct it
     for i in range(0, len(src_name)):
@@ -305,7 +345,6 @@ def informer_class_dict():
         ns_ins.pos = src_pos.values()[i]
         ns_ins.i_type = src_type.values()[i] 
         ns_ins.classified = src_classified.values()[i]
-
         all_ns.append(ns_ins)
 
     return all_ns
@@ -412,14 +451,14 @@ def make_nouns_set():
 
     for i in range(0, len(excel_nouns_dict)):
         if excel_nouns_dict[i] is None:
-	    continue
-	else :
+            continue
+        else :
             #print excel_nouns_dict[i].split(",")
             split_val = excel_nouns_dict[i].split(",")
-	    for noun_val in range(0, len(split_val)):
-	        noun_items.add(split_val[noun_val]) 
-	    #for noun in range(split_val):
-	    #noun_items.add(split_val)
+            for noun_val in range(0, len(split_val)):
+                noun_items.add(split_val[noun_val]) 
+        #for noun in range(split_val):
+        #noun_items.add(split_val)
     #MyPrettyPrinter().pprint(noun_items)
     #print len(noun_items)
     return noun_items
@@ -464,36 +503,32 @@ def matrix_V():
         b = i+1
         try:
             for idx, set_items in enumerate(make_nouns_set_test):
-	        #print set_items
+            #print set_items
                 for split_items in src_split_arr_nouns[i]:
                     #print split_items
-		    if set_items == split_items:
+                    if set_items == split_items:
                         U[a:b, idx] = 1
-		    else :
-		        pass
-		        #print "no"
-		        #print set_items
-		        #print split_items
-	except:
+                    else :
+                        pass
+                    #print "no"
+                    #print set_items
+                    #print split_items
+        except:
             traceback.print_exc()
-	    pass
-
+            pass
     dump_matrix_V(U, src_split_arr_nouns, make_nouns_set_test)
 
 def split_arr_nouns():
     split_nouns = {}
-
     for i in range(0, len(excel_nouns_dict)):
         if excel_nouns_dict[i] is None:
-	    continue
-	else :
+            continue
+        else:
             split_val = excel_nouns_dict[i].split(",")
-	    split_nouns[i] = split_val
-    print split_nouns
+            split_nouns[i] = split_val
+            print split_nouns
     return split_nouns
-	     
-    
-
+         
 def get_excel_nouns():
     #wb=load_workbook('./file/reference.xlsx')
     wb=load_workbook(REFERENCE_EXCEL)
@@ -556,13 +591,6 @@ def n_informer_set_dict():
     #print dict_article_id_set
     return dict_n_informer_set
 
-# return artice label.
-def get_ArticleLabel():
-    # this body to be filled
-    return None
-    # to be filled...     
-    
-
 def get_all_Quo():
     all_Quo=[]
     total_quo=TotalNum_Quotations
@@ -585,19 +613,19 @@ def get_all_Quo():
  
 # Return diatance matrix of Quatations
 def generate_Qdist (w_param):
-	# using w_param (weight coefficients for various distance matrix for Quatations 
-	# w_param is given by DM's excel table ...
+    # using w_param (weight coefficients for various distance matrix for Quatations 
+    # w_param is given by DM's excel table ...
     return D_q
 
 
 def quo_network_analysis(D_q,ns_param):
-	# discover the best network structure given ns_param
-	# D_q: Distance matrix for quoatations. 
-	# 1. Clustering using D_q
-	# 2. Applying na_param and cutoff neighbor max number of neighbor. 
-	# 3. generate ns_structure = n by n binaryt matrix. 
+    # discover the best network structure given ns_param
+    # D_q: Distance matrix for quoatations. 
+    # 1. Clustering using D_q
+    # 2. Applying na_param and cutoff neighbor max number of neighbor. 
+    # 3. generate ns_structure = n by n binaryt matrix. 
     return ns_structutre
-	
+    
 
 if __name__ == "__main__":
 
@@ -638,42 +666,9 @@ if __name__ == "__main__":
         # position set dict
         src_pos_set=nt.loadObjectBinaryFast(DICT_POS_SET)
 
-        """
-        table_define.xlsx : 정보원 정의
-        | infoSrc_ID                   | 정보원 ID |
-        | name                         | 이름 |
-        | orgName                      | 소속이름 |
-        | type                         | 정보원 구분 |
-        | position                     | 직함 |
-        | etc_position                 | 기타 직함 정보 |
-        | yearOfBirth                  | 생년 |
-        | person_id(FK)                | 사전의 인물 ID |
-        | code                         | 인물의 소속 분류 |
-        | is_classified_paper_category | 신문 지면 정보에 의해 정보원의 분류되었는지 여부 |
-        | INFOSRC_GLOBAL_ID            | 전기간
-        | infosrc_id_whole    | 5 |
-        | infosrc_id_day      | 2003/10/10_408 |
-        | infosrc_name        | 김수행 |
-        | infosrc_org         | 서울대 |
-        | infosrc_type        | I |
-        | infosrc_pos         | 교수 |
-        | infosrc_code        | 13 |
-        | infosrc_isclassified| \N |        에 걸친 UniqueID |
-        
-        Each column is extracted from wholetable.xlsx (정보원 자료 엑셀 파일)
-        """
         
         src_name=nt.loadObjectBinaryFast(DICT_ID_NAME)
         src_org=nt.loadObjectBinaryFast(DICT_ORG)
-        """ 
-        type
-      | S | 익명 - 소속 없는 사람 |
-      | R | 익명 - 소속 있는 사람 |
-      | I | 실명 개인 - 소속 있음 |
-      | N | 무속속 실명 |
-      | O | 조직 |
-      | s | 성만 나와 있는 익명 |        
-       """
        # dictionary of type
         src_type=nt.loadObjectBinaryFast(DICT_TYPE)
         # dictionary of position 
@@ -724,7 +719,7 @@ if __name__ == "__main__":
     print '------------------------------------'    
     print ' List of organizations set '
     print '------------------------------------'
-    #print MyPrettyPrinter().pprint(src_org_set)
+    print nt.MyPrettyPrinter().pprint(src_org_set)
     print '------------------------------------'
 
     print '------------------------------------'    
@@ -773,7 +768,6 @@ if __name__ == "__main__":
         print " Found a class  list for news sources "
         # News Source Matrix        
         src_article_id_set=nt.loadObjectBinaryFast(DICT_ARTICLE_ID_SET)
-
     else :
         try:
             article_id_set_tmp = article_id_set_dict()
@@ -814,7 +808,8 @@ if __name__ == "__main__":
     #make_nouns_set()
     #split_arr_nouns()
 
-    matrix_V()
+    # Commented out for a while. 
+    #matrix_V()
 
     # News Article by a = {a_1 , · · · , a_l }
     
