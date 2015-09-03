@@ -1,4 +1,5 @@
 #-*- coding:utf-8 -*-
+import traceback
 from konlpy.tag import Kkma
 #from konlpy.utils import pprint
  
@@ -9,6 +10,8 @@ from openpyxl.cell import get_column_letter
 from openpyxl import load_workbook
 
 from na_config import *
+
+import pprint
 
 def excel_noun():
 
@@ -41,7 +44,8 @@ def excel_noun():
 		try :
 			QUA = cellValue.count(u'\u201c')
 		except :
-			continue 
+                        traceback.print_exc()
+			#continue
 
 		if QUA != -1:
 			if QUA == 1 :
@@ -52,7 +56,7 @@ def excel_noun():
 				END_QUA = cellValue_re.find(u"\u201d") # position of last quatation mark
 
 				cellValue_final = cellValue_re[0:END_QUA]
-				print str(i) + "  "+ cellValue_name + "  "  + cellValue_final
+				#print str(i) + "  "+ cellValue_name + "  "  + cellValue_final
 
 				kkma = Kkma()
 				#pprint (kkma.nouns(cellValue_final))
@@ -60,6 +64,8 @@ def excel_noun():
 
 				for j in range(0,len(s)):
 					noun_val = noun_val + s[j].encode('utf-8') + ','
+
+				print noun_val
 
 				excel_write(i, 1, cellValue_name)
 				excel_write(i, 2, cellValue_final)
@@ -90,27 +96,29 @@ def excel_noun():
 
 			elif QUA > 1 :
 				#print str(i) + " " + str(QUA)
-				for q in range(0,QUA):
-					arr = cellValue.split(u"\u201d")
-					arr_start_qua = arr[q].find(u"\u201c") + 1
-					arr_len = len(arr[q]) 
+				try :
+					for q in range(0,QUA):
+						arr = cellValue.split(u"\u201d")
+						arr_start_qua = arr[q].find(u"\u201c") + 1
+						arr_len = len(arr[q]) 
 
-					arr_cellValue = arr[q][arr_start_qua:arr_len]
+						arr_cellValue = arr[q][arr_start_qua:arr_len]
 
-					full_qua = full_qua + arr_cellValue
+						full_qua = full_qua + arr_cellValue
 
-					kkma = Kkma()
-					#pprint (kkma.nouns(cellValue_final))
-					s = (kkma.nouns(arr_cellValue))
+						kkma = Kkma()
+						s = (kkma.nouns(arr_cellValue))
 
-					for j in range(0,len(s)):
-						noun_val = noun_val + s[j].encode('utf-8') + ','
-						#print str(i) + " " + arr_cellValue
+						for j in range(0,len(s)):
+							noun_val = noun_val + s[j].encode('utf-8') + ','
+							#print str(i) + " " + arr_cellValue
 
-					excel_write(i, 1, cellValue_name)
-					excel_write(i, 2, full_qua)
-					excel_write(i, 3, noun_val)
-					excel_write(i, 4, cellValue_article_id)
+						excel_write(i, 1, cellValue_name)
+						excel_write(i, 2, full_qua)
+						excel_write(i, 3, noun_val)
+						excel_write(i, 4, cellValue_article_id)
+				except : 
+                        		traceback.print_exc()
 
 	wb.save(REFERENCE_EXCEL)
 
