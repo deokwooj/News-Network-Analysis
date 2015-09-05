@@ -139,7 +139,13 @@ def get_excel_sets(excel_dict):
 '''
 ######################################
 # table_define.xlsx
-# Field.... 설명.... 
+# id : 정보원 ID
+# name : 정보원 이름
+# org : 정보원 조직
+# srctype : 정보원 구분 {S,R,I,N,O,s}, (e.g. S ~ 익명 - 소속 없는 사람)
+# pos : 정보원 직위
+# code : 정보원 소속 분류, {헌법재판소, 재판부: 111 }, {검찰 : 211} 
+# classified : 신문 지면 정보에 의해 정보원이 분류되어있는지 여부
 ######################################
 class NewsSource:
     def __init__(self):
@@ -155,8 +161,16 @@ class NewsSource:
             print key[0],': ', key[1]
 
 ######################################
-# refere... xlsx
-# 설명....            
+# reference xlsx file
+# 1 Reference sheet
+#   - INFOSRC_NAME : 정보원 이름
+#   - STN_CONTENT : 인용문이 들어간 문장
+#   - ART_ID : 기사 ID
+# 2 extraction sheet : 인용문 분리 후 명사 분리하고 정리
+#   - 이름
+#   - 인용문
+#   - 명사
+#   - 기사 ID
 ######################################
 # Art.ID (meta_data_id) :"01101001[-->매체정보].20130527[-->날짜]100000112[-->기사ID] 
 class NewsQuotation:
