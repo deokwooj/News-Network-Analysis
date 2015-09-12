@@ -157,7 +157,7 @@ class NewsSource:
         self.classified=None # isclassified 
     def whoami(self): # print the current information for news source object
         for key in self.__dict__.items():
-            print key[0],': ', key[1]
+            print key[0],': ', key[1]\
 
 ######################################
 # reference xlsx file
@@ -227,7 +227,7 @@ def quo_network_analysis(D_q,ns_param):
     
 
 if __name__ == "__main__":
-    print " running news source analysis..... "
+    print " running news source analysis....."
 
     # Load bin files for news sources and quotations 
     print 'Loading DICT_NEWS_INFO ...'
@@ -323,7 +323,7 @@ if __name__ == "__main__":
     print 'Generate News Source  '
     # News Sources by s = {s_1 , · · · , s_m }
 
-
+    
     # Print list dictionary for news source. 
     print '------------------------------------'    
     print ' List of names in news sources '
@@ -418,3 +418,4 @@ if __name__ == "__main__":
     #S=U*U.T
     #pprint.pprint(S)
     
+    print "version 2.56"
