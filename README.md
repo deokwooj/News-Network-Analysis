@@ -10,5 +10,5 @@
   - pip install openpyxl
   - pip install xlsxwriter
 
-#### 개발 현황 메모
+#### SW 개발 현황 메모
   - https://github.com/deokwooj/NLP/blob/master/Report.md
