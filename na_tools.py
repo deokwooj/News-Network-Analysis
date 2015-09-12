@@ -263,4 +263,4 @@ class MyPrettyPrinter(pprint.PrettyPrinter):
         elif isinstance(_object, str):
             _object = unicode(_object,'utf8')
             return "'%s'" % _object.encode('utf8'), True, False
-    return pprint.PrettyPrinter.format(self, _object, context, maxlevels, level)
+        return pprint.PrettyPrinter.format(self, _object, context, maxlevels, level)
