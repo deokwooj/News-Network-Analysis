@@ -230,7 +230,7 @@ def build_NewsQuoObjs(max_num_rows=inf):
     return status_flag
 
 
-def main(argv_print=False):
+def na_build_main(argv_print=False):
     print 'running na_build.py....'
     print 'start to build news source object...'
     try:

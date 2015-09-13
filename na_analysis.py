@@ -35,8 +35,7 @@ from __future__ import division # To forace float point division
 # newly imported
 from na_config import *
 #from na_build import *
-import na_build
-
+from na_build import *
 
 # Article is stroed in harddisk or DB,... 
 QuoLabel={'pol':1, 'eco':2, 'tec':2,'cul':3, 'ent':3,'soc':4,'int':5, 'spo':6, 'etc':7}
@@ -96,7 +95,7 @@ def quo_network_analysis(D_q,ns_param):
 
 if __name__ == "__main__":
     print " running news source analysis.....version 2.56"
-    NewsSrcObjs, NewsQuoObjs=na_build.main()
+    NewsSrcObjs, NewsQuoObjs=na_build_main()
     
     
 """
