@@ -328,9 +328,30 @@ if __name__ == "__main__":
     print '------------------------------------'    
     print ' List of names in news sources '
     print '------------------------------------'
+    listofname=[obj.name for nid,obj in NewsSrcObjs]
+    for name_t in listofname:
+        print name_t
 
+    # List of names in quotations        
+    names_in_ns=list(set([obj.name for nid,obj in NewsSrcObjs]))
     
+    names_in_quo=list(set([obj.news_src.name for qid,obj in NewsQuoObjs]))
     
+    # print all names in quotations.     
+    for name_ in list(set(names_in_quo)):
+                
+        print name_
+    
+    NewsQuoObjs[0][1].news_src.name
+    
+    for (qid, obj_) in NewsQuoObjs:
+    print '==================================================='
+    print 'Quotation ID : ', qid 
+    print '==================================================='
+    obj_.whoami()
+    print '********************************************************************'
+
+        
     # constrcut news source array 
     #for key in src_name.keys(): 
     #    print src_name[key]
