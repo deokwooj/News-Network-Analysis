@@ -96,49 +96,88 @@ def quo_network_analysis(D_q,ns_param):
 if __name__ == "__main__":
     print " running news source analysis.....version 2.56"
     NewsSrcObjs, NewsQuoObjs=na_build_main()
+    # Note that NewsSrcObjc are used only for lookup reference. 
+    # It contains 102878 distinctive number of news sources which is way too much 
+    # for current number of news sources in NewsQuoObjs 
     
+    # We decided not to use NewsSrcObjs due to too many ambiguous names.
+    names_in_ns=[obj.name for nid,obj in NewsSrcObjs]
+    # 9x duplicated names.     
+    #len(names_in_ns) =903440
+    #len(set(names_in_ns))=102878 
     
-"""
-    np.array([obj_.name for (sid, obj_) in NewsSrcObjs])
+    # Use only NewsQuoObjs
+    names_in_quo=[obj.news_src.name for qid,obj in NewsQuoObjs]
+    # 2x duplicated names    
+    # len(names_in_quo)=2522
+    # len(set(names_in_quo)) =1223
+    
     print 'Generate News Source  '
+    # Create array of News Sources
     # News Sources by s = {s_1 , · · · , s_m }
-
-    import pdb; pdb.set_trace()
+    s=np.array([name_ for name_ in set(names_in_quo)])
+    m=names_arr_quo.size
     
-    # Print list dictionary for news source. 
-    print '------------------------------------'    
-    print ' List of names in news sources '
-    print '------------------------------------'
-    listofname=[obj.name for nid,obj in NewsSrcObjs]
-    for name_t in listofname:
-        print name_t
-
-    # List of names in quotations        
-    names_in_ns=list(set([obj.name for nid,obj in NewsSrcObjs]))
+    # News Article by a = {a_1 , · · · , a_l }
+    articles_in_quo=[obj.article_id for qid,obj in NewsQuoObjs]
     
-    names_in_quo=list(set([obj.news_src.name for qid,obj in NewsQuoObjs]))
+    # Quotations in articles  by q = {q_1 , · · · , q_n }
     
-    # print all names in quotations.     
-    for name_ in list(set(names_in_quo)):
-                
-        print name_
-    
-
-    for (qid, obj_) in NewsQuoObjs:
-        print '==================================================='
-        print 'Quotation ID : ', qid 
-        print '=========================build_NewsQuoObjs=========================='
-        obj_.whoami()
-        print '********************************************************************'
-
-
+    print 'The array for News Sources, News Articles, Quotations are  s,a,q'
+    # News Sources by s = {s_1 , · · · , s_m }    
+    s=[]
+    # News Article by a = {a_1 , · · · , a_l }
+    a=[]
+    # Quotations in articles  by q = {q_1 , · · · , q_n }
+    q=[]
+    # U_{mxl} ~ Association matrix between News Sources S and Articles A
+    U_idx_1=[]   
+    # V_{mxn} ~ Association matrix  between News Sources S and Quotations Q.
+    V_idx_1=[]   
+    # Z_{nxl}~ Association matrix  between Quotations − Articles.
+    Z_idx_1=[]   
+    for i,(qid,obj) in enumerate(NewsQuoObjs):
+        name_=obj.news_src.name
+        article_=obj.article_id
+        quotation_=obj.quotation_key
+        if name_ not in s:
+            s.append(name_)
+        if article_ not in a:
+            a.append(article_)
+        if quotation_ not in q:
+            q.append(quotation_)
+        else:
+            raise NameError('quotation_key must be unique')
+        U_idx_1.append((len(s)-1,len(a)-1))
+        V_idx_1.append((len(s)-1,len(q)-1)) 
+        Z_idx_1.append((len(q)-1,len(a)-1)) 
 
         
+    m,l,n =len(s), len(a),len(q)
+    print 'The length of s,a,q array are ',m,l,n
+    U,V,Z=np.zeros((m,l)),np.zeros((m,n)), np.zeros((n,l))        
+    print 'The shape of U,V,Z matrix are ', U.shape,V.shape,Z.shape
+    
+    for row,col in U_idx_1:
+        U[row,col]=1
+    for row,col in V_idx_1:
+        V[row,col]=1
+    for row,col in Z_idx_1:
+        Z[row,col]=1
+        
+    # Convert nparray to matrix
+    U,V,Z=mat(U),mat(V),mat(Z)
+    
+    Q_v = V*V.T
+    Q_z = Z*Z.T
+
+    """        
     # constrcut news source array 
     #for key in src_name.keys(): 
     #    print src_name[key]
     #print MyPrettyPrinter().pprint(src_name)
     print '------------------------------------'
+
 
 
     print '--------------------------build_NewsQuoObjs----------'    
@@ -179,21 +218,12 @@ if __name__ == "__main__":
 
     #print MyPrettyPrinter().pprint(test)
 
-    # News Article by a = {a_1 , · · · , a_l }
+    
     
 
 
-    # Quotations in articles  by q = {q_1 , · · · , a_n }
 
-    # U_{lxm} ~ Association matrix between News Sources S and Articles A
 
-    # V_{mxn} ~ Association matrix  between News Sources S and Quotations Q.
-    
-    # Z_{nxl}~ Association matrix  between Quotations − Articles.
-    build_NewsQuoObjs
-    # Q_v = V*V' 
-    
-    # Q_z = Z*Z'
     
     # \hat{q}_i ~ Projection of q_i into n-dimensional Euclidian space E_n    
     
