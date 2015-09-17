@@ -77,10 +77,26 @@ def get_all_Quo():
         return all_Quo
  
 # Return diatance matrix of Quatations
-def generate_Qdist (w_param):
+def Build_Distq(NewsQuoObjs_):
     # using w_param (weight coefficients for various distance matrix for Quatations 
     # w_param is given by DM's excel table ...
-    return D_q
+    n=len(NewsQuoObjs)    
+    Distq=np.zeros((n,n))
+    print '+++++++++++++++++++++++++++++++++++++++++++'
+    for k,(qid_a, obj_a) in enumerate(NewsQuoObjs_):
+        print 'qid ', k
+        print '------------'
+        for j,(qid_b, obj_b) in enumerate(NewsQuoObjs_):
+            try:
+                #print k, ': ',obj.nounvec
+                noun_a=set(obj_a.nounvec.split(","))
+                noun_b=set(obj_b.nounvec.split(","))
+                common_nouns=list(noun_a.intersection(noun_b))
+                Distq[k][j]=len(common_nouns)-1
+            except:
+                Distq[k][j]=0
+    print '+++++++++++++++++++++++++++++++++++++++++++'
+    return Distq
 
 
 def quo_network_analysis(D_q,ns_param):
@@ -91,39 +107,40 @@ def quo_network_analysis(D_q,ns_param):
     # 2. Applying na_param and cutoff neighbor max number of neighbor. 
     # 3. generate ns_structure = n by n binaryt matrix. 
     return ns_structutre
+
+
     
 
+    
 if __name__ == "__main__":
     print " running news source analysis.....version 2.56"
-    NewsSrcObjs, NewsQuoObjs=na_build_main()
+    NewsSrcObjs, NewsQuoObjs=na_build_main(SRC_OBJ=False,QUO_OBJ=True, argv_print=False)
     # Note that NewsSrcObjc are used only for lookup reference. 
     # It contains 102878 distinctive number of news sources which is way too much 
     # for current number of news sources in NewsQuoObjs 
     
     # We decided not to use NewsSrcObjs due to too many ambiguous names.
-    names_in_ns=[obj.name for nid,obj in NewsSrcObjs]
+    #names_in_ns=[obj.name for nid,obj in NewsSrcObjs]
     # 9x duplicated names.     
     #len(names_in_ns) =903440
     #len(set(names_in_ns))=102878 
     
     # Use only NewsQuoObjs
-    names_in_quo=[obj.news_src.name for qid,obj in NewsQuoObjs]
+    #names_in_quo=[obj.news_src.name for qid,obj in NewsQuoObjs]
     # 2x duplicated names    
     # len(names_in_quo)=2522
     # len(set(names_in_quo)) =1223
     
-    print 'Generate News Source  '
+    
     # Create array of News Sources
     # News Sources by s = {s_1 , · · · , s_m }
-    s=np.array([name_ for name_ in set(names_in_quo)])
-    m=names_arr_quo.size
-    
+    #s=np.array([name_ for name_ in set(names_in_quo)])
+        
     # News Article by a = {a_1 , · · · , a_l }
-    articles_in_quo=[obj.article_id for qid,obj in NewsQuoObjs]
+    #articles_in_quo=[obj.article_id for qid,obj in NewsQuoObjs]
     
     # Quotations in articles  by q = {q_1 , · · · , q_n }
     
-    print 'The array for News Sources, News Articles, Quotations are  s,a,q'
     # News Sources by s = {s_1 , · · · , s_m }    
     s=[]
     # News Article by a = {a_1 , · · · , a_l }
@@ -136,7 +153,11 @@ if __name__ == "__main__":
     V_idx_1=[]   
     # Z_{nxl}~ Association matrix  between Quotations − Articles.
     Z_idx_1=[]   
+    print '-----------------------------------------------------'
+    print 'The array for News Sources, News Articles, Quotations are  s,a,q'
+    print '-----------------------------------------------------'
     for i,(qid,obj) in enumerate(NewsQuoObjs):
+        print 'qid : '+ str(qid)
         name_=obj.news_src.name
         article_=obj.article_id
         quotation_=obj.quotation_key
@@ -151,7 +172,7 @@ if __name__ == "__main__":
         U_idx_1.append((len(s)-1,len(a)-1))
         V_idx_1.append((len(s)-1,len(q)-1)) 
         Z_idx_1.append((len(q)-1,len(a)-1)) 
-
+    print '-----------------------------------------------------'
         
     m,l,n =len(s), len(a),len(q)
     print 'The length of s,a,q array are ',m,l,n
@@ -171,6 +192,13 @@ if __name__ == "__main__":
     Q_v = V*V.T
     Q_z = Z*Z.T
 
+    import pdb;pdb.set_trace()
+
+    Dq=Build_Distq(NewsQuoObjs)
+    #aa.split(",")
+    #aaa=set(aa.split(","))
+    #bbb=set(bb.split(","))
+    #aaa.intersection(bbb)
     """        
     # constrcut news source array 
     #for key in src_name.keys(): 

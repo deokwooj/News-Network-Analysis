@@ -51,7 +51,7 @@ type
 | O | 조직 |
 | s | 성만 나와 있는 익명 |        
 """
-# Deokwoo Jung 's update 23 Aug by jdw-2. 
+# Deokwoo Jung 's update 23 Aug by jdw-2.  필수 입니다
 # modules to be imported
 # Loding common modules
 from na_config import *
@@ -195,9 +195,9 @@ def build_NewsQuoObjs(max_num_rows=inf):
         return status_flag
 
     NewsQuoObjs=[]
-    ########################################################tatus_out
+    ########################################################
     # Print all news dictionary information    
-    ########################################################tatus_out
+    ########################################################
     fld_name=('Name','Quatation', 'Nouns','Code')
     for k,(key, val) in enumerate(dict_news_info.iteritems()):
         quo_temp=NewsQuotation()
@@ -230,53 +230,63 @@ def build_NewsQuoObjs(max_num_rows=inf):
     return status_flag
 
 
-def na_build_main(argv_print=False):
+def na_build_main(SRC_OBJ=True,QUO_OBJ=True, argv_print=False):
     print 'running na_build.py....'
     print 'start to build news source object...'
-    try:
-        print 'loading ' +NEWS_SRC_OBJ
-        NewsSrcObjs=nt.loadObjectBinaryFast(NEWS_SRC_OBJ)
-    except:
-        print 'cannot find ' + NEWS_SRC_OBJ
-        print 'buid it... '
-        status_out=build_NewsSrcObjs()
-        if status_out!=True:
-            print status_out
-        print 'job done, and stored news source objects...'
-        NewsSrcObjs=nt.loadObjectBinaryFast(NEWS_SRC_OBJ)
+    NewsSrcObjs=NewsQuoObjs=[]
     
-    if argv_print==True:
-        print '********************************************************************'
-        print 'Print News Source Objects- NewsSrcObjs '
-        for (sid, obj_) in NewsSrcObjs:
-            print '==================================================='
-            print 'News Source  ID : ', sid 
-            print '==================================================='
-            obj_.whoami()
-        print '********************************************************************'
+    if SRC_OBJ==True:
+        print 'start to build NewsSrcObjs....'
+        try:
+            print 'loading ' +NEWS_SRC_OBJ
+            NewsSrcObjs=nt.loadObjectBinaryFast(NEWS_SRC_OBJ)
+        except:
+            print 'cannot find ' + NEWS_SRC_OBJ
+            print 'buid it... '
+            status_out=build_NewsSrcObjs()
+            if status_out!=True:
+                print status_out
+            print 'job done, and stored news source objects...'
+            NewsSrcObjs=nt.loadObjectBinaryFast(NEWS_SRC_OBJ)
+        
+        if argv_print==True:
+            print '********************************************************************'
+            print 'Print News Source Objects- NewsSrcObjs '
+            for (sid, obj_) in NewsSrcObjs:
+                print '==================================================='
+                print 'News Source  ID : ', sid 
+                print '==================================================='
+                obj_.whoami()
+            print '********************************************************************'
+    else:
+        print 'skip to build NewsSrcObjs....'
 
-    try:
-        print 'loading ' +NEWS_QUO_OBJ
-        NewsQuoObjs=nt.loadObjectBinaryFast(NEWS_QUO_OBJ)
-    except:
-        status_out=build_NewsQuoObjs()
-        print status_out
-        if status_out!=True:
-            print status_outNEWS_SRC_OBJ
-        print 'job done, and stored news quotation objects...'
-        NewsQuoObjs=nt.loadObjectBinaryFast(NEWS_QUO_OBJ)
-
-    if argv_print==True:
-        print '********************************************************************'
-        print 'Print News Quotation Objects- NewsQuoObjs '    
-        for (qid, obj_) in NewsQuoObjs:
-            print '==================================================='
-            print 'Quotation ID : ', qid 
-            print '==================================================='
-            obj_.whoami()
-        print '********************************************************************'
+    if QUO_OBJ==True:
+        print 'start to build NewsQuoObjs....'
+        try:
+            print 'loading ' +NEWS_QUO_OBJ
+            NewsQuoObjs=nt.loadObjectBinaryFast(NEWS_QUO_OBJ)
+        except:
+            status_out=build_NewsQuoObjs()
+            print status_out
+            if status_out!=True:
+                print status_outNEWS_SRC_OBJ
+            print 'job done, and stored news quotation objects...'
+            NewsQuoObjs=nt.loadObjectBinaryFast(NEWS_QUO_OBJ)
+    
+        if argv_print==True:
+            print '********************************************************************'
+            print 'Print News Quotation Objects- NewsQuoObjs '    
+            for (qid, obj_) in NewsQuoObjs:
+                print '==================================================='
+                print 'Quotation ID : ', qid 
+                print '==================================================='
+                obj_.whoami()
+            print '********************************************************************'
+    else:
+        print 'skip to build NewsQuoObjs....'
     
     return NewsSrcObjs, NewsQuoObjs
 
 if __name__ == "__main__":
-    main()
+    na_build_main(argv_print=True)
