@@ -38,24 +38,18 @@ from na_config import *
 from na_build import *
 
 # Article is stroed in harddisk or DB,... 
-QuoLabel={'pol':1, 'eco':2, 'tec':2,'cul':3, 'ent':3,'soc':4,'int':5, 'spo':6, 'etc':7}
-
-TotalNum_Quotations=1000
+#QuoLabel={'pol':1, 'eco':2, 'tec':2,'cul':3, 'ent':3,'soc':4,'int':5, 'spo':6, 'etc':7}
 # class definition : news source. 
-
 # Dicitonary Definition
 # Using 'set' data structure to extract a set of elements in each column of excel file. 
 # Org_Name={1:'외무부', 2:'신한국당':,3:'서울대':,...}
 # Job_Title={1: '변호사', 2:'사장':,3:'교수':,...};
 # Function to extract sets from excel file. 
 
-
 # R : no name yes org,    I : yes name yes org,    N : yes name no org,    O : org,    s : only last name
 # NewsSource Type = {1:S, 2:R, 3:I, 4:N ,5:O, 6:s}
 
-
-
-
+"""
 def get_all_Quo():
     all_Quo=[]
     total_quo=TotalNum_Quotations
@@ -75,6 +69,7 @@ def get_all_Quo():
         #print all_Quo[i].quo_nouns
         # Fill all members and details...
         return all_Quo
+ """
  
 # Return diatance matrix of Quatations
 def Build_Distq(NewsQuoObjs_):
@@ -108,8 +103,7 @@ def quo_network_analysis(D_q,ns_param):
     # 3. generate ns_structure = n by n binaryt matrix. 
     return ns_structutre
 
-
-    
+   
 
     
 if __name__ == "__main__":
@@ -194,6 +188,15 @@ if __name__ == "__main__":
     Q_z = Z*Z.T
     print 'construt Dq...'
     Dq=Build_Distq(NewsQuoObjs)
+    
+    
+    
+    # similarity  and co-occurrence
+    
+    
+    
+    #A=np.mat([[1,0],[1,0],[0,1]])
+    
     
     
     
