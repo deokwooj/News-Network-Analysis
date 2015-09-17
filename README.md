@@ -1,5 +1,11 @@
 #NLP(Natural Language Processing)
 
+#### files
+  - na_analysis.py (분석메인)
+  - na_build.py
+  - na_config.py
+  - na_const.py
+
 #### 파이썬 자연어 처리 패키지
   - http://pearl.cs.pusan.ac.kr/~wiki/images/4/46/TR14-09-PBK-b.pdf
 
