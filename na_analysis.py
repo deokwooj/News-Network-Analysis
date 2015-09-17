@@ -187,7 +187,7 @@ if __name__ == "__main__":
         Z[row,col]=1
         
     # Convert nparray to matrix
-    U,V,Z=mat(U),mat(V),mat(Z)
+    U,V,Z=np.mat(U),np.mat(V),np.mat(Z)
     
     Q_v = V*V.T
     Q_z = Z*Z.T
