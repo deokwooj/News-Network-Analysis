@@ -21,6 +21,25 @@
 
 ---
 
+## 자연어처리와 연결망분석을 활용한 뉴스 빅데이터 분석 시스템 구현
+
+## 소프트웨어 구조
+
+![Code Flow](https://raw.githubusercontent.com/kowonsik/NLP/master/png/code_flow.png)
+
+## 코드 개요
+
+- na_analysis.py
+   - 뉴스소스 분석을 위한 메인 실행 파일
+- na_build.py
+   - 정보원과 인용문이 들어가 있는 엑셀파일에서 데이터 분석용 바이너리 파일로 저장하기 위한 파일
+- na_config.py
+   - 파일경로등 분석에 필요한 설정이 들어가 있는 파일
+- na_const.py
+   - 프로그램에서 사용하고 있는 상수들이 들어가 있는 파일
+- extraction.py
+   - 인용문이 들어가 있는 엑셀파일에서 명사를 분리하고 extraction sheet 를 추가하여 저장하는 파일
+
 ##  Excel Source File (원본 소스  엑셀 파일에 대한 설명)
 - reference.xlsx ('분단'에 대한 자료 엑셀 파일)
       - Reference sheet : '분단'이 포함되어 있는 인용문 정리
@@ -99,7 +118,21 @@
       ```
 
 
-##  Bin  Source File(원본 소스 변환 파일에 대한 설명)
+##  Bin Source File(원본 소스 변환 파일에 대한 설명)
+
+- NewsQuoObjs.p
+   - /exlfiles/reference.xlsx 파일의
+
+- NewsSrcObjs.p
+   - /exlfiles/wholetable.xlsx 파일의 id/name/
+
+- dict_news_info.p
+   - /exlfiles/reference.xlsx 파일의 extraction sheet 의 name, quatation, noun, article_id 컬럼의 데이터를 저장
+
+
+
+----
+
 -  nouns.p
        - reference 엑셀파일 중 extraction sheet에 있는 명사들을 리스트로 저장한 파일
 
@@ -139,28 +172,76 @@
 -  dict_informer.p
        - whole_table 엑셀파일과 생성된 dictionary 파일을 활용하여 생성한 정보원 dictionary 파일
 
+----
+
 
 
 ## Data Structure (사용되는 Class/Dictionary 에 대한 설명)
-- wholetable 엑셀파일에 나와있는 정보원 소스를 바탕으로 구성
-- class NewsSource :
-       - id = [] 
-       - name = [] 
-       - org = [] 
-       - type=[]
-       - pos = [] 
-       - code = []
-       - isclassified =[]
 
-- all NewSource Dictionary
-       - 모든 정보원의 NewsSource 구조체를 value로 하는 dict_informer.p dictionary 파일을 사용
 
-- class NewsQuotation :
-       - gth_label = []      # uuid 
-       - quo_unicode = []    # unicode 
-       - quo_date = []       # date of quotations , defined by datetime. 
-       - quo_nouns=[]        # position, need to be initionalized by kkd_functions. 
-       - quo_article=get_ArticleLabel() = []    # Article Label ...
+### table_define.xlsx 파일에서 정보원의 데이터를 클래스로 정의
+
+```sh
+class NewsSource:
+    def __init__(self):
+        self.id = None # uuid 
+        self.date=dt.datetime(1999,12,31) #  quotations data,1999년 12월 31일 23시.
+        self.name = None # name_seloadObjectBinaryFastt
+        self.org = None # org_set
+        self.srctype=None #~ {S,R,I,N,O,s}, (e.g. S ~ 익명 - 소속 없는 사람)
+        self.pos = None #  Position  status_out!=True
+        self.code=None # organization code
+        self.classified=None # isclassified 
+    def whoami(self): # print the current information for news source object
+        for key in self.__dict__.items():
+            print key[0],': ', key[1]\
+            
+```
+
+- id : 정보원 ID
+- name : 정보원 이름
+- org : 정보원 조직
+- srctype : 정보원 구분 {S,R,I,N,O,s}, (e.g. S ~ 익명 - 소속 없는 사람)
+- pos : 정보원 직위
+- code : 정보원 소속 분류, {헌법재판소, 재판부: 111 }, {검찰 : 211} 
+- classified : 신문 지면 정보에 의해 정보원이 분류되어있는지 여부
+
+
+### reference.xlsx 파일에서 인용문 관련 데이터를 클래스로 저장
+
+
+```sh
+
+class NewsQuotation:
+    def __init__(self):
+        self.quotation_key =None # 4 digit number 
+        self.article_id =None # 9 digit number 
+        self.media_id = None  # 8 digit number string 
+        self.date=dt.datetime(1999,12,31) #  quotations data,1999년 12월 31일 23시.
+        self.news_src=NewsSource() # create NewsSource object
+        self.quotation =None  # position, need utcto be initionalized by kkd_functions. 
+        self.nounvec =None # position, need utcto be initionalized by kkd_functions. 
+    def whoami(self):
+        for key in self.__dict__.items():
+            if key[0]=='news_src':
+                print key[0],'name : ', key[1].name
+            else:
+                print key[0],': ', key[1]
+```
+
+- Reference sheet
+   - INFOSRC_NAME : 정보원 이름976.911 kB
+   - STN_CONTENT : 인용문이 들어간 문장
+   - ART_ID : 기사 ID
+- extraction sheet : 인용문 분리 후 명사 분리하고 정리
+   - 이름
+   - 인용문
+   - 명사
+   - 기사 ID
+
+- Art.ID (meta_data_id) :"01101001[-->매체정보].20130527[-->날짜]100000112[-->기사ID] 
+
+
 
 
 ## Code Description 
@@ -208,117 +289,6 @@
        - reference.xlxs 엑셀파일 중 Reference sheet 의 STN_CONTENT 퀄럼에서 인용문을 분리하고 인용문에서 명사 분리한 코드
 - file directory
        - 사용되고 있는 엑셀파일과 dictionary 파일이 존재하는 디렉토리
- 
-## Output Description (Script 파일 실행 결과)
-- 100개 클래스에 대한 메트릭스 예
-
-                U[a:b,0]=all_ns[i].id
-                U[a:b,1]=all_ns[i].org
-                U[a:b,2]=all_ns[i].type
-                U[a:b,3]=all_ns[i].pos
-                U[a:b,4]=all_ns[i].code
-                U[a:b,5]=all_ns[i].classified
-
-<pre>
-[[   3.    9.    4.   27.   14.    0.]
- [   2.    9.    4.   27.   14.    0.]
- [   1.    9.    4.   27.   14.    0.]
- [   0.    9.    4.   27.   43.    0.]
- [   7.    2.    3.   24.   13.    0.]
- [   6.    9.    4.    8.   14.    0.]
- [   5.    2.    3.   24.   13.    0.]
- [   4.    1.    3.    8.   43.    0.]
- [   9.    4.    3.    2.  331.    0.]
- [   8.    9.    4.   27.   14.    0.]
- [  35.    9.    4.   17.   14.    0.]
- [  36.    6.    3.   16.  121.    0.]
- [  33.    9.    4.   23.   43.    0.]
- [  34.    9.    4.    5.  331.    0.]
- [  39.    9.    4.   27.   14.    0.]
- [  37.    8.    3.    4.  142.    0.]
- [  38.    9.    4.   27.   14.    0.]
- [  43.    9.    4.    4.   14.    0.]
- [  42.    9.    4.   19.   14.    0.]
- [  41.    9.    4.   10.  422.    0.]
- [  40.    9.    4.   18.  422.    0.]
- [  22.    9.    4.   27.   14.    0.]
- [  23.    9.    4.   27.   14.    0.]
- [  24.    9.    4.   17.  331.    0.]
- [  25.    9.    4.   13.  422.    0.]
- [  26.    9.    4.   27.  422.    0.]
- [  27.    9.    4.    8.  422.    0.]
- [  28.    9.    4.    4.   14.    0.]
- [  29.    9.    4.   27.   14.    0.]
- [  30.    7.    3.   20.  994.    0.]
- [  32.    9.    4.   27.  422.    0.]
- [  31.    9.    4.   12.  331.    0.]
- [  19.    7.    3.    7.   14.    0.]
- [  17.    9.    4.   14.  331.    0.]
- [  18.    9.    4.   27.   43.    0.]
- [  15.    9.    4.    6.   14.    0.]
- [  16.    9.    4.   27.   14.    0.]
- [  13.    7.    3.    7.   15.    0.]
- [  14.    9.    4.   27.  422.    0.]
- [  11.    9.    4.   27.   14.    0.]
- [  12.    9.    4.   23.   14.    0.]
- [  21.    9.    4.   27.  422.    0.]
- [  20.    9.    4.    4.  422.    0.]
- [  10.    3.    3.   14.  114.    0.]
- [  79.    9.    4.   27.   14.    0.]
- [  78.    9.    4.   27.   43.    0.]
- [  77.    9.    4.   27.   43.    0.]
- [  82.    9.    4.   25.  331.    0.]
- [  83.    9.    4.   27.   14.    0.]
- [  80.    9.    4.   27.  422.    0.]
- [  81.    9.    4.   27.   14.    0.]
- [  86.    9.    4.   27.  422.    0.]
- [  87.    9.    4.    8.  422.    0.]
- [  84.    9.    4.   27.  422.    0.]
- [  85.    9.    4.   27.   14.    0.]
- [  67.    9.    4.    1.   14.    0.]
- [  66.    9.    4.   27.  422.    0.]
- [  69.    5.    3.   19.   14.    0.]
- [  68.    9.    4.   17.   14.    0.]
- [  70.    9.    4.   16.  331.    0.]
- [  71.    9.    4.   27.   43.    0.]
- [  72.    9.    4.   11.   14.    0.]
- [  73.    9.    4.    5.  331.    0.]
- [  74.    9.    4.   21.  121.    0.]
- [  75.    9.    4.   27.   15.    0.]
- [  76.    0.    3.   16.  121.    0.]
- [  59.    9.    4.   15.   14.    0.]
- [  58.    4.    3.   15.  994.    0.]
- [  57.    9.    4.   27.  331.    0.]
- [  56.    9.    4.   16.   14.    0.]
- [  55.    9.    4.   27.  331.    0.]
- [  64.    9.    4.   27.   43.    0.]
- [  65.    9.    4.   27.   14.    0.]
- [  62.    9.    4.   27.   14.    0.]
- [  63.    9.    4.   27.   14.    0.]
- [  60.    9.    4.   27.  422.    0.]
- [  61.    6.    3.   27.  121.    0.]
- [  49.   11.    3.   19.  532.    0.]
- [  48.    9.    4.   19.  422.    0.]
- [  45.    9.    4.   27.  422.    0.]
- [  44.    9.    4.   11.   14.    0.]
- [  47.    9.    4.    0.   43.    0.]
- [  46.    9.    4.    3.   43.    0.]
- [  51.    9.    4.   27.   14.    0.]
- [  52.    9.    4.   27.   14.    0.]
- [  53.    9.    4.   16.   14.    0.]
- [  54.    4.    3.   16.  994.    0.]
- [  50.    9.    4.   27.   14.    0.]
- [  99.    9.    4.   27.   43.    0.]
- [  98.    9.    4.    9.  422.    0.]
- [  97.    9.    4.    8.   14.    0.]
- [  96.    9.    4.   21.  121.    0.]
- [  95.    9.    4.   26.  422.    0.]
- [  94.    9.    4.   27.   14.    0.]
- [  93.    9.    4.    4.  422.    0.]
- [  92.    9.    4.   27.  422.    0.]
- [  91.   10.    3.   27.  322.    0.]
- [  90.    9.    4.   22.  422.    0.]]
-</pre>
 
 
 
