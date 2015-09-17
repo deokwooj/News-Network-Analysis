@@ -36,6 +36,12 @@ from __future__ import division # To forace float point division
 from na_config import *
 #from na_build import *
 from na_build import *
+from sklearn import cluster
+from sklearn.cluster import Ward
+from sklearn.cluster import KMeans
+from scipy.stats import stats 
+from sklearn import cluster, covariance, manifold
+
 
 # Article is stroed in harddisk or DB,... 
 #QuoLabel={'pol':1, 'eco':2, 'tec':2,'cul':3, 'ent':3,'soc':4,'int':5, 'spo':6, 'etc':7}
@@ -49,30 +55,9 @@ from na_build import *
 # R : no name yes org,    I : yes name yes org,    N : yes name no org,    O : org,    s : only last name
 # NewsSource Type = {1:S, 2:R, 3:I, 4:N ,5:O, 6:s}
 
-"""
-def get_all_Quo():
-    all_Quo=[]
-    total_quo=TotalNum_Quotations
-    #excel_nouns = pickle.load(open("./file/nouns.p","rb"))
-    excel_nouns = pickle.load(open(DICT_NOUNS,"rb"))
-    
-    for i in range(0, len(excel_nouns)) :
-        temp_nq = NewsQuotation() # create an instance of news quotations
-        # To be manually or automatically (preferred)...
-        temp_nq.gth_label = QuoLabel['eco'] # this is example. 
-        #temp_nq.quo_nouns=get_nouns(temp_nq.quo_unicode) # to be done...
-        temp_nq.quo_nouns = excel_nouns[i] # to be done...
-        temp_nq.quo_date = '2015/07/30'# date of quotations , defined by datetime. 
-        temp_nq.quo_article = '1' # Article Label ...
-
-        all_Quo.append(temp_nq)
-        #print all_Quo[i].quo_nouns
-        # Fill all members and details...
-        return all_Quo
- """
- 
 # Return diatance matrix of Quatations
 def Build_Distq(NewsQuoObjs_):
+    # Compute Cosine similiarty. 
     # using w_param (weight coefficients for various distance matrix for Quatations 
     # w_param is given by DM's excel table ...
     n=len(NewsQuoObjs)    
@@ -86,26 +71,18 @@ def Build_Distq(NewsQuoObjs_):
                 #print k, ': ',obj.nounvec
                 noun_a=set(obj_a.nounvec.split(","))
                 noun_b=set(obj_b.nounvec.split(","))
-                common_nouns=list(noun_a.intersection(noun_b))
-                Distq[k][j]=len(common_nouns)-1
+                all_nouns=list(noun_a.union(noun_b))
+                #import pdb;pdb.set_trace()
+                vec_a=[ 1 if d in noun_a else 0 for d in all_nouns]
+                vec_b=[ 1 if d in noun_b else 0 for d in all_nouns]
+                sim_val= np.dot(vec_a,vec_b) /(np.linalg.norm(vec_b)*np.linalg.norm(vec_a))
+                Distq[k][j]=sim_val
             except:
                 Distq[k][j]=0
     print '+++++++++++++++++++++++++++++++++++++++++++'
-    return Distq
+    return np.mat(Distq)
 
 
-def quo_network_analysis(D_q,ns_param):
-    # discover the best network structure given ns_param
-    # D_q: Distance matrix for quoatations. 
-    # 1. Clustering using D_q
-
-    # 2. Applying na_param and cutoff neighbor max number of neighbor. 
-    # 3. generate ns_structure = n by n binaryt matrix. 
-    return ns_structutre
-
-   
-
-    
 if __name__ == "__main__":
     print " running news source analysis.....version 2.56"
     NewsSrcObjs, NewsQuoObjs=na_build_main(SRC_OBJ=False,QUO_OBJ=True, argv_print=False)
@@ -189,22 +166,35 @@ if __name__ == "__main__":
     print 'construt Dq...'
     Dq=Build_Distq(NewsQuoObjs)
     
+    D_opt=(Q_v+Q_z+Dq)/3
     
     
-    # similarity  and co-occurrence
+    print 'Extract  and store it as exp_result_hist_1.png '
+    Dopt_distvals=np.array(np.fliplr(D_opt)[np.triu_indices(D_opt.shape[0])])[0]
+    Dq_distvals=np.array(np.fliplr(Dq)[np.triu_indices(Dq.shape[0])])[0]
+    Qz_distvals=np.array(np.fliplr(Q_z)[np.triu_indices(Q_z.shape[0])])[0]
+    Qv_distvals=np.array(np.fliplr(Q_v)[np.triu_indices(Q_v.shape[0])])[0]
     
+    bin_size=[0.1,0.1,0.005,0.005]
+    title_set=['(1)Co-occurrence by Article ', '(2)Co-occurrence by New Sources','(3)Sentence Similarity', 'All Combined (1)+(2)+(3)']
+    for k,D_ in enumerate((Qv_distvals,Qz_distvals,Dq_distvals,Dopt_distvals)):
+        plt.subplot(2,2,k+1)
+        plt.hist(D_,arange(0,1.01,bin_size[k]))
+        plt.ylabel('# of occurances')
+        plt.xlabel('Similarity')
+        plt.title(title_set[k]+',  bin size: '+str(bin_size[k]))
+        plt.xlim([0,1])
+
     
-    
-    #A=np.mat([[1,0],[1,0],[0,1]])
-    
-    
-    
-    
+
+    """"    
+    edge_model = covariance.GraphLassoCV()    
+    X=Dq
+    edge_model.fit(X)
+    aff_exemplars, aff_labels = cluster.affinity_propagation(Dq,damping=0.5)
+    """
+
    
-    #aa.split(",")
-    #aaa=set(aa.split(","))
-    #bbb=set(bb.split(","))
-    #aaa.intersection(bbb)
     """        
     # constrcut news source array 
     #for key in src_name.keys(): 
