@@ -168,7 +168,7 @@ if __name__ == "__main__":
         if quotation_ not in q:
             q.append(quotation_)
         else:
-            raise NameError('quotation_key must be unique')
+            raise NameError('quotation_key must be uniqBuild_Distque')
         U_idx_1.append((len(s)-1,len(a)-1))
         V_idx_1.append((len(s)-1,len(q)-1)) 
         Z_idx_1.append((len(q)-1,len(a)-1)) 
@@ -188,13 +188,16 @@ if __name__ == "__main__":
         
     # Convert nparray to matrix
     U,V,Z=np.mat(U),np.mat(V),np.mat(Z)
-    
-    Q_v = V*V.T
+    print 'construt Qv...'
+    Q_v = V.T*V
+    print 'construt Qz...'
     Q_z = Z*Z.T
-
-    import pdb;pdb.set_trace()
-
+    print 'construt Dq...'
     Dq=Build_Distq(NewsQuoObjs)
+    
+    
+    
+   
     #aa.split(",")
     #aaa=set(aa.split(","))
     #bbb=set(bb.split(","))
