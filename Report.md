@@ -131,52 +131,7 @@
 
 
 
-----
-
--  nouns.p
-       - reference 엑셀파일 중 extraction sheet에 있는 명사들을 리스트로 저장한 파일
-
--  dict_id_name.p
-       - whole_table 엑셀파일에서 infosrc_id_whole를 key 값으로 infosrc_name 을 value 로 하여 dictionary 형태로 저장한 파일
-
--  dict_org.p
-       - whole_table 엑셀파일에서 infosrc_org를 value 로 하여 dictionary 형태로 저장한 파일(key 값은 0부터 자동 증가)
-
--  dict_type.p
-       - whole_table 엑셀파일에서 infosrc_type을 value 로 하여 dictionary 형태로 저장한 파일(key 값은 0부터 자동 증가)
-
-      ```
-            | S | 1 |
-            | R | 2 |
-            | I | 3 |
-            | N | 4 |
-            | O | 5 |
-            | s | 6 |
-      ```
-
--  dict_pos.p
-       - whole_table 엑셀파일에서 infosrc_pos을 value 로 하여 dictionary 형태로 저장한 파일(key 값은 0부터 자동 증가)
-
--  dict_code.p
-       - whole_table 엑셀파일에서 infosrc_code를 value 로 하여 dictionary 형태로 저장한 파일(key 값은 0부터 자동 증가)
-
--  dict_classified.p
-       - whole_table 엑셀파일에서 infosrc_isclassified를 value 로 하여 dictionary 형태로 저장한 파일(key 값은 0부터 자동 증가)
-       - is_classified_paper_category
-
-      ```
-            | N | 0 |
-            | Y | 1 |
-      ```
-
--  dict_informer.p
-       - whole_table 엑셀파일과 생성된 dictionary 파일을 활용하여 생성한 정보원 dictionary 파일
-
-----
-
-
-
-## Data Structure (사용되는 Class/Dictionary 에 대한 설명)
+## Data Structure (사용되는 Class에 대한 설명)
 
 
 ### table_define.xlsx 파일에서 정보원의 데이터를 클래스로 정의
@@ -243,52 +198,14 @@ class NewsQuotation:
 
 
 
-
-## Code Description 
-![NLP Flow](https://raw.githubusercontent.com/kowonsik/NLP/master/png/NLP_flow.png)
-
 ## Functions
-- excel_noun()
-       - extraction.py 코드
-       - reference 엑셀파일에서 extraction sheet 생성하고 명사 분리하여 저장
 
-- get_excel_nouns()
-       - reference 엑셀파일에서 extraction sheet 에 저장되어 있는 분리된 명사를 dictionary로 변환
-
-- get_excel_informers()
-       - whloletable의 id, name, org, pos 참고하여 dictionary 파일 생성
-       - 생성된 파일 이름 : dict_id_name.p, dict_org.p, dict_pos.p
-
-- get_excel_type()
-       - 정보원을 구분하여 type dictionary 파일 생성
-       - 생성된 파일 이름 : dict_type.p
-
-- get_excel_code()
-       - 정보원의 소속을 구분하여 code dictionary 파일 생성
-       - 생성된 파일 이름 : dict_code.p
-
-- get_excel_classified()
-       - 정보원의 카테고리를 구분하여 classified dictionary 파일 생성
-       - 생성된 파일 이름 : dict_classified.p
-
-- informer_save()
-       - dictionary 파일과 excel 파일을 활용하여 NewsSource 클래스를 dictionary로 저장
-
-- get_all_NS()
-       - NewsSource 클래스가 dictionary로 저장되어있는 dict_informers.p 파일을 활용하여 메트릭스 생성
  
 ## How to use
 - 소스 다운로드
-       - git clone "http://github.com/kowonsik/NLP.git"
+       - git clone "http://github.com/deokwooj/NLP.git"
 - 실행 방법
        - python na_analysis.py
-- na_analysis.py
-       - main 코드
-       - 엑셀 파일과 dictionary 파일로 현재 정보원 메트릭스 생성 코드
-- extraction.py
-       - reference.xlxs 엑셀파일 중 Reference sheet 의 STN_CONTENT 퀄럼에서 인용문을 분리하고 인용문에서 명사 분리한 코드
-- file directory
-       - 사용되고 있는 엑셀파일과 dictionary 파일이 존재하는 디렉토리
 
 
 
