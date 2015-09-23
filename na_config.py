@@ -68,6 +68,8 @@ DICT_NEWS_INFO = "./binfiles/dict_news_info.p"
 #
 NEWS_SRC_OBJ="./binfiles/NewsSrcObjs.p" 
 NEWS_QUO_OBJ="./binfiles/NewsQuoObjs.p"
+ANAL_MAT_OBJ="./binfiles/AnalMatObj.p"
+
 
 # Excel file inputs
 REFERENCE_EXCEL = "./exlfiles/reference.xlsx"

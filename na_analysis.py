@@ -39,9 +39,10 @@ from na_build import *
 from sklearn import cluster
 from sklearn.cluster import Ward
 from sklearn.cluster import KMeans
+from sklearn.neighbors.kde import KernelDensity
 from scipy.stats import stats 
 from sklearn import cluster, covariance, manifold
-
+import networkx as nx
 
 # Article is stroed in harddisk or DB,... 
 #QuoLabel={'pol':1, 'eco':2, 'tec':2,'cul':3, 'ent':3,'soc':4,'int':5, 'spo':6, 'etc':7}
@@ -82,6 +83,28 @@ def Build_Distq(NewsQuoObjs_):
     print '+++++++++++++++++++++++++++++++++++++++++++'
     return np.mat(Distq)
 
+def compute_network(Q_z,Dq,sim_thresh=0.5):
+    #W_v=0 # dont consider network by News Sources
+    #W_z=0 # dont need to consider, computed by min function. 
+    # below threshold 
+    Dq_cut=(np.sign(Dq-sim_thresh)+1)/2
+    D_opt=np.minimum(np.ones(Dq.shape),Dq_cut+Q_z)
+    return D_opt
+
+def show_graph(adjacency_matrix):
+    # given an adjacency matrix use networkx and matlpotlib to plot the graph
+    import networkx as nx
+    import matplotlib.pyplot as plt
+
+    rows, cols = np.where(adjacency_matrix == 1)
+    edges = zip(rows.tolist(), cols.tolist())
+    gr = nx.Graph()
+    gr.add_edges_from(edges)
+    # nx.draw(gr) # edited to include labels
+    nx.draw_networkx(gr)
+    # now if you decide you don't want labels because your graph
+    # is too busy just do: nx.draw_networkx(G,with_labels=False)
+    plt.show() 
 
 if __name__ == "__main__":
     print " running news source analysis.....version 2.56"
@@ -109,73 +132,112 @@ if __name__ == "__main__":
         
     # News Article by a = {a_1 , · · · , a_l }
     #articles_in_quo=[obj.article_id for qid,obj in NewsQuoObjs]
-    
-    # Quotations in articles  by q = {q_1 , · · · , q_n }
-    
-    # News Sources by s = {s_1 , · · · , s_m }    
-    s=[]
-    # News Article by a = {a_1 , · · · , a_l }
-    a=[]
-    # Quotations in articles  by q = {q_1 , · · · , q_n }
-    q=[]
-    # U_{mxl} ~ Association matrix between News Sources S and Articles A
-    U_idx_1=[]   
-    # V_{mxn} ~ Association matrix  between News Sources S and Quotations Q.
-    V_idx_1=[]   
-    # Z_{nxl}~ Association matrix  between Quotations − Articles.
-    Z_idx_1=[]   
-    print '-----------------------------------------------------'
-    print 'The array for News Sources, News Articles, Quotations are  s,a,q'
-    print '-----------------------------------------------------'
-    for i,(qid,obj) in enumerate(NewsQuoObjs):
-        print 'qid : '+ str(qid)
-        name_=obj.news_src.name
-        article_=obj.article_id
-        quotation_=obj.quotation_key
-        if name_ not in s:
-            s.append(name_)
-        if article_ not in a:
-            a.append(article_)
-        if quotation_ not in q:
-            q.append(quotation_)
-        else:
-            raise NameError('quotation_key must be uniqBuild_Distque')
-        U_idx_1.append((len(s)-1,len(a)-1))
-        V_idx_1.append((len(s)-1,len(q)-1)) 
-        Z_idx_1.append((len(q)-1,len(a)-1)) 
-    print '-----------------------------------------------------'
+
+    try:
+        AnalMatObj=nt.loadObjectBinaryFast(ANAL_MAT_OBJ)
+        s,a,q,U,V,Z=AnalMatObj.s, AnalMatObj.a,  AnalMatObj.q, AnalMatObj.U, AnalMatObj.V, AnalMatObj.Z
+        Q_v, Q_z, Dq, D_opt=AnalMatObj.Q_v, AnalMatObj.Q_z, AnalMatObj.Dq, AnalMatObj.D_opt
+    except:
+        # News Sources by s = {s_1 , · · · , s_m }    D_opt
+        s=[]
+        # News Article by a = {a_1 , · · · , a_l }
+        a=[]
+        # Quotations in articles  by q = {q_1 , · · · , q_n }
+        q=[]
+        # U_{mxl} ~ Association matrix between News Sources S and Articles A
+        U_idx_1=[]   
+        # V_{mxn} ~ Association matrix  between News Sources S and Quotations Q.
+        V_idx_1=[]   
+        # Z_{nxl}~ Association matrix  between Quotations − Articles.
+        Z_idx_1=[]   
+        print '-----------------------------------------------------'
+        print 'The array for News Sources, News Articles, Quotations are  s,a,q'
+        print '-----------------------------------------------------'
+        for i,(qid,obj) in enumerate(NewsQuoObjs):
+            print 'qid : '+ str(qid)
+            name_=obj.news_src.name
+            article_=obj.article_id
+            quotation_=obj.quotation_key
+            if name_ not in s:
+                s.append(name_)
+            if article_ not in a:
+                a.append(article_)
+            if quotation_ not in q:
+                q.append(quotation_)
+            else:
+                raise NameError('quotation_key must be uniqBuild_Distque')
+            U_idx_1.append((len(s)-1,len(a)-1))
+            V_idx_1.append((len(s)-1,len(q)-1)) 
+            Z_idx_1.append((len(q)-1,len(a)-1)) 
+        print '-----------------------------------------------------'
+            
+        m,l,n =len(s), len(a),len(q)
+        print 'The length of s,a,q array are ',m,l,n
+        U,V,Z=np.zeros((m,l)),np.zeros((m,n)), np.zeros((n,l))        
+        print 'The shape of U,V,Z matrix are ', U.shape,V.shape,Z.shape
         
-    m,l,n =len(s), len(a),len(q)
-    print 'The length of s,a,q array are ',m,l,n
-    U,V,Z=np.zeros((m,l)),np.zeros((m,n)), np.zeros((n,l))        
-    print 'The shape of U,V,Z matrix are ', U.shape,V.shape,Z.shape
+        for row,col in U_idx_1:
+            U[row,col]=1
+        for row,col in V_idx_1:
+            V[row,col]=1
+        for row,col in Z_idx_1:
+            Z[row,col]=1
+        # Convert nparray to matrix
+        U,V,Z=np.mat(U),np.mat(V),np.mat(Z)
+        print 'construt Qv...'
+        # Quotation network by News Sources
+        Q_v = V.T*V
+        print 'construt Qz...'
+        # Quotatoin network by Articles
+        Q_z = Z*Z.T
+        print 'construt Dq...'
+        Dq=Build_Distq(NewsQuoObjs)
+        print 'construt D_opt...'
+        D_opt=np.minimum(np.ones(Dq.shape),Q_v+Q_z+Dq)
+
+        AnalMatObj=nt.obj({'s':s,'a':a,'q':q,'U':U,'V':V,'Z':Z,'Q_v':Q_v,'Q_z':Q_z,'Dq':Dq,'D_opt':D_opt})
+        # ANAL_MAT_OBJ="./binfiles/AnalMatObj.p"
+        nt.saveObjectBinaryFast(AnalMatObj, ANAL_MAT_OBJ)   
     
-    for row,col in U_idx_1:
-        U[row,col]=1
-    for row,col in V_idx_1:
-        V[row,col]=1
-    for row,col in Z_idx_1:
-        Z[row,col]=1
-        
-    # Convert nparray to matrix
-    U,V,Z=np.mat(U),np.mat(V),np.mat(Z)
-    print 'construt Qv...'
-    Q_v = V.T*V
-    print 'construt Qz...'
-    Q_z = Z*Z.T
-    print 'construt Dq...'
-    Dq=Build_Distq(NewsQuoObjs)
     
-    D_opt=(Q_v+Q_z+Dq)/3
+
+    """
+    정의 ctio
+    0 같거나 매우 유사한 인용문
+    1 같은 기사에 등장한 서로 다른 두 인용문
+    2 서로 다른 두 기사에 모두 등장한 인용문(s1, s4)에 의해 매개된 두 기사에 등장한 모든 서로 다른 인용문
+    3 서로 다른 두 인용문에 의해 매개된 서로 다른 두 기사의 인용문
+    ≥4 공통 인용문에 의해 연결되는 서로 다른 둘 이상의 기사에 의해 매개된 서로 다른 두 기사 간의 인용문
+    """
+    D_opt=compute_network(Q_z,Dq,sim_thresh=0.5)
     
+    G = nx.DiGraph(D_opt[0:1000,0:1000])
+    nx.draw(G)
+    
+    G = nx.DiGraph(Q_z)
+    nx.draw(G)
+    
+    import pdb; pdb.set_trace()
+    
+    plt.hist(Dq_distvals,arange(0,1.01,0.01))
+    hist(Dq_distvals[Dq_distvals>0.0],arange(0,1.01,0.02))
+    
+    kde = KernelDensity(kernel='gaussian', bandwidth=0.01).fit(Dq_distvals)
+    log_dens = KernelDensity(kernel='gaussian').fit(Dq_distvals).score_samples(X_plot)
+    X_plot = np.linspace(Dq_distvals.min(), Dq_distvals.max(), 1000)[:, np.newaxis]
+    log_dens = kde.score_samples(arange(0,1.01,0.01))
+    
+    ax[1, 1].fill(X_plot[:, 0], np.exp(log_dens), fc='#AAAAFF')
+    ax[1, 1].text(-3.5, 0.31, "Gaussian Kernel Density")
     
     print 'Extract  and store it as exp_result_hist_1.png '
     Dopt_distvals=np.array(np.fliplr(D_opt)[np.triu_indices(D_opt.shape[0])])[0]
     Dq_distvals=np.array(np.fliplr(Dq)[np.triu_indices(Dq.shape[0])])[0]
     Qz_distvals=np.array(np.fliplr(Q_z)[np.triu_indices(Q_z.shape[0])])[0]
     Qv_distvals=np.array(np.fliplr(Q_v)[np.triu_indices(Q_v.shape[0])])[0]
+
     
-    bin_size=[0.1,0.1,0.005,0.005]
+    bin_size=[0.1,0.1,0.001,0.001]
     title_set=['(1)Co-occurrence by Article ', '(2)Co-occurrence by New Sources','(3)Sentence Similarity', 'All Combined (1)+(2)+(3)']
     for k,D_ in enumerate((Qv_distvals,Qz_distvals,Dq_distvals,Dopt_distvals)):
         plt.subplot(2,2,k+1)
@@ -187,12 +249,10 @@ if __name__ == "__main__":
 
     
 
-    """"    
-    edge_model = covariance.GraphLassoCV()    
-    X=Dq
-    edge_model.fit(X)
+    #edge_model = covariance.GraphLassoCV()    
+    #edge_model.fit(Dq)
     aff_exemplars, aff_labels = cluster.affinity_propagation(Dq,damping=0.5)
-    """
+    
 
    
     """        
