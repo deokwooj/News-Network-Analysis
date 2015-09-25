@@ -20,6 +20,7 @@ import uuid
 import pylab as pl
 from scipy import signal
 from scipy import stats
+from scipy import sparse
 from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
 from multiprocessing import Pool
@@ -63,12 +64,12 @@ DICT_SPLIT_ARR_NOUNS = "./binfiles/dict_split_arr_nouns.p"
 # news info tuple in extraction sheet of reference.xlsx
 DICT_NEWS_INFO = "./binfiles/dict_news_info.p"
 
-
 ####
 #
 NEWS_SRC_OBJ="./binfiles/NewsSrcObjs.p" 
 NEWS_QUO_OBJ="./binfiles/NewsQuoObjs.p"
 ANAL_MAT_OBJ="./binfiles/AnalMatObj.p"
+DUMP_OBJ="./binfiles/dump.p"
 
 
 # Excel file inputs

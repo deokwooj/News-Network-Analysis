@@ -135,8 +135,14 @@ if __name__ == "__main__":
 
     try:
         AnalMatObj=nt.loadObjectBinaryFast(ANAL_MAT_OBJ)
-        s,a,q,U,V,Z=AnalMatObj.s, AnalMatObj.a,  AnalMatObj.q, AnalMatObj.U, AnalMatObj.V, AnalMatObj.Z
-        Q_v, Q_z, Dq, D_opt=AnalMatObj.Q_v, AnalMatObj.Q_z, AnalMatObj.Dq, AnalMatObj.D_opt
+        # Convert sparse matrix to dense mastrix for s,a,q        
+        s,a,q=AnalMatObj.s, AnalMatObj.a,  AnalMatObj.q
+        # Convert sparse matrix to dense mastrix for U,V,Z        
+        U,V,Z=AnalMatObj.U_sparse.todense(), AnalMatObj.V_sparse.todense(), \
+        AnalMatObj.Z_sparse.todense()
+        # Convert sparse matrix to dense mastrix for Q_v, Q_z, Dq, D_opt
+        Q_v, Q_z, Dq=AnalMatObj.Q_v_sparse.todense(), \
+        AnalMatObj.Q_z_sparse.todense(), AnalMatObj.Dq_sparse.todense()
     except:
         # News Sources by s = {s_1 , · · · , s_m }    D_opt
         s=[]
@@ -161,11 +167,11 @@ if __name__ == "__main__":
             if name_ not in s:
                 s.append(name_)
             if article_ not in a:
-                a.append(article_)
+                a.append(article_) 
             if quotation_ not in q:
                 q.append(quotation_)
             else:
-                raise NameError('quotation_key must be uniqBuild_Distque')
+                raise NameError('quotation_key must be unique')
             U_idx_1.append((len(s)-1,len(a)-1))
             V_idx_1.append((len(s)-1,len(q)-1)) 
             Z_idx_1.append((len(q)-1,len(a)-1)) 
@@ -182,7 +188,8 @@ if __name__ == "__main__":
             V[row,col]=1
         for row,col in Z_idx_1:
             Z[row,col]=1
-        # Convert nparray to matrix
+
+       # Convert nparray to matrix
         U,V,Z=np.mat(U),np.mat(V),np.mat(Z)
         print 'construt Qv...'
         # Quotation network by News Sources
@@ -192,15 +199,23 @@ if __name__ == "__main__":
         Q_z = Z*Z.T
         print 'construt Dq...'
         Dq=Build_Distq(NewsQuoObjs)
-        print 'construt D_opt...'
-        D_opt=np.minimum(np.ones(Dq.shape),Q_v+Q_z+Dq)
+        
+        # Convert U,V,Z,Q_v,Q_z,Dq,D_opt to Sparse Matrix. 
+        U_sparse= sparse.bsr_matrix(U, dtype=np.int8)
+        V_sparse= sparse.bsr_matrix(V, dtype=np.int8)
+        Z_sparse= sparse.bsr_matrix(Z, dtype=np.int8)
+        Q_v_sparse= sparse.bsr_matrix(Q_v, dtype=np.int8)
+        Q_z_sparse= sparse.bsr_matrix(Q_z, dtype=np.int8)
+        Dq_sparse= sparse.bsr_matrix(Dq, dtype=np.float)
 
-        AnalMatObj=nt.obj({'s':s,'a':a,'q':q,'U':U,'V':V,'Z':Z,'Q_v':Q_v,'Q_z':Q_z,'Dq':Dq,'D_opt':D_opt})
-        # ANAL_MAT_OBJ="./binfiles/AnalMatObj.p"
-        nt.saveObjectBinaryFast(AnalMatObj, ANAL_MAT_OBJ)   
-    
-    
+        AnalMatObj=nt.obj({'s':s,'a':a,'q':q
+        ,'U_sparse':U_sparse,'V_sparse':V_sparse,'Z_sparse':Z_sparse,\
+        'Q_v_sparse':Q_v_sparse,'Q_z_sparse':Q_z_sparse,'Dq_sparse':Dq_sparse})
+        # ANAL_MAT_OBJ="./binfiles/AnalMatObjQ_v_sparse.todense()-Q_v.p
+        
+        nt.saveObjectBinaryFast(AnalMatObj, ANAL_MAT_OBJ)
 
+     #nt.saveObjectBinaryFast(D_opt_sparse, DUMP_OBJ)
     """
     정의 ctio
     0 같거나 매우 유사한 인용문
