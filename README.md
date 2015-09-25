@@ -16,6 +16,7 @@
   - pip install openpyxl
   - pip install xlsxwriter
   - pip install scikit-learn
+  - pip install networkx
 
 #### SW 개발 현황 메모
   - https://github.com/deokwooj/NLP/blob/master/Report.md
