@@ -225,6 +225,7 @@ if __name__ == "__main__":
     ≥4 공통 인용문에 의해 연결되는 서로 다른 둘 이상의 기사에 의해 매개된 서로 다른 두 기사 간의 인용문
     """
     
+    """
     import pdb;pdb.set_trace()
     D_opt=compute_network(Q_z,Dq,sim_thresh=0.5)
     
@@ -269,7 +270,7 @@ if __name__ == "__main__":
     #edge_model = covariance.GraphLassoCV()    
     #edge_model.fit(Dq)
     aff_exemplars, aff_labels = cluster.affinity_propagation(Dq,damping=0.5)
-    
+    """
 
    
     """        
