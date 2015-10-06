@@ -237,10 +237,10 @@ def na_build_main(SRC_OBJ=True,QUO_OBJ=True, argv_print=False):
     
     if SRC_OBJ==True:
         print 'start to build NewsSrcObjs....'
-        try:
+        if os.path.exists(NEWS_SRC_OBJ):
             print 'loading ' +NEWS_SRC_OBJ
             NewsSrcObjs=nt.loadObjectBinaryFast(NEWS_SRC_OBJ)
-        except:
+        else:
             print 'cannot find ' + NEWS_SRC_OBJ
             print 'buid it... '
             status_out=build_NewsSrcObjs()
@@ -263,10 +263,10 @@ def na_build_main(SRC_OBJ=True,QUO_OBJ=True, argv_print=False):
 
     if QUO_OBJ==True:
         print 'start to build NewsQuoObjs....'
-        try:
+        if os.path.exists(NEWS_QUO_OBJ):
             print 'loading ' +NEWS_QUO_OBJ
             NewsQuoObjs=nt.loadObjectBinaryFast(NEWS_QUO_OBJ)
-        except:
+        else:
             status_out=build_NewsQuoObjs()
             print status_out
             if status_out!=True:

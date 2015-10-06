@@ -27,9 +27,7 @@ from __future__ import division # To forace float point division
 # bla bla...
 #########################################################
 
-
-
-# Deokwoo Jung 's update 23 Aug by jdw-2. 
+# Deokwoo Jung 's update 07 Oct by Deokwoo Jung
 # modules to be imported
 
 # newly imported
@@ -59,21 +57,12 @@ import networkx as nx
 # Class for a set of matrix for quotation network computation
 class AnalMat:
     def __init__(self):
-        self.s = []
-        self.a = []
-        self.q = []
-        self.U = []
-        self.V = []
-        self.Z = []
-        self.Q_v= []
-        self.Q_z= []
-        self.Dq = []
-        self.U_sparse= None
-        self.V_sparse= None
-        self.Z_sparse= None
-        self.Q_v_sparse= None
-        self.Q_z_sparse= None
-        self.Dq_sparse= None
+        self.s = [] ;  self.a = [];   self.q = []
+        self.U = [];   self.V = [];   self.Z = []
+        self.Q_v= [];  self.Q_z= [];  self.Dq = []
+        self.U_sparse= None;   self.V_sparse= None
+        self.Z_sparse= None;   self.Q_v_sparse= None
+        self.Q_z_sparse= None; self.Dq_sparse= None
     def sparsify_mat(self):
         # for sparse form
         self.U_sparse= sparse.bsr_matrix(self.U, dtype=np.int8)
@@ -83,18 +72,18 @@ class AnalMat:
         self.Q_z_sparse= sparse.bsr_matrix(self.Q_z, dtype=np.int8)
         self.Dq_sparse= sparse.bsr_matrix(self.Dq, dtype=np.float)
         # Initialize original matrix        
-        self.U = self.V = self.Z = self.Q_v= self.Q_z= self.Dq = []
+        self.U=[]; self.V=[];self.Z=[]; self.Q_v=[]; self.Q_z=[]; self.Dq = []
     def densify_mat(self):
         self.U,self.V,self.Z=\
         self.U_sparse.todense(), self.V_sparse.todense(), self.Z_sparse.todense()
         # Convert sparse matrix to dense mastrix for Q_v, Q_z, Dq, D_opt
         self.Q_v, self.Q_z, self.Dq=\
         self.Q_v_sparse.todense(), self.Q_z_sparse.todense(), self.Dq_sparse.todense()
-        self.U_sparse= self.V_sparse= self.Z_sparse= self.Q_v_sparse=\
-        self.Q_z_sparse= self.Dq_sparse= None
+        self.U_sparse= None; self.V_sparse= None; self.Z_sparse= None
+        self.Q_v_sparse= None;self.Q_z_sparse= None; self.Dq_sparse= None
 
 
-def Constrct_matrix_for_network():
+def Constrct_matrix_for_network(NewsQuoObjs_):
     # Matrix for news source analysis
     AnalMatObj=AnalMat()
     # News Sources by s = {s_1 , · · · , s_m }
@@ -112,8 +101,9 @@ def Constrct_matrix_for_network():
     print '-----------------------------------------------------'
     print 'The array for News Sources, News Articles, Quotations are  s,a,q'
     print '-----------------------------------------------------'
-    for i,(qid,obj) in enumerate(NewsQuoObjs):
-        print 'qid : '+ str(qid)
+    print 'qid : ', 
+    for i,(qid,obj) in enumerate(NewsQuoObjs_):
+        print qid,
         name_=obj.news_src.name
         article_=obj.article_id
         quotation_=obj.quotation_key
@@ -128,6 +118,7 @@ def Constrct_matrix_for_network():
         U_idx_1.append((len(s)-1,len(a)-1))
         V_idx_1.append((len(s)-1,len(q)-1)) 
         Z_idx_1.append((len(q)-1,len(a)-1)) 
+    print "" 
     print '-----------------------------------------------------'
     m,l,n =len(s), len(a),len(q)
     print 'The length of s,a,q array are ',m,l,n
@@ -150,27 +141,15 @@ def Constrct_matrix_for_network():
     print 'construt Dq...'
     # Build distance matrix for quotations      
     Dq=Build_Distq(NewsQuoObjs)
-    AnalMatObj.s=s
-    AnalMatObj.q=q
-    AnalMatObj
-
+    AnalMatObj.s = s; AnalMatObj.a = a;  AnalMatObj.q = q
+    AnalMatObj.U = U;  AnalMatObj.V = V;  AnalMatObj.Z = Z
+    AnalMatObj.Q_v= Q_v; AnalMatObj.Q_z= Q_z; AnalMatObj.Dq = Dq
+    # Sparsify matrix for storing
+    AnalMatObj.sparsify_mat()
     nt.saveObjectBinaryFast(AnalMatObj, ANAL_MAT_OBJ)
-    """
-    # Convert U,V,Z,Q_v,Q_z,Dq,D_opt to Sparse Matrix. 
-    U_sparse= sparse.bsr_matrix(U, dtype=np.int8)
-    V_sparse= sparse.bsr_matrix(V, dtype=np.int8)
-    Z_sparse= sparse.bsr_matrix(Z, dtype=np.int8)
-    Q_v_sparse= sparse.bsr_matrix(Q_v, dtype=np.int8)
-    Q_z_sparse= sparse.bsr_matrix(Q_z, dtype=np.int8)
-    Dq_sparse= sparse.bsr_matrix(Dq, dtype=np.float)
-    # Store input parameters for quotation matrix computations as object file. 
-    AnalMatObj=nt.obj({'s':s,'a':a,'q':q
-    ,'U_sparse':U_sparse,'V_sparse':V_sparse,'Z_sparse':Z_sparse,\
-    'Q_v_sparse':Q_v_sparse,'Q_z_sparse':Q_z_sparse,'Dq_sparse':Dq_sparse})
-    
-    """
-
-
+    # Desnify matrix back and return it
+    AnalMatObj.densify_mat()
+    return AnalMatObj
 
 
 # Return diatance matrix of Quatations
@@ -181,8 +160,9 @@ def Build_Distq(NewsQuoObjs_):
     n=len(NewsQuoObjs)    
     Distq=np.zeros((n,n))
     print '+++++++++++++++++++++++++++++++++++++++++++'
+    print 'qid ', 
     for k,(qid_a, obj_a) in enumerate(NewsQuoObjs_):
-        print 'qid ', k
+        print k, 
         print '------------'
         for j,(qid_b, obj_b) in enumerate(NewsQuoObjs_):
             try:
@@ -197,6 +177,7 @@ def Build_Distq(NewsQuoObjs_):
                 Distq[k][j]=sim_val
             except:
                 Distq[k][j]=0
+    print "" 
     print '+++++++++++++++++++++++++++++++++++++++++++'
     return np.mat(Distq)
 
@@ -226,114 +207,21 @@ def show_graph(adjacency_matrix):
 if __name__ == "__main__":
     print " running news source analysis.....version 2.56"
     NewsSrcObjs, NewsQuoObjs=na_build_main(SRC_OBJ=False,QUO_OBJ=True, argv_print=False)
-    # Note that NewsSrcObjc are used only for lookup reference. 
-    # It contains 102878 distinctive number of news sources which is way too much 
-    # for current number of news sources in NewsQuoObjs 
-    
-    # We decided not to use NewsSrcObjs due to too many ambiguous names.
-    #names_in_ns=[obj.name for nid,obj in NewsSrcObjs]
-    # 9x duplicated names.     
-    #len(names_in_ns) =903440
-    #len(set(names_in_ns))=102878 
-    
-    # Use only NewsQuoObjs
-    #names_in_quo=[obj.news_src.name for qid,obj in NewsQuoObjs]
-    # 2x duplicated names    
-    # len(names_in_quo)=2522
-    # len(set(names_in_quo)) =1223
-    
-    
-    # Create array of News Sources
-    # News Sources by s = {s_1 , · · · , s_m }
-    #s=np.array([name_ for name_ in set(names_in_quo)])
-        
-    # News Article by a = {a_1 , · · · , a_l }
-    #articles_in_quo=[obj.article_id for qid,obj in NewsQuoObjs]
 
-    try:
+    if os.path.exists(ANAL_MAT_OBJ):
+        print 'Loading ' +ANAL_MAT_OBJ
         AnalMatObj=nt.loadObjectBinaryFast(ANAL_MAT_OBJ)
-        # Convert sparse matrix to dense mastrix for s,a,q        
-        s,a,q=AnalMatObj.s, AnalMatObj.a,  AnalMatObj.q
-        # Convert sparse matrix to dense mastrix for U,V,Z        
-        U,V,Z=AnalMatObj.U_sparse.todense(), AnalMatObj.V_sparse.todense(), \
-        AnalMatObj.Z_sparse.todense()
-        # Convert sparse matrix to dense mastrix for Q_v, Q_z, Dq, D_opt
-        Q_v, Q_z, Dq=AnalMatObj.Q_v_sparse.todense(), \
-        AnalMatObj.Q_z_sparse.todense(), AnalMatObj.Dq_sparse.todense()
-    except:
-        """
-        # News Sources by s = {s_1 , · · · , s_m }
-        s=[]
-        # News Article by a = {a_1 , · · · , a_l }
-        a=[]
-        # Quotations in articles  by q = {q_1 , · · · , q_n }
-        q=[]
-        # U_{mxl} ~ Association matrix between News Sources S and Articles A
-        U_idx_1=[]   
-        # V_{mxn} ~ Association matrix between News Sources S and Quotations Q.
-        V_idx_1=[]   
-        # Z_{nxl}~ Association matrix between Quotations − Articles.
-        Z_idx_1=[]   
-        print '-----------------------------------------------------'
-        print 'The array for News Sources, News Articles, Quotations are  s,a,q'
-        print '-----------------------------------------------------'
-        for i,(qid,obj) in enumerate(NewsQuoObjs):
-            print 'qid : '+ str(qid)
-            name_=obj.news_src.name
-            article_=obj.article_id
-            quotation_=obj.quotation_key
-            if name_ not in s:
-                s.append(name_)
-            if article_ not in a:
-                a.append(article_) 
-            if quotation_ not in q:
-                q.append(quotation_)
-            else:
-                raise NameError('quotation_key must be unique')
-            U_idx_1.append((len(s)-1,len(a)-1))
-            V_idx_1.append((len(s)-1,len(q)-1)) 
-            Z_idx_1.append((len(q)-1,len(a)-1)) 
-        print '-----------------------------------------------------'
-        m,l,n =len(s), len(a),len(q)
-        print 'The length of s,a,q array are ',m,l,n
-        U,V,Z=np.zeros((m,l)),np.zeros((m,n)), np.zeros((n,l))        
-        print 'The shape of U,V,Z matrix are ', U.shape,V.shape,Z.shape
-        for row,col in U_idx_1:
-            U[row,col]=1
-        for row,col in V_idx_1:
-            V[row,col]=1
-        for row,col in Z_idx_1:
-            Z[row,col]=1
-       # Convert nparray to matrix
-        U,V,Z=np.mat(U),np.mat(V),np.mat(Z)
-        print 'construt Qv...'
-        # Quotation network by News Sources
-        Q_v = V.T*V
-        print 'construt Qz...'
-        # Quotatoin network by Articles
-        Q_z = Z*Z.T
-        print 'construt Dq...'
-        # Build distance matrix for quotations      
-        Dq=Build_Distq(NewsQuoObjs)
-        # Convert U,V,Z,Q_v,Q_z,Dq,D_opt to Sparse Matrix. 
-        U_sparse= sparse.bsr_matrix(U, dtype=np.int8)
-        V_sparse= sparse.bsr_matrix(V, dtype=np.int8)
-        Z_sparse= sparse.bsr_matrix(Z, dtype=np.int8)
-        Q_v_sparse= sparse.bsr_matrix(Q_v, dtype=np.int8)
-        Q_z_sparse= sparse.bsr_matrix(Q_z, dtype=np.int8)
-        Dq_sparse= sparse.bsr_matrix(Dq, dtype=np.float)
-        # Store input parameters for quotation matrix computations as object file. 
-        AnalMatObj=nt.obj({'s':s,'a':a,'q':q
-        ,'U_sparse':U_sparse,'V_sparse':V_sparse,'Z_sparse':Z_sparse,\
-        'Q_v_sparse':Q_v_sparse,'Q_z_sparse':Q_z_sparse,'Dq_sparse':Dq_sparse})
-        nt.saveObjectBinaryFast(AnalMatObj, ANAL_MAT_OBJ)
-        """
+        AnalMatObj.densify_mat()        
+    else:
+        print 'Cannot find ' +ANAL_MAT_OBJ
+        print 'Construct '  +ANAL_MAT_OBJ
+        AnalMatObj=Constrct_matrix_for_network(NewsQuoObjs)
 
-    import pdb;pdb.set_trace()
+    #import pdb;pdb.set_trace()
     
-    # 1. compute clusters of quotations using 
+    # TODO  1. compute clusters of quotations using 
     
-    D_opt=compute_network(Q_z,Dq,sim_thresh=0.5)
+    #D_opt=compute_network(AnalMatObj.Q_z,Dq,sim_thresh=0.5)
     
 
      #nt.saveObjectBinaryFast(D_opt_sparse, DUMP_OBJ)
