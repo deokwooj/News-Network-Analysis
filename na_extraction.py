@@ -10,6 +10,7 @@ from na_config import *
 import pprint
 import na_tools as nt
 
+
 def excel_noun():
 
     def excel_write(row_val, column_val, data):

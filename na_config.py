@@ -35,9 +35,17 @@ import random
 from matplotlib.collections import LineCollection
 import pprint
 import warnings
-import na_tools as nt
+import data_tools as nt
 from na_const import * 
 #from na_extraction import *
+__author__ = "Deokwoo Jung"
+__copyright__ = "Copyright 2015, Deokwoo Jung, All rights reserved."
+__credits__ = ["Deokwoo Jung"]
+__license__ = "GPL"
+__version__ = "1.0.1"
+__maintainer__ = "Deokwoo Jung"
+__email__ = "deokwooj@gmail.com"
+__status__ = "Development"
 
 
 # dictionary file path
@@ -69,6 +77,7 @@ DICT_NEWS_INFO = "./binfiles/dict_news_info.p"
 NEWS_SRC_OBJ="./binfiles/NewsSrcObjs.p" 
 NEWS_QUO_OBJ="./binfiles/NewsQuoObjs.p"
 ANAL_MAT_OBJ="./binfiles/AnalMatObj.p"
+QUO_CLUSTER_OBJ="./binfiles/quo_cluster.p"
 DUMP_OBJ="./binfiles/dump.p"
 
 

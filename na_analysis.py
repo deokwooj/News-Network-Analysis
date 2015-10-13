@@ -1,35 +1,19 @@
 #-*- coding: utf-8 -*-
 from __future__ import division # To forace float point division
 
-#########################################################
-# Authors
-#########################################################
-# bla. bla...
-#
-#########################################################
+"""Provides statistical analysis for news articles .
 
-#########################################################
-# Liscence
-#########################################################
-# bla bla..
-#
-#########################################################
+ Read articles and discover network structure of news sources based on quataions in artticles. 
+ Two stages :
+ Stg 1. Excel files -->  Python data structure --> store binary format in hard disk as *.bin
+ Stg 2. Load binary files, *.bin files into memory and performs data analytics with the loaded bin files. 
 
-#########################################################
-# Program Decsription
-#########################################################
-# this is news source analyis program. 
-# read articles and discover network structure of news sources based on quataions in artticles. 
-# Two stages :
-# Stg 1. Excel files -->  Python data structure --> store binary format in hard disk as *.bin
-# Stg 2. Load binary files, *.bin files into memory and performs data analytics with the loaded bin files. 
-#
-# bla bla...
-#########################################################
-
-# Deokwoo Jung 's update 07 Oct by Deokwoo Jung
-# modules to be imported
-
+ File dependcy is following. 
+ 1. na_build.py
+ 2. na_config.py
+ 3. na_const.py
+ 4. na_extraction.py
+"""
 # newly imported
 from na_config import *
 #from na_build import *
@@ -41,18 +25,17 @@ from sklearn.neighbors.kde import KernelDensity
 from scipy.stats import stats 
 from sklearn import cluster, covariance, manifold
 import networkx as nx
+from pack_cluster import max_pack_cluster
+from sklearn.cluster import KMeans
 
-# Article is stroed in harddisk or DB,... 
-#QuoLabel={'pol':1, 'eco':2, 'tec':2,'cul':3, 'ent':3,'soc':4,'int':5, 'spo':6, 'etc':7}
-# class definition : news source. 
-# Dicitonary Definition
-# Using 'set' data structure to extract a set of elements in each column of excel file. 
-# Org_Name={1:'외무부', 2:'신한국당':,3:'서울대':,...}
-# Job_Title={1: '변호사', 2:'사장':,3:'교수':,...};
-# Function to extract sets from excel file. 
-
-# R : no name yes org,    I : yes name yes org,    N : yes name no org,    O : org,    s : only last name
-# NewsSource Type = {1:S, 2:R, 3:I, 4:N ,5:O, 6:s}
+__author__ = "Deokwoo Jung"
+__copyright__ = "Copyright 2015, Deokwoo Jung, All rights reserved."
+__credits__ = ["Deokwoo Jung"]
+__license__ = "GPL"
+__version__ = "1.0.1"
+__maintainer__ = "Deokwoo Jung"
+__email__ = "deokwooj@gmail.com"
+__status__ = "Prototype"
 
 # Class for a set of matrix for quotation network computation
 class AnalMat:
@@ -216,10 +199,77 @@ if __name__ == "__main__":
         print 'Cannot find ' +ANAL_MAT_OBJ
         print 'Construct '  +ANAL_MAT_OBJ
         AnalMatObj=Constrct_matrix_for_network(NewsQuoObjs)
+    
+    """ MaxPackCluster algorithm is the algorith developed and copyrighted by 
+    Deokwoo Jung in 2014 for DDEA (Data Driven Energy Analysis) Developemtnt
+    Use of MaxPackCluster algorithm will be strictly abiding to NLPNNA project only. 
+    For Test max pack cluster, use test data below
+    SIMM_MAT_temp=np.array([\
+    [0.50 ,   0.92 ,   0.95 ,  0.12 ,  0.23], \
+    [0.00 ,   0.50 ,   0.95 ,  0.32 ,  0.13],\
+    [0.00 ,   0.00 ,   0.50 ,  0.50 ,  0.60],\
+    [0.00 ,   0.00 ,   0.00 ,  0.50 ,  0.96],\
+    [0.00 ,   0.00 ,   0.00 ,  0.00 ,  0.50]\
+    ])
+    SIMM_MAT=SIMM_MAT_temp+SIMM_MAT_temp.T
+    DIST_MAT=1-SIMM_MAT
+    """    
+    SIMM_MAT=np.asarray(AnalMatObj.Dq)
+    DIST_MAT=1-np.asarray(AnalMatObj.Dq)
+    """
+    mat_triu_=np.triu(DIST_MAT,1)
+    mat_nzeros=mat_triu_.ravel()[np.flatnonzero(mat_triu_)]
+    kmean=KMeans(n_clusters=2).fit(mat_nzeros[:,np.newaxis])
+    """
+    IN_CLUSTER_SIM_CUTOFF=0.95
+    OUT_CLUSTER_SIM_CUTOFF=0.90
+    print '----------------------------------------------'
+    print 'Clustering quotaitons by Dq'
+    print 'SAME_CLUSTER_SIM_VAL: ',  IN_CLUSTER_SIM_CUTOFF
+    print 'DIFF_CLUSTER_SIM_VAL: ', OUT_CLUSTER_SIM_CUTOFF
+    print '----------------------------------------------'
+    print 'Start clusteirng.... '
+    start_time = time.time()
+    """
+    exemplars_,labels_=\
+    max_pack_cluster(DIST_MAT[0:1000,0:1000],\
+    min_dist=1-IN_CLUSTER_SIM_CUTOFF,\
+    max_dist=1-OUT_CLUSTER_SIM_CUTOFF)
+    """
+    exemplars_, labels_ = cluster.affinity_propagation(SIMM_MAT,damping=0.5)
+    quo_cluster=\
+    nt.obj({'exemplars_':exemplars_,'labels_':labels_,    
+    'in_cluster_cutoff':IN_CLUSTER_SIM_CUTOFF,\
+    'out_cluster_cutoff':OUT_CLUSTER_SIM_CUTOFF})
+    
+    nt.saveObjectBinaryFast(quo_cluster, QUO_CLUSTER_OBJ)
+    print("Clustering done --- %s seconds ---" % (time.time() - start_time))
+    #print labels_
+    
+    quo_cluster=nt.loadObjectBinaryFast(QUO_CLUSTER_OBJ)
+    for label_ in set(quo_cluster.labels_):
+        quo_cluster.labels_[quo_cluster.labels_==label_]
+
+    for label_ in set(quo_cluster.labels_):
+        print label_
+        #quo_cluster.labels_[quo_cluster.labels_==label_]
+        a=SIMM_MAT[quo_cluster.labels_==label_,quo_cluster.labels_==label_]
+        print a.shape
+        
+    all_set=set(range(SIMM_MAT.shape[0]))
+    cluster_set=[]
+    for i,col in enumerate(SIMM_MAT):
+        print i, len(col)
+        cluster_idx=np.where(col>0.9)[0]
+        if len(cluster_idx)==0:
+            break 
+        #cluster_set.append(list(cluster_idx))
 
     #import pdb;pdb.set_trace()
     
     # TODO  1. compute clusters of quotations using 
+    # Clustering Algorithm 
+    
     
     #D_opt=compute_network(AnalMatObj.Q_z,Dq,sim_thresh=0.5)
     

@@ -62,6 +62,15 @@ from openpyxl.cell import get_column_letter
 from openpyxl import load_workbook
 from numpy import inf
 
+__author__ = "Deokwoo Jung"
+__copyright__ = "Copyright 2015, Deokwoo Jung, All rights reserved."
+__credits__ = ["Deokwoo Jung"]
+__license__ = "GPL"
+__version__ = "1.0.1"
+__maintainer__ = "Deokwoo Jung"
+__email__ = "deokwooj@gmail.com"
+__status__ = "Development"
+
 ######################################
 # table_define.xlsx
 # id : 정보원 ID

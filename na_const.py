@@ -10,7 +10,17 @@ Created on Wed Sep  2 21:18:26 2015
 - This file defines global constant symbols and definitions used through in this program. 
 - Should be included all python modules first. 
 """
-import na_tools as nt
+import data_tools as nt
+
+__author__ = "Deokwoo Jung"
+__copyright__ = "Copyright 2015, Deokwoo Jung, All rights reserved."
+__credits__ = ["Deokwoo Jung"]
+__license__ = "GPL"
+__version__ = "1.0.1"
+__maintainer__ = "Deokwoo Jung"
+__email__ = "deokwooj@gmail.com"
+__status__ = "Development"
+
 # Define media code dictionary
 #(media name, media id)
 media_code={\
