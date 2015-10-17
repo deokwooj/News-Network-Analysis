@@ -148,18 +148,16 @@ def Build_Distq(NewsQuoObjs_):
         print k, 
         print '------------'
         for j,(qid_b, obj_b) in enumerate(NewsQuoObjs_):
-            try:
-                #print k, ': ',obj.nounvec
-                noun_a=set(obj_a.nounvec.split(","))
-                noun_b=set(obj_b.nounvec.split(","))
-                all_nouns=list(noun_a.union(noun_b))
-                #import pdb;pdb.set_trace()
-                vec_a=[ 1 if d in noun_a else 0 for d in all_nouns]
-                vec_b=[ 1 if d in noun_b else 0 for d in all_nouns]
-                sim_val= np.dot(vec_a,vec_b) /(np.linalg.norm(vec_b)*np.linalg.norm(vec_a))
-                Distq[k][j]=sim_val
-            except:
-                Distq[k][j]=0
+            #print k, ': ',obj.nounvec
+            noun_a=set(obj_a.nounvec.split(","))
+            noun_b=set(obj_b.nounvec.split(","))
+            all_nouns=list(noun_a.union(noun_b))
+            #import pdb;pdb.set_trace()
+            vec_a=[ 1 if d in noun_a else 0 for d in all_nouns]
+            vec_b=[ 1 if d in noun_b else 0 for d in all_nouns]
+            sim_val= np.dot(vec_a,vec_b) /(np.linalg.norm(vec_b)*np.linalg.norm(vec_a))
+            Distq[k][j]=sim_val
+
     print "" 
     print '+++++++++++++++++++++++++++++++++++++++++++'
     return np.mat(Distq)
@@ -190,7 +188,7 @@ def show_graph(adjacency_matrix):
 if __name__ == "__main__":
     print " running news source analysis.....version 2.56"
     NewsSrcObjs, NewsQuoObjs=na_build_main(SRC_OBJ=False,QUO_OBJ=True, argv_print=False)
-
+    #import pdb;pdb.set_trace();
     if os.path.exists(ANAL_MAT_OBJ):
         print 'Loading ' +ANAL_MAT_OBJ
         AnalMatObj=nt.loadObjectBinaryFast(ANAL_MAT_OBJ)
@@ -199,6 +197,41 @@ if __name__ == "__main__":
         print 'Cannot find ' +ANAL_MAT_OBJ
         print 'Construct '  +ANAL_MAT_OBJ
         AnalMatObj=Constrct_matrix_for_network(NewsQuoObjs)
+        
+    """  
+    # For debugging...
+    import pdb;pdb.set_trace()
+    tmp_a=AnalMatObj.Dq.diagonal()
+    z_idx=np.where(tmp_a<10e-3)[1]
+    z_qid=[NewsQuoObjs[idx_][1].quotation_key  for idx_ in z_idx ]
+    #NewsQuoObjs[z_idx]
+    
+    for i,idx_ in enumerate(z_qid):
+        print i, list(dict_news_info[idx_])[0][2]
+        
+    dict_news_info=nt.loadObjectBinaryFast(DICT_NEWS_INFO)
+    for key_,val_ in dict_news_info.iteritems():
+        if list(val_)[0][2]==None:
+            print key_
+            print list(val_)[0][0], ',', list(val_)[0][1]
+      
+        
+        if val_==None:
+            print key_
+        
+        
+        
+        if list(val_)[0][2]==None:
+            print key_
+      
+    for idx_ in z_idx:
+        print '---------------------------'
+        print NewsQuoObjs[idx_][1].quotation_key
+        print NewsQuoObjs[idx_][1].quotation
+        print NewsQuoObjs[idx_][1].nounvec
+        print '---------------------------'
+    
+    """
     
     """ MaxPackCluster algorithm is the algorith developed and copyrighted by 
     Deokwoo Jung in 2014 for DDEA (Data Driven Energy Analysis) Developemtnt
@@ -222,7 +255,7 @@ if __name__ == "__main__":
     kmean=KMeans(n_clusters=2).fit(mat_nzeros[:,np.newaxis])
     """
     IN_CLUSTER_SIM_CUTOFF=0.95
-    OUT_CLUSTER_SIM_CUTOFF=0.90
+    OUT_CLUSTER_SIM_CUTOFF=0.80
     print '----------------------------------------------'
     print 'Clustering quotaitons by Dq'
     print 'SAME_CLUSTER_SIM_VAL: ',  IN_CLUSTER_SIM_CUTOFF
@@ -230,12 +263,12 @@ if __name__ == "__main__":
     print '----------------------------------------------'
     print 'Start clusteirng.... '
     start_time = time.time()
-    """
+    
     exemplars_,labels_=\
-    max_pack_cluster(DIST_MAT[0:1000,0:1000],\
+    max_pack_cluster(DIST_MAT,\
     min_dist=1-IN_CLUSTER_SIM_CUTOFF,\
     max_dist=1-OUT_CLUSTER_SIM_CUTOFF)
-    """
+    
     exemplars_, labels_ = cluster.affinity_propagation(SIMM_MAT,damping=0.5)
     quo_cluster=\
     nt.obj({'exemplars_':exemplars_,'labels_':labels_,    

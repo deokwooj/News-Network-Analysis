@@ -209,18 +209,27 @@ def build_NewsQuoObjs(max_num_rows=inf):
     ########################################################
     fld_name=('Name','Quatation', 'Nouns','Code')
     for k,(key, val) in enumerate(dict_news_info.iteritems()):
+        if list(val)[0][2]==None:
+            print 'For quotatoin key ',key, ' empty !!! '
+            continue
         quo_temp=NewsQuotation()
         quo_temp.quotation_key=str(key)
         if max_num_rows<k:
             break
         for i,(fld_, val_) in enumerate(zip(fld_name,list(val)[0])):
-            print fld_
             if fld_=='Name':
                 quo_temp.news_src.name=val_
             elif fld_=='Quatation':
                 val_temp=val_
                 quo_temp.quotation=val_
             elif fld_=='Nouns':
+                #import pdb;pdb.set_trace()
+                #try:                
+                #    print len(val_)
+                #except:
+                #    import pdb;pdb.set_trace()
+                #if isinstance(val_,list)==False:
+                 #   import pdb;pdb.set_trace()
                 quo_temp.nounvec=val_
             elif fld_=='Code':
                 val_temp=str(val_)[1:]
@@ -230,6 +239,8 @@ def build_NewsQuoObjs(max_num_rows=inf):
                 quo_temp.article_id=val_temp[17:]
             else:
                 warnings.warn("fld name not found")
+        # For debugging
+        #if quo_temp.quotation_key==11:
         NewsQuoObjs.append((k,quo_temp))
     try: 
         nt.saveObjectBinaryFast(NewsQuoObjs, NEWS_QUO_OBJ)   
@@ -242,11 +253,12 @@ def build_NewsQuoObjs(max_num_rows=inf):
 def na_build_main(SRC_OBJ=True,QUO_OBJ=True, argv_print=False):
     print 'running na_build.py....'
     print 'start to build news source object...'
-    NewsSrcObjs=NewsQuoObjs=[]
+    NewsSrcObjs=[];NewsQuoObjs=[];
     
     if SRC_OBJ==True:
         print 'start to build NewsSrcObjs....'
         if os.path.exists(NEWS_SRC_OBJ):
+            print 'found ' + NEWS_SRC_OBJ
             print 'loading ' +NEWS_SRC_OBJ
             NewsSrcObjs=nt.loadObjectBinaryFast(NEWS_SRC_OBJ)
         else:
@@ -273,13 +285,16 @@ def na_build_main(SRC_OBJ=True,QUO_OBJ=True, argv_print=False):
     if QUO_OBJ==True:
         print 'start to build NewsQuoObjs....'
         if os.path.exists(NEWS_QUO_OBJ):
+            print 'found ' + NEWS_QUO_OBJ
             print 'loading ' +NEWS_QUO_OBJ
             NewsQuoObjs=nt.loadObjectBinaryFast(NEWS_QUO_OBJ)
         else:
+            print 'cannot find ' + NEWS_QUO_OBJ
+            print 'buid it... '
             status_out=build_NewsQuoObjs()
             print status_out
             if status_out!=True:
-                print status_outNEWS_SRC_OBJ
+                print status_out 
             print 'job done, and stored news quotation objects...'
             NewsQuoObjs=nt.loadObjectBinaryFast(NEWS_QUO_OBJ)
     
