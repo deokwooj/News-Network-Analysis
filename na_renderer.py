@@ -10,6 +10,7 @@ import matplotlib.pyplot
 from openpyxl import load_workbook
 from openpyxl.workbook import Workbook 
 from openpyxl.drawing import Image
+from openpyxl.styles import Font, Style, Fill, Color, colors, fills, PatternFill
 
 
 __author__ = "Jung-uk Choi"
@@ -23,7 +24,9 @@ __status__ = "Prototype"
 
 
 TMP_DIR = os.path.join('/tmp', 'NLP')
-os.system('mkdir ' + TMP_DIR)
+if not os.path.exists(TMP_DIR):
+	os.system('mkdir ' + TMP_DIR)
+
 
 def temporaryImagePath():
 	return os.path.join(TMP_DIR, str(uuid.uuid4()) + '.png')
@@ -216,7 +219,8 @@ class ExcelRenderer(object):
 		wb.remove_sheet(wb.worksheets[0])
 		self.renderInfoSheet(wb)
 		for i in range(maxN):
-			self.renderConnectivitySheet(wb, i+1)
+			self.renderConnectivityMatrixSheet(wb, i+1)
+			self.renderConnectivityChartSheet(wb, i+1)
 
 		wb.save(outputPath)
 
@@ -225,13 +229,40 @@ class ExcelRenderer(object):
 		ws.title = 'Info'
 		return ws
 
-	def renderConnectivitySheet(self, wb, N):
+	def renderConnectivityMatrixSheet(self, wb, N):
+		def cellIndex(r, c):
+			return chr(ord('A') + c) + str(r + 1)
+
 		ws = wb.create_sheet()
-		ws.title = 'N = %d' % N
+		ws.title = 'C.Matrix(N=%d)' % N
+
+		labelIDs = self.__context.labels
+		cell = ws[cellIndex(0, 0)]
+		cell.style = Style(fill=PatternFill(patternType=fills.FILL_SOLID, fgColor=colors.BLUE), font=Font(bold=True, color=colors.WHITE))
+		for i in range(len(labelIDs)):
+			cell = ws[cellIndex(0, i+1)]
+			cell.value = self.__context.labelExamplar(labelIDs[i])
+			cell.style = Style(fill=PatternFill(patternType=fills.FILL_SOLID, fgColor=colors.BLUE), font=Font(bold=True, color=colors.WHITE))
+
+			cell = ws[cellIndex(i+1, 0)]
+			cell.value = self.__context.labelExamplar(labelIDs[i])
+			cell.style = Style(fill=PatternFill(patternType=fills.FILL_SOLID, fgColor=colors.BLUE), font=Font(bold=True, color=colors.WHITE))
+
+		m = self.__context.connectivityMatrixForStepN(N)
+		for r in range(m.shape[0]):
+			for c in range(m.shape[1]):
+				ws[cellIndex(r + 1, c + 1)].value = m[r, c]
+
+		return ws
+
+	def renderConnectivityChartSheet(self, wb, N):
+		ws = wb.create_sheet()
+		ws.title = 'C.Chart(N=%d)' % N
 
 		path = temporaryImagePath()
 		self.__connectedDotsRenderer.render(N, path)
 		
+		# image
 		img = Image(path)
 		img.anchor(ws['A1'])
 		ws.add_image(img)
@@ -281,12 +312,5 @@ if __name__ == '__main__':
 
 	obj.setConnectivityMatrix(G_q)
 
-
-	# r = ConnectedDots(obj)
-	# r.render(1, '/Users/emerson/Downloads/1.png')
-	# r.render(2, '/Users/emerson/Downloads/2.png')
-	# r.render(3, '/Users/emerson/Downloads/3.png')
-	# r.render(4, '/Users/emerson/Downloads/4.png')
-
 	r2 = ExcelRenderer(obj)
-	r2.render('/Users/emerson/Downloads/out.xlsx', 4)
+	r2.render(os.path.join(os.getcwd(), 'output/output.xlsx'), 4)
