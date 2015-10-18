@@ -43,17 +43,28 @@ class Context(object):
 	def quotations(self):
 		return sorted(self.__quotations.keys())
 
+	def quotationText(self, quotationID):
+		assert isinstance(quotationID, (int, long))
+		return self.__quotations[quotationID]['text']
+
+	def quotationLabel(self, quotationID):
+		assert isinstance(quotationID, (int, long))
+		return self.__quotations[quotationID]['label']
+
 	@property 
 	def labels(self):
 		return sorted(self.__labels.keys())
 
 	def isExamplar(self, quotationID):
+		assert isinstance(quotationID, (int, long))
 		return self.__quotations[quotationID]['is_examplar']
 
 	def labelExamplar(self, labelID):
+		assert isinstance(labelID, (int, long))
 		return self.__labels[labelID]['examplar']
 
 	def labelQuotations(self, labelID):
+		assert isinstance(labelID, (int, long))
 		return self.__labels[labelID]['quotations']
 
 	def setQuotationText(self, quotationID, text):
@@ -210,6 +221,8 @@ class ExcelRenderer(object):
 		super(ExcelRenderer, self).__init__()
 		self.__context = context
 		self.__connectedDotsRenderer = ConnectedDots(context)
+		self.__columnStyle = Style(fill=PatternFill(patternType=fills.FILL_SOLID, fgColor=colors.BLACK), font=Font(bold=True, color=colors.WHITE))
+
 
 	def render(self, outputPath, maxN):
 		assert isinstance(outputPath, (str, unicode))
@@ -217,16 +230,42 @@ class ExcelRenderer(object):
 		
 		wb=Workbook()
 		wb.remove_sheet(wb.worksheets[0])
-		self.renderInfoSheet(wb)
+		self.renderQuotationSheet(wb)
 		for i in range(maxN):
 			self.renderConnectivityMatrixSheet(wb, i+1)
 			self.renderConnectivityChartSheet(wb, i+1)
 
 		wb.save(outputPath)
 
-	def renderInfoSheet(self, wb):
+	def renderQuotationSheet(self, wb):
 		ws = wb.create_sheet()
-		ws.title = 'Info'
+		ws.title = 'Quotations'
+
+		ws.cell(row=1, column=1).value = 'ID'
+		ws.cell(row=1, column=2).value = 'Text'
+		ws.cell(row=1, column=3).value = 'Label'
+		ws.cell(row=1, column=4).value = 'Exemplar'
+
+		ws.cell(row=1, column=1).style = self.__columnStyle
+		ws.cell(row=1, column=2).style = self.__columnStyle
+		ws.cell(row=1, column=3).style = self.__columnStyle
+		ws.cell(row=1, column=4).style = self.__columnStyle
+
+		quotations = self.__context.quotations
+		for (idx, qid) in enumerate(quotations):
+			text = self.__context.quotationText(qid)
+			label = self.__context.quotationLabel(qid)
+			is_examplar = self.__context.isExamplar(qid)
+
+			ws.cell(row=idx+2, column=1).value = qid
+			ws.cell(row=idx+2, column=2).value = text
+			ws.cell(row=idx+2, column=3).value = label
+
+			if is_examplar:
+				ws.cell(row=idx+2, column=4).value = "YES"
+			else:
+				ws.cell(row=idx+2, column=4).value = "NO"
+
 		return ws
 
 	def renderConnectivityMatrixSheet(self, wb, N):
@@ -238,15 +277,15 @@ class ExcelRenderer(object):
 
 		labelIDs = self.__context.labels
 		cell = ws[cellIndex(0, 0)]
-		cell.style = Style(fill=PatternFill(patternType=fills.FILL_SOLID, fgColor=colors.BLUE), font=Font(bold=True, color=colors.WHITE))
+		cell.style = self.__columnStyle
 		for i in range(len(labelIDs)):
 			cell = ws[cellIndex(0, i+1)]
 			cell.value = self.__context.labelExamplar(labelIDs[i])
-			cell.style = Style(fill=PatternFill(patternType=fills.FILL_SOLID, fgColor=colors.BLUE), font=Font(bold=True, color=colors.WHITE))
+			cell.style = self.__columnStyle
 
 			cell = ws[cellIndex(i+1, 0)]
 			cell.value = self.__context.labelExamplar(labelIDs[i])
-			cell.style = Style(fill=PatternFill(patternType=fills.FILL_SOLID, fgColor=colors.BLUE), font=Font(bold=True, color=colors.WHITE))
+			cell.style = self.__columnStyle
 
 		m = self.__context.connectivityMatrixForStepN(N)
 		for r in range(m.shape[0]):
