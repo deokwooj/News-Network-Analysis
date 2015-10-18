@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 # na_renderer.py  
 
+import os
+import uuid
 import numpy as np 
 import networkx as nx 
 import matplotlib
 import matplotlib.pyplot
-
 from openpyxl import load_workbook
 from openpyxl.workbook import Workbook 
+from openpyxl.drawing import Image
 
 
 __author__ = "Jung-uk Choi"
@@ -18,6 +20,13 @@ __version__ = "0.1"
 __maintainer__ = "Jung-uk Choi"
 __email__ = "choijunguk@gmail.com"
 __status__ = "Prototype"
+
+
+TMP_DIR = os.path.join('/tmp', 'NLP')
+os.system('mkdir ' + TMP_DIR)
+
+def temporaryImagePath():
+	return os.path.join(TMP_DIR, str(uuid.uuid4()) + '.png')
 
 
 class Context(object):
@@ -43,10 +52,6 @@ class Context(object):
 
 	def labelQuotations(self, labelID):
 		return self.__labels[labelID]['quotations']
-
-
-
-
 
 	def setQuotationText(self, quotationID, text):
 		assert isinstance(quotationID, (int, long))
@@ -115,9 +120,12 @@ class ConnectedDots(object):
 		super(ConnectedDots, self).__init__()
 		self.__context = context
 
-	def renderForStepN(self, N):
+	def render(self, N, outputPath=None):
 		assert isinstance(N, int)
 		assert N > 0
+		assert outputPath is None or isinstance(outputPath, (str, unicode))
+
+		matplotlib.pyplot.clf()
 
 		G = nx.Graph()
 		labels = {}
@@ -185,7 +193,50 @@ class ConnectedDots(object):
 		nx.draw_networkx_edges(G, pos, edgelist=esmall, width=0.5, edge_color='gray', style='dashed')
 
 		nx.draw_networkx_labels(G, pos, labels)
-		matplotlib.pyplot.show()
+
+		if outputPath:
+			matplotlib.pyplot.savefig(outputPath)
+		
+		else:
+			matplotlib.pyplot.show()
+
+
+class ExcelRenderer(object):
+	def __init__(self, context):
+		assert isinstance(context, Context)
+		super(ExcelRenderer, self).__init__()
+		self.__context = context
+		self.__connectedDotsRenderer = ConnectedDots(context)
+
+	def render(self, outputPath, maxN):
+		assert isinstance(outputPath, (str, unicode))
+		assert isinstance(maxN, int)
+		
+		wb=Workbook()
+		wb.remove_sheet(wb.worksheets[0])
+		self.renderInfoSheet(wb)
+		for i in range(maxN):
+			self.renderConnectivitySheet(wb, i+1)
+
+		wb.save(outputPath)
+
+	def renderInfoSheet(self, wb):
+		ws = wb.create_sheet()
+		ws.title = 'Info'
+		return ws
+
+	def renderConnectivitySheet(self, wb, N):
+		ws = wb.create_sheet()
+		ws.title = 'N = %d' % N
+
+		path = temporaryImagePath()
+		self.__connectedDotsRenderer.render(N, path)
+		
+		img = Image(path)
+		img.anchor(ws['A1'])
+		ws.add_image(img)
+		return ws
+
 
 
 if __name__ == '__main__':
@@ -231,8 +282,11 @@ if __name__ == '__main__':
 	obj.setConnectivityMatrix(G_q)
 
 
-	r = ConnectedDots(obj)
-	r.renderForStepN(1)
-	r.renderForStepN(2)
-	r.renderForStepN(3)
-	r.renderForStepN(4)
+	# r = ConnectedDots(obj)
+	# r.render(1, '/Users/emerson/Downloads/1.png')
+	# r.render(2, '/Users/emerson/Downloads/2.png')
+	# r.render(3, '/Users/emerson/Downloads/3.png')
+	# r.render(4, '/Users/emerson/Downloads/4.png')
+
+	r2 = ExcelRenderer(obj)
+	r2.render('/Users/emerson/Downloads/out.xlsx', 4)
