@@ -184,6 +184,33 @@ def show_graph(adjacency_matrix):
     # now if you decide you don't want labels because your graph
     # is too busy just do: nx.draw_networkx(G,with_labels=False)
     plt.show() 
+    
+    
+def verify_AnalMatObj(AnalMatObj):
+    # For debugging...
+    tmp_a=AnalMatObj.Dq.diagonal()
+    z_idx=np.where(tmp_a<10e-3)[1]
+    z_qid=[NewsQuoObjs[idx_][1].quotation_key  for idx_ in z_idx ]
+    #NewsQuoObjs[z_idx]
+    for i,idx_ in enumerate(z_qid):
+        print i, list(dict_news_info[idx_])[0][2]
+    dict_news_info=nt.loadObjectBinaryFast(DICT_NEWS_INFO)
+    for key_,val_ in dict_news_info.iteritems():
+        if list(val_)[0][2]==None:
+            print key_
+            print list(val_)[0][0], ',', list(val_)[0][1]
+        if val_==None:
+            print key_
+        if list(val_)[0][2]==None:
+            print key_
+    for idx_ in z_idx:
+        print '---------------------------'
+        print NewsQuoObjs[idx_][1].quotation_key
+        print NewsQuoObjs[idx_][1].quotation
+        print NewsQuoObjs[idx_][1].nounvec
+        print '---------------------------'
+    
+    
 
 if __name__ == "__main__":
     print " running news source analysis.....version 2.56"
@@ -198,40 +225,6 @@ if __name__ == "__main__":
         print 'Construct '  +ANAL_MAT_OBJ
         AnalMatObj=Constrct_matrix_for_network(NewsQuoObjs)
         
-    """  
-    # For debugging...
-    import pdb;pdb.set_trace()
-    tmp_a=AnalMatObj.Dq.diagonal()
-    z_idx=np.where(tmp_a<10e-3)[1]
-    z_qid=[NewsQuoObjs[idx_][1].quotation_key  for idx_ in z_idx ]
-    #NewsQuoObjs[z_idx]
-    
-    for i,idx_ in enumerate(z_qid):
-        print i, list(dict_news_info[idx_])[0][2]
-        
-    dict_news_info=nt.loadObjectBinaryFast(DICT_NEWS_INFO)
-    for key_,val_ in dict_news_info.iteritems():
-        if list(val_)[0][2]==None:
-            print key_
-            print list(val_)[0][0], ',', list(val_)[0][1]
-      
-        
-        if val_==None:
-            print key_
-        
-        
-        
-        if list(val_)[0][2]==None:
-            print key_
-      
-    for idx_ in z_idx:
-        print '---------------------------'
-        print NewsQuoObjs[idx_][1].quotation_key
-        print NewsQuoObjs[idx_][1].quotation
-        print NewsQuoObjs[idx_][1].nounvec
-        print '---------------------------'
-    
-    """
     
     """ MaxPackCluster algorithm is the algorith developed and copyrighted by 
     Deokwoo Jung in 2014 for DDEA (Data Driven Energy Analysis) Developemtnt
@@ -249,36 +242,50 @@ if __name__ == "__main__":
     """    
     SIMM_MAT=np.asarray(AnalMatObj.Dq)
     DIST_MAT=1-np.asarray(AnalMatObj.Dq)
-    """
-    mat_triu_=np.triu(DIST_MAT,1)
-    mat_nzeros=mat_triu_.ravel()[np.flatnonzero(mat_triu_)]
-    kmean=KMeans(n_clusters=2).fit(mat_nzeros[:,np.newaxis])
-    """
+    
+    CLUSTER_ALG='aff'
     IN_CLUSTER_SIM_CUTOFF=0.95
     OUT_CLUSTER_SIM_CUTOFF=0.80
     print '----------------------------------------------'
-    print 'Clustering quotaitons by Dq'
+    print 'Clustering quotaitons by Dq using ' +CLUSTER_ALG
     print 'SAME_CLUSTER_SIM_VAL: ',  IN_CLUSTER_SIM_CUTOFF
     print 'DIFF_CLUSTER_SIM_VAL: ', OUT_CLUSTER_SIM_CUTOFF
     print '----------------------------------------------'
     print 'Start clusteirng.... '
+    
     start_time = time.time()
-    
-    exemplars_,labels_=\
-    max_pack_cluster(DIST_MAT,\
-    min_dist=1-IN_CLUSTER_SIM_CUTOFF,\
-    max_dist=1-OUT_CLUSTER_SIM_CUTOFF)
-    
-    exemplars_, labels_ = cluster.affinity_propagation(SIMM_MAT,damping=0.5)
-    quo_cluster=\
-    nt.obj({'exemplars_':exemplars_,'labels_':labels_,    
-    'in_cluster_cutoff':IN_CLUSTER_SIM_CUTOFF,\
-    'out_cluster_cutoff':OUT_CLUSTER_SIM_CUTOFF})
-    
+    if CLUSTER_ALG=='pack':
+        exemplars_,labels_=\
+        max_pack_cluster(DIST_MAT,\
+        min_dist=1-IN_CLUSTER_SIM_CUTOFF,\
+        max_dist=1-OUT_CLUSTER_SIM_CUTOFF)
+    elif CLUSTER_ALG=='aff':
+        exemplars_, labels_ = cluster.affinity_propagation(SIMM_MAT,damping=0.5)
+        quo_cluster=\
+        nt.obj({'exemplars_':exemplars_,'labels_':labels_,\
+        'cluster_alg':CLUSTER_ALG,\
+        'in_cluster_cutoff':IN_CLUSTER_SIM_CUTOFF,\
+        'out_cluster_cutoff':OUT_CLUSTER_SIM_CUTOFF})
+    else:
+        raise Exception('Please input your choice of algorithm for Dq..')
+        
     nt.saveObjectBinaryFast(quo_cluster, QUO_CLUSTER_OBJ)
     print("Clustering done --- %s seconds ---" % (time.time() - start_time))
     #print labels_
+    """
+    q_id={0:23, 1:10, 2:39, 3:44, 4:14, 5:33, 6:21, 7:66, 8:88, 9:11}
+    q_label={0:0, 1:4, 2:1, 3:2, 4:3, 5:4, 6:1, 7:2, 8:2, 9:1}
+    q_exemplar={0:23, 1:39, 2:44, 3:14, 4:33}
     
+    G_q = np.matrix([\
+        [1, 0, 1, 0, 0],\
+        [0, 1, 1, 0, 1],\
+        [1, 1, 1, 1, 0],\
+        [0, 0, 1, 1, 0],\
+        [0, 1, 0, 0, 1]])
+    """
+    
+    """
     quo_cluster=nt.loadObjectBinaryFast(QUO_CLUSTER_OBJ)
     for label_ in set(quo_cluster.labels_):
         quo_cluster.labels_[quo_cluster.labels_==label_]
@@ -297,7 +304,7 @@ if __name__ == "__main__":
         if len(cluster_idx)==0:
             break 
         #cluster_set.append(list(cluster_idx))
-
+    """
     #import pdb;pdb.set_trace()
     
     # TODO  1. compute clusters of quotations using 
