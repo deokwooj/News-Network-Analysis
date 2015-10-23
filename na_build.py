@@ -117,12 +117,16 @@ class NewsQuotation:
         self.news_src=NewsSource() # create NewsSource object
         self.quotation =None  # position, need utcto be initionalized by kkd_functions. 
         self.nounvec =None # position, need utcto be initionalized by kkd_functions. 
+    
     def whoami(self):
         for key in self.__dict__.items():
             if key[0]=='news_src':
                 print key[0],'name : ', key[1].name
             else:
                 print key[0],': ', key[1]
+
+    def __unicode__(self):
+        return self.quotation
 
 
 # Building News Source Objects from WHOLETABLE_EXCEL and stores them into bin files.

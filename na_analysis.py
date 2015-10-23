@@ -27,6 +27,7 @@ from sklearn import cluster, covariance, manifold
 import networkx as nx
 from pack_cluster import max_pack_cluster
 from sklearn.cluster import KMeans
+import na_renderer
 
 __author__ = "Deokwoo Jung"
 __copyright__ = "Copyright 2015, Deokwoo Jung, All rights reserved."
@@ -251,7 +252,7 @@ if __name__ == "__main__":
     print 'SAME_CLUSTER_SIM_VAL: ',  IN_CLUSTER_SIM_CUTOFF
     print 'DIFF_CLUSTER_SIM_VAL: ', OUT_CLUSTER_SIM_CUTOFF
     print '----------------------------------------------'
-    print 'Start clusteirng.... '
+    print 'Start clustering.... '
     
     start_time = time.time()
     if CLUSTER_ALG=='pack':
@@ -271,6 +272,9 @@ if __name__ == "__main__":
         
     nt.saveObjectBinaryFast(quo_cluster, QUO_CLUSTER_OBJ)
     print("Clustering done --- %s seconds ---" % (time.time() - start_time))
+
+
+
     #print labels_
     """
     q_id={0:23, 1:10, 2:39, 3:44, 4:14, 5:33, 6:21, 7:66, 8:88, 9:11}
