@@ -245,7 +245,10 @@ def build_NewsQuoObjs(max_num_rows=inf):
                 warnings.warn("fld name not found")
         # For debugging
         #if quo_temp.quotation_key==11:
-        NewsQuoObjs.append((k,quo_temp))
+        if len(quo_temp.nounvec)>0:
+            NewsQuoObjs.append((k,quo_temp))
+        else:
+            print 'empty nounvec found, skip it'
     try: 
         nt.saveObjectBinaryFast(NewsQuoObjs, NEWS_QUO_OBJ)   
     except: 
@@ -268,7 +271,7 @@ def na_build_main(SRC_OBJ=True,QUO_OBJ=True, argv_print=False):
         else:
             print 'cannot find ' + NEWS_SRC_OBJ
             print 'buid it... '
-            status_out=build_NewsSrcObjs()
+            status_out=build_NewsSrcObjs(MAX_NUM_SRC_ROWS)
             if status_out!=True:
                 print status_out
             print 'job done, and stored news source objects...'
@@ -295,7 +298,7 @@ def na_build_main(SRC_OBJ=True,QUO_OBJ=True, argv_print=False):
         else:
             print 'cannot find ' + NEWS_QUO_OBJ
             print 'buid it... '
-            status_out=build_NewsQuoObjs()
+            status_out=build_NewsQuoObjs(MAX_NUM_QUO_ROWS)
             print status_out
             if status_out!=True:
                 print status_out 

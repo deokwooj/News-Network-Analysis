@@ -25,7 +25,6 @@ from sklearn.neighbors.kde import KernelDensity
 from scipy.stats import stats 
 from sklearn import cluster, covariance, manifold
 import networkx as nx
-from pack_cluster import max_pack_cluster
 from sklearn.cluster import KMeans
 import na_renderer
 
@@ -241,41 +240,62 @@ if __name__ == "__main__":
     SIMM_MAT=SIMM_MAT_temp+SIMM_MAT_temp.T
     DIST_MAT=1-SIMM_MAT
     """    
-    SIMM_MAT=np.asarray(AnalMatObj.Dq)
-    DIST_MAT=1-np.asarray(AnalMatObj.Dq)
+    """
+    #import pdb; pdb.set_trace()
+    num_empty_nouns=0
+    for obj_ in NewsQuoObjs:
+        print '-----------------------------'
+        if len(obj_[1].nounvec)==0:
+            print 'error'
+            num_empty_nouns=num_empty_nouns+1
+        else:
+            print obj_[1].nounvec
+    k=3;
+    sort_idx=np.argsort(SIMM_MAT[k,:])[::-1][:5]
+    key_quo=NewsQuoObjs[k][1].nounvec
+    print key_quo
+    print '-----------------------'
+    for i,idx in enumerate(sort_idx):
+        cmp_quo=NewsQuoObjs[idx][1].nounvec
+        print i, ': ',cmp_quo, ':', SIMM_MAT[k,idx]
+        
+    """    
     
-    CLUSTER_ALG='aff'
-    IN_CLUSTER_SIM_CUTOFF=0.95
-    OUT_CLUSTER_SIM_CUTOFF=0.80
     print '----------------------------------------------'
     print 'Clustering quotaitons by Dq using ' +CLUSTER_ALG
-    print 'SAME_CLUSTER_SIM_VAL: ',  IN_CLUSTER_SIM_CUTOFF
-    print 'DIFF_CLUSTER_SIM_VAL: ', OUT_CLUSTER_SIM_CUTOFF
     print '----------------------------------------------'
     print 'Start clustering.... '
-    
+    # construct similarity matrix
+    Dq=np.asarray(AnalMatObj.Dq)
+    sim_thresh=0.8
+    SIMM_MAT=(np.sign(Dq-sim_thresh)+1)/2
     start_time = time.time()
-    if CLUSTER_ALG=='pack':
-        exemplars_,labels_=\
-        max_pack_cluster(DIST_MAT,\
-        min_dist=1-IN_CLUSTER_SIM_CUTOFF,\
-        max_dist=1-OUT_CLUSTER_SIM_CUTOFF)
-    elif CLUSTER_ALG=='aff':
-        exemplars_, labels_ = cluster.affinity_propagation(SIMM_MAT,damping=0.5)
-        quo_cluster=\
-        nt.obj({'exemplars_':exemplars_,'labels_':labels_,\
-        'cluster_alg':CLUSTER_ALG,\
-        'in_cluster_cutoff':IN_CLUSTER_SIM_CUTOFF,\
-        'out_cluster_cutoff':OUT_CLUSTER_SIM_CUTOFF})
-    else:
-        raise Exception('Please input your choice of algorithm for Dq..')
-        
-    nt.saveObjectBinaryFast(quo_cluster, QUO_CLUSTER_OBJ)
+    exemplars_, labels_ = cluster.affinity_propagation(SIMM_MAT,damping=0.5)
     print("Clustering done --- %s seconds ---" % (time.time() - start_time))
 
+    quo_cluster=\
+    nt.obj({'exemplars_':exemplars_,'labels_':labels_})
+    nt.saveObjectBinaryFast(quo_cluster, QUO_CLUSTER_OBJ)
+    
+    """    
+    quo_cluster=\
+    nt.obj({'exemplars_':exemplars_,'labels_':labels_,\
+    'cluster_alg':CLUSTER_ALG,\
+    'in_cluster_cutoff':IN_CLUSTER_SIM_CUTOFF,\
+    'out_cluster_cutoff':OUT_CLUSTER_SIM_CUTOFF})
+    """    
+    
+    """    
+    for i in range(SIMM_MAT.shape[0]):
+        for j in range(SIMM_MAT.shape[0]):
+            if i<j:
+                print i,j,SIMM_MAT[i,j]+1, labels_[i],labels_[j]
+    """    
+    ############################    
+    # Construct G_q
+    ############################    
+    # fill by junguk. 
 
-
-    #print labels_
     """
     q_id={0:23, 1:10, 2:39, 3:44, 4:14, 5:33, 6:21, 7:66, 8:88, 9:11}
     q_label={0:0, 1:4, 2:1, 3:2, 4:3, 5:4, 6:1, 7:2, 8:2, 9:1}
