@@ -284,13 +284,18 @@ if __name__ == "__main__":
     'in_cluster_cutoff':IN_CLUSTER_SIM_CUTOFF,\
     'out_cluster_cutoff':OUT_CLUSTER_SIM_CUTOFF})
     """    
+    ############################    
+    # computer Intra, Inter..
+    ############################    
+    # fill by junguk. 
     
-    """    
+    Dq_inter=[] # outside cluster
+    Dq_intra=[] # inside cluster
     for i in range(SIMM_MAT.shape[0]):
         for j in range(SIMM_MAT.shape[0]):
             if i<j:
                 print i,j,SIMM_MAT[i,j]+1, labels_[i],labels_[j]
-    """    
+
     ############################    
     # Construct G_q
     ############################    
