@@ -72,12 +72,6 @@ DICT_SPLIT_ARR_NOUNS = "./binfiles/dict_split_arr_nouns.p"
 # news info tuple in extraction sheet of reference.xlsx
 DICT_NEWS_INFO = "./binfiles/dict_news_info.p"
 
-# max number of quotations for analysis. 
-# MAX_NUM_SRC_ROWS=10 
-
-# max number of quotations for analysis.
-
-MAX_NUM_QUO_ROWS=200
 
  
 ####
@@ -95,4 +89,43 @@ EXTRACTION_SHEET = "extraction"
 
 WHOLETABLE_EXCEL = './exlfiles/wholetable.xlsx'
 WHOLETABLE_SHEET = 'wholetable'
+
+
+## 알고리즘 파라미터
+__MAX_NUM_QUO_ROWS = 200
+__SIMILARITY_THRESHOLD = 0.8
+__MAX_CONNECTIVITY = 2
+
+
+def setMaxNumberOfQuotationRows(value):
+	global __MAX_NUM_QUO_ROWS
+	assert isinstance(value, (int, long))
+	__MAX_NUM_QUO_ROWS = value
+
+
+def maxNumberOfQuotationRows():
+	return __MAX_NUM_QUO_ROWS
+
+
+def setSimilarityThreshold(value):
+	global __SIMILARITY_THRESHOLD
+	assert isinstance(value, (int, long, float))
+	assert 0 <= value <= 1
+	__SIMILARITY_THRESHOLD = value;
+
+
+def similarityThreshold():
+	return __SIMILARITY_THRESHOLD
+
+
+def setMaxConnectivity(value):
+	global __MAX_CONNECTIVITY
+	assert isinstance(value, (int, long))
+	assert 0 < value 
+	__MAX_CONNECTIVITY = value
+
+
+def maxConnectivity():
+	return __MAX_CONNECTIVITY
+
 

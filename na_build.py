@@ -55,6 +55,7 @@ type
 # modules to be imported
 # Loding common modules
 from na_config import *
+import na_config as conf
 # Loading na_build specific modules
 from openpyxl.workbook import Workbook
 from openpyxl.writer.excel import ExcelWriter
@@ -298,7 +299,7 @@ def na_build_main(SRC_OBJ=True,QUO_OBJ=True, argv_print=False):
         else:
             print 'cannot find ' + NEWS_QUO_OBJ
             print 'buid it... '
-            status_out=build_NewsQuoObjs(MAX_NUM_QUO_ROWS)
+            status_out=build_NewsQuoObjs(conf.maxNumberOfQuotationRows())
             print status_out
             if status_out!=True:
                 print status_out 

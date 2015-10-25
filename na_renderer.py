@@ -9,6 +9,7 @@ import math
 import networkx as nx 
 import matplotlib
 import matplotlib.pyplot
+import na_config as conf
 from openpyxl import load_workbook
 from openpyxl.workbook import Workbook 
 from openpyxl.drawing import Image
@@ -302,23 +303,27 @@ class ExcelRenderer(object):
 		ws = wb.create_sheet()
 		ws.title = 'Quotations'
 
-		ws.cell(row=1, column=1).value = 'Quotation Key'
-		ws.cell(row=1, column=2).value = 'Text'
-		ws.cell(row=1, column=3).value = 'Label'
-		ws.cell(row=1, column=4).value = 'Exemplar'
-		ws.cell(row=1, column=5).value = 'N=1 (degree)'
-		ws.cell(row=1, column=6).value = 'N=1 (Neighbors)'
-		ws.cell(row=1, column=7).value = 'N=2 (degree)'
-		ws.cell(row=1, column=8).value = 'N=2 (neighbors)'
-		ws.cell(row=1, column=9).value = 'N=3 (degree)'
-		ws.cell(row=1, column=10).value = 'N=3 (neighbors)'
-		ws.cell(row=1, column=11).value = 'N=4 (degree)'
-		ws.cell(row=1, column=12).value = 'N=4 (neighbors)'
-		ws.cell(row=1, column=13).value = 'Date'
-		ws.cell(row=1, column=14).value = 'ArticleID'
+		N = conf.maxConnectivity()
 
-		for c in range(14):
-			ws.cell(row=1, column=1 + c).style = self.__columnStyle
+		ws.cell(row=1, column=1).value = 'N = %d, sim_thr = %f, MAX_NUM_QUO_ROWS = %d' % (conf.maxConnectivity(), conf.similarityThreshold(), conf.maxNumberOfQuotationRows())
+		for i in range(6 + N * 2):
+			ws.cell(row=1, column=1 + i).style = Style(fill=PatternFill(patternType=fills.FILL_SOLID, fgColor=colors.YELLOW), font=Font(bold=True, color=colors.RED))
+
+		ws.cell(row=2, column=1).value = 'Quotation Key'
+		ws.cell(row=2, column=2).value = 'Text'
+		ws.cell(row=2, column=3).value = 'Label'
+		ws.cell(row=2, column=4).value = 'Exemplar'
+
+		for i in range(1, N + 1):
+			ws.cell(row=2, column=3 + i * 2).value = 'N=%d (degree)' % i
+			ws.cell(row=2, column=4 + i * 2).value = 'N=%d (neighbors)' % i
+
+
+		ws.cell(row=2, column=5 + N * 2).value = 'Date'
+		ws.cell(row=2, column=6 + N * 2).value = 'ArticleID'
+
+		for c in range(6 + N * 2):
+			ws.cell(row=2, column=1 + c).style = self.__columnStyle
 
 		quotations = self.__context.quotations
 		for (idx, qid) in enumerate(quotations):
@@ -326,22 +331,22 @@ class ExcelRenderer(object):
 			label = self.__context.quotationLabel(qid)
 			is_examplar = self.__context.isExamplar(qid)
 
-			ws.cell(row=idx+2, column=1).value = qid
-			ws.cell(row=idx+2, column=2).value = text
-			ws.cell(row=idx+2, column=3).value = label
+			ws.cell(row=idx+3, column=1).value = qid
+			ws.cell(row=idx+3, column=2).value = text
+			ws.cell(row=idx+3, column=3).value = label
 
 			if is_examplar:
-				ws.cell(row=idx+2, column=4).value = "YES"
+				ws.cell(row=idx+3, column=4).value = "YES"
 			else:
-				ws.cell(row=idx+2, column=4).value = "NO"
+				ws.cell(row=idx+3, column=4).value = "NO"
 
-			for n in (1, 2, 3, 4):
+			for n in range(1, N + 1):
 				neighbors = self.__context.neighbors(qid, n)
-				ws.cell(row=idx+2, column=5 + (n - 1) * 2 ).value = len(neighbors)
-				ws.cell(row=idx+2, column=6 + (n - 1) * 2 ).value = repr(tuple(neighbors))
+				ws.cell(row=idx+3, column=3 + n * 2).value = len(neighbors)
+				ws.cell(row=idx+3, column=4 + n * 2).value = repr(tuple(neighbors))
 
-			ws.cell(row=idx+2, column=13).value = self.__context.quotationDate(qid)
-			ws.cell(row=idx+2, column=14).value = self.__context.quotationArticleID(qid)
+			ws.cell(row=idx+3, column=5 + N * 2).value = self.__context.quotationDate(qid)
+			ws.cell(row=idx+3, column=6 + N * 2).value = self.__context.quotationArticleID(qid)
 
 		return ws
 
