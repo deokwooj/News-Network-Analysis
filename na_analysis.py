@@ -162,7 +162,7 @@ def Build_Distq(NewsQuoObjs_):
     return np.mat(Distq)
 
 def sim_cluser(Dq,sim_thresh=0.8):
-    labels_=np.inf*ones(Dq.shape[0])
+    labels_=np.inf*np.ones(Dq.shape[0],dtype=int)
     labels_id=0
     exemplars_=[]
     used_idx_set=set([])
@@ -177,13 +177,14 @@ def sim_cluser(Dq,sim_thresh=0.8):
             for idx_ in singular_idx_set:
                 labels_[idx_]=labels_id
                 exemplars_.append(idx_)
-                labels_id=labels_id+1
+                labels_id=np.int(labels_id+1)
             break
         else:
             labels_[update_idx]=labels_id
             exemplars_.append(k)
             used_idx_set=set(list(np.where(labels_<inf)[0]))
             labels_id=labels_id+1
+    
     return  exemplars_,labels_
 
 
