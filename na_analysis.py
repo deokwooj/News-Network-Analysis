@@ -214,7 +214,8 @@ def verify_AnalMatObj(AnalMatObj):
 if __name__ == "__main__":
     print " running news source analysis.....version 2.56"
     NewsSrcObjs, NewsQuoObjs=na_build_main(SRC_OBJ=False,QUO_OBJ=True, argv_print=False)
-    #import pdb;pdb.set_trace();
+    #import pdb;pdb.set_trace(); ##
+
     if os.path.exists(ANAL_MAT_OBJ):
         print 'Loading ' +ANAL_MAT_OBJ
         AnalMatObj=nt.loadObjectBinaryFast(ANAL_MAT_OBJ)
@@ -312,22 +313,30 @@ if __name__ == "__main__":
     ############################    
     # Render to Excel file
     ############################    
-    obj = na_renderer.Context()
-    for (qid, label) in enumerate(labels_):
-        text = 'text ' + str(qid)
-        print 'qid = %d, text = %s' % (qid, text)
-        print 'qid = %d, label = %d' % (qid, label)
-        obj.setQuotationText(qid, text)
-        obj.setQuotationLabel(qid, label)
+    #import pdb;pdb.set_trace(); ##
 
-    for (label, qid) in enumerate(exemplars_):
+    obj = na_renderer.Context()
+
+    numQuotations = len(NewsQuoObjs)
+
+    for idx in range(numQuotations):
+        qobj = NewsQuoObjs[idx][1]
+        label = labels_[idx]
+        qid = int(qobj.quotation_key)
+        print '[%d] %s' % (qid, qobj.quotation)
+        obj.setQuotationText(qid, qobj.quotation)
+        obj.setQuotationLabel(qid, label)
+        obj.setQuotationDate(qid, qobj.date)
+
+    for (idx, idx2) in enumerate(exemplars_):
+        label = idx
+        qobj = NewsQuoObjs[idx2][1]
+        qid = int(qobj.quotation_key)
         obj.setLabelExamplar(label, qid)
 
     obj.setConnectivityMatrix(G_q)
     r2 = na_renderer.ExcelRenderer(obj)
     r2.render(os.path.join(os.getcwd(), 'output/output.xlsx'), 4)
-
-
 
 
     """
