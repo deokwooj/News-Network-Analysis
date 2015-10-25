@@ -161,6 +161,32 @@ def Build_Distq(NewsQuoObjs_):
     print '+++++++++++++++++++++++++++++++++++++++++++'
     return np.mat(Distq)
 
+def sim_cluser(Dq,sim_thresh=0.8):
+    labels_=np.inf*ones(Dq.shape[0])
+    labels_id=0
+    exemplars_=[]
+    used_idx_set=set([])
+    for k,rows in enumerate(Dq):
+        idx=np.where(rows>sim_thresh)[0]
+        #print update_idx, list(used_idx_set)    
+        update_idx=np.array(list(set(idx)-used_idx_set))
+        #print labels_
+        #print k,labels_id
+        if len(update_idx)==0:
+            singular_idx_set=np.where(labels_==inf)[0]
+            for idx_ in singular_idx_set:
+                labels_[idx_]=labels_id
+                exemplars_.append(idx_)
+                labels_id=labels_id+1
+            break
+        else:
+            labels_[update_idx]=labels_id
+            exemplars_.append(k)
+            used_idx_set=set(list(np.where(labels_<inf)[0]))
+            labels_id=labels_id+1
+    return  exemplars_,labels_
+
+
 def compute_network(Q_z,Dq,sim_thresh=0.5):
     #W_v=0 # dont consider network by News Sources
     #W_z=0 # dont need to consider, computed by min function. 
@@ -260,47 +286,22 @@ if __name__ == "__main__":
         print i, ': ',cmp_quo, ':', SIMM_MAT[k,idx]
         
     """    
-    
     print '----------------------------------------------'
     print 'Clustering quotaitons by Dq'
     print '----------------------------------------------'
     print 'Start clustering.... '
     # construct similarity matrix
     Dq=np.asarray(AnalMatObj.Dq)
+
+    """
     sim_thresh=0.1
     SIMM_MAT=(np.sign(Dq-sim_thresh)+1)/2
-    
-    
-    sim_thresh=0.2
-    labels_=np.inf*ones(Dq.shape[0])
-    labels_id=0
-    exemplars_=[]
-    used_idx_set=set([])
-    for k,rows in enumerate(Dq):
-        idx=np.where(rows>sim_thresh)[0]
-        update_idx=np.array(list(set(idx)-used_idx_set))
-        print update_idx,list(used_idx_set)
-        #print labels_
-        #print k,labels_id
-        if len(update_idx)==0:
-            break
-        else:
-            labels_[update_idx]=labels_id
-            exemplars_.append(k)
-            used_idx_set=set(list(np.where(labels_<inf)[0]))
-            labels_id=labels_id+1
-            
-    
-
-    print labels_, exemplars_            
-    
-    for k,row_ in enumerate(SIMM_MAT):
-        print k,sum(row_>sim_thresh)
-    
     start_time = time.time()
     exemplars_, labels_ = cluster.affinity_propagation(SIMM_MAT,damping=0.5)
     print("Clustering done --- %s seconds ---" % (time.time() - start_time))
+    """
 
+    exemplars_,labels_ =sim_cluser(Dq,sim_thresh=0.8)
     quo_cluster=\
     nt.obj({'exemplars_':exemplars_,'labels_':labels_})
     nt.saveObjectBinaryFast(quo_cluster, QUO_CLUSTER_OBJ)
@@ -315,6 +316,7 @@ if __name__ == "__main__":
     ############################    
     # computer Intra, Inter..
     ############################    
+    """
     #TODO: fill by junguk. 
     Dq_inter=[] # outside cluster
     Dq_intra=[] # inside cluster
@@ -322,7 +324,7 @@ if __name__ == "__main__":
         for j in range(SIMM_MAT.shape[0]):
             if i<j:
                 print i,j,SIMM_MAT[i,j]+1, labels_[i],labels_[j]
-
+    """
     ############################    
     # Construct G_q
     ############################    
@@ -342,7 +344,6 @@ if __name__ == "__main__":
     # Render to Excel file
     ############################    
     #import pdb;pdb.set_trace(); ##
-
     obj = na_renderer.Context()
 
     numQuotations = len(NewsQuoObjs)
