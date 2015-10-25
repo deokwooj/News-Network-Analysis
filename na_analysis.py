@@ -327,6 +327,7 @@ if __name__ == "__main__":
         obj.setQuotationText(qid, qobj.quotation)
         obj.setQuotationLabel(qid, label)
         obj.setQuotationDate(qid, qobj.date)
+        obj.setQuotationArticleID(qid, qobj.article_id)
 
     for (idx, idx2) in enumerate(exemplars_):
         label = idx

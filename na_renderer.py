@@ -53,6 +53,10 @@ class Context(object):
 		assert isinstance(quotationID, (int, long))
 		return self.__quotations[quotationID]['date']
 
+	def quotationArticleID(self, quotationID):
+		assert isinstance(quotationID, (int, long))
+		return self.__quotations[quotationID]['articleID']
+
 	def quotationLabel(self, quotationID):
 		assert isinstance(quotationID, (int, long))
 		return self.__quotations[quotationID]['label']
@@ -84,6 +88,28 @@ class Context(object):
 
 		obj['text'] = text
 
+	def setQuotationDate(self, quotationID, date):
+		assert isinstance(quotationID, (int, long))
+		assert isinstance(date, (str, unicode, datetime.datetime))
+
+		try:
+			obj = self.__quotations[quotationID]
+		except KeyError:
+			obj = self.__quotations[quotationID] = {'text':None, 'label':None, 'is_examplar':False, 'date': None, 'articleID': None}
+
+		obj['date'] = date
+
+	def setQuotationArticleID(self, quotationID, articleID):
+		assert isinstance(quotationID, (int, long))
+		assert isinstance(articleID, (str, unicode))
+
+		try:
+			obj = self.__quotations[quotationID]
+		except KeyError:
+			obj = self.__quotations[quotationID] = {'text':None, 'label':None, 'is_examplar':False, 'date': None, 'articleID': None}
+
+		obj['articleID'] = articleID
+
 	def setQuotationLabel(self, quotationID, labelID):
 		assert isinstance(quotationID, (int, long))
 		assert isinstance(labelID, (int, long))
@@ -95,17 +121,6 @@ class Context(object):
 
 		self.__quotations[quotationID]['label'] = labelID
 		obj['quotations'].append(quotationID)
-
-	def setQuotationDate(self, quotationID, date):
-		assert isinstance(quotationID, (int, long))
-		assert isinstance(date, (str, unicode, datetime.datetime))
-
-		try:
-			obj = self.__quotations[quotationID]
-		except KeyError:
-			obj = self.__quotations[quotationID] = {'text':None, 'label':None, 'is_examplar':False, 'date': None}
-
-		obj['date'] = date
 
 	def setLabelExamplar(self, labelID, quotationID):
 		assert isinstance(labelID, (int, long))
@@ -130,7 +145,10 @@ class Context(object):
 		assert N > 0
 
 		if self.__connectivity is not None:
-			m = self.__connectivity ** N 
+			m = self.__connectivity[:]
+			for n in range(2, N+1):
+				m += self.__connectivity ** n 
+
 			for r in range(m.shape[0]):
 				for c in range(m.shape[1]):
 					if m[r, c]:
@@ -150,14 +168,12 @@ class Context(object):
 
 		degrees = 0
 
-		for n in range(1, N+1):
-			m = self.connectivityMatrixForStepN(n)
-			q1 = quotationID
-			l1 = self.labelIdForQuotationID(q1)
-			quotationIDs = sorted(self.quotations)
-			for j in range(len(quotationIDs)):
-				q2 = quotationIDs[j]
-				l2 = self.labelIdForQuotationID(q2)
+		quotationIDs = sorted(self.quotations)
+		l1 = self.labelIdForQuotationID(quotationID)
+		m = self.connectivityMatrixForStepN(N)
+		for j in range(len(quotationIDs)):
+			if self.isExamplar(quotationIDs[j]):
+				l2 = self.labelIdForQuotationID(quotationIDs[j])
 				if l1 != l2:
 					if m[l1, l2]:
 						degrees += 1
@@ -196,21 +212,20 @@ class ConnectedDots(object):
 				G.add_edge(self.__context.labelExamplar(l), q, weight=1.0)
 
 		# add connectivity
-		for n in range(1, N+1):
-			m = self.__context.connectivityMatrixForStepN(n)
-			for i in range(len(quotationIDs)):
-				q1 = quotationIDs[i]
-				l1 = self.__context.labelIdForQuotationID(q1)
+		m = self.__context.connectivityMatrixForStepN(N)
+		for i in range(len(quotationIDs)):
+			q1 = quotationIDs[i]
+			l1 = self.__context.labelIdForQuotationID(q1)
 
-				for j in range(len(quotationIDs)):
-					q2 = quotationIDs[j]
-					l2 = self.__context.labelIdForQuotationID(q2)
-					if l1 != l2:
-						if m[l1, l2]:
-							if self.__context.isExamplar(q1) and self.__context.isExamplar(q2):
-								G.add_edge(q1, q2, weight=0.1)
-								degrees[q1] += 1
-								degrees[q2] += 1
+			for j in range(len(quotationIDs)):
+				q2 = quotationIDs[j]
+				l2 = self.__context.labelIdForQuotationID(q2)
+				if l1 != l2:
+					if m[l1, l2]:
+						if self.__context.isExamplar(q1) and self.__context.isExamplar(q2):
+							G.add_edge(q1, q2, weight=0.1)
+							degrees[q1] += 1
+							degrees[q2] += 1
 
 		#
 		sizes = []
@@ -228,12 +243,14 @@ class ConnectedDots(object):
 			else:
 				colors.append('orange')
 
-		#
 		try:
 			pos=nx.graphviz_layout(G)
 
 		except:
 			pos=nx.spring_layout(G, iterations=20)
+
+		#pos = nx.circular_layout(G)
+		#pos=nx.spring_layout(G, iterations=100)
 
 		imageSize = math.sqrt(len(pos)) * 200 
 		matplotlib.pyplot.figure(figsize=(imageSize/100,imageSize/100)) # image size
@@ -291,6 +308,7 @@ class ExcelRenderer(object):
 		ws.cell(row=1, column=7).value = 'N=3'
 		ws.cell(row=1, column=8).value = 'N=4'
 		ws.cell(row=1, column=9).value = 'Date'
+		ws.cell(row=1, column=10).value = 'ArticleID'
 
 		ws.cell(row=1, column=1).style = self.__columnStyle
 		ws.cell(row=1, column=2).style = self.__columnStyle
@@ -301,6 +319,7 @@ class ExcelRenderer(object):
 		ws.cell(row=1, column=7).style = self.__columnStyle
 		ws.cell(row=1, column=8).style = self.__columnStyle
 		ws.cell(row=1, column=9).style = self.__columnStyle
+		ws.cell(row=1, column=10).style = self.__columnStyle
 
 		quotations = self.__context.quotations
 		for (idx, qid) in enumerate(quotations):
@@ -321,6 +340,7 @@ class ExcelRenderer(object):
 				ws.cell(row=idx+2, column=5 + n - 1).value = self.__context.degrees(qid, n)
 
 			ws.cell(row=idx+2, column=9).value = self.__context.quotationDate(qid)
+			ws.cell(row=idx+2, column=10).value = self.__context.quotationArticleID(qid)
 
 		return ws
 
