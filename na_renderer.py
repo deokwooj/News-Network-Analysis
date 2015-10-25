@@ -3,6 +3,7 @@
 
 import os
 import uuid
+import datetime
 import numpy as np 
 import math
 import networkx as nx 
@@ -48,6 +49,14 @@ class Context(object):
 		assert isinstance(quotationID, (int, long))
 		return self.__quotations[quotationID]['text']
 
+	def quotationDate(self, quotationID):
+		assert isinstance(quotationID, (int, long))
+		return self.__quotations[quotationID]['date']
+
+	def quotationArticleID(self, quotationID):
+		assert isinstance(quotationID, (int, long))
+		return self.__quotations[quotationID]['articleID']
+
 	def quotationLabel(self, quotationID):
 		assert isinstance(quotationID, (int, long))
 		return self.__quotations[quotationID]['label']
@@ -75,9 +84,31 @@ class Context(object):
 		try:
 			obj = self.__quotations[quotationID]
 		except KeyError:
-			obj = self.__quotations[quotationID] = {'text':None, 'label':None, 'is_examplar':False}
+			obj = self.__quotations[quotationID] = {'text':None, 'label':None, 'is_examplar':False, 'date': None}
 
 		obj['text'] = text
+
+	def setQuotationDate(self, quotationID, date):
+		assert isinstance(quotationID, (int, long))
+		assert isinstance(date, (str, unicode, datetime.datetime))
+
+		try:
+			obj = self.__quotations[quotationID]
+		except KeyError:
+			obj = self.__quotations[quotationID] = {'text':None, 'label':None, 'is_examplar':False, 'date': None, 'articleID': None}
+
+		obj['date'] = date
+
+	def setQuotationArticleID(self, quotationID, articleID):
+		assert isinstance(quotationID, (int, long))
+		assert isinstance(articleID, (str, unicode))
+
+		try:
+			obj = self.__quotations[quotationID]
+		except KeyError:
+			obj = self.__quotations[quotationID] = {'text':None, 'label':None, 'is_examplar':False, 'date': None, 'articleID': None}
+
+		obj['articleID'] = articleID
 
 	def setQuotationLabel(self, quotationID, labelID):
 		assert isinstance(quotationID, (int, long))
@@ -114,7 +145,10 @@ class Context(object):
 		assert N > 0
 
 		if self.__connectivity is not None:
-			m = self.__connectivity ** N 
+			m = self.__connectivity[:]
+			for n in range(2, N+1):
+				m += self.__connectivity ** n 
+
 			for r in range(m.shape[0]):
 				for c in range(m.shape[1]):
 					if m[r, c]:
@@ -127,6 +161,24 @@ class Context(object):
 	def labelIdForQuotationID(self, quotationID):
 		assert isinstance(quotationID, (int, long))	
 		return self.__quotations[quotationID]['label']
+
+	def degrees(self, quotationID, N):
+		assert isinstance(quotationID, (int, long))	
+		assert isinstance(N, (int, long))
+
+		degrees = 0
+
+		quotationIDs = sorted(self.quotations)
+		l1 = self.labelIdForQuotationID(quotationID)
+		m = self.connectivityMatrixForStepN(N)
+		for j in range(len(quotationIDs)):
+			if self.isExamplar(quotationIDs[j]):
+				l2 = self.labelIdForQuotationID(quotationIDs[j])
+				if l1 != l2:
+					if m[l1, l2]:
+						degrees += 1
+
+		return degrees
 
 
 class ConnectedDots(object):
@@ -191,12 +243,14 @@ class ConnectedDots(object):
 			else:
 				colors.append('orange')
 
-		#
 		try:
 			pos=nx.graphviz_layout(G)
 
 		except:
 			pos=nx.spring_layout(G, iterations=20)
+
+		#pos = nx.circular_layout(G)
+		#pos=nx.spring_layout(G, iterations=100)
 
 		imageSize = math.sqrt(len(pos)) * 200 
 		matplotlib.pyplot.figure(figsize=(imageSize/100,imageSize/100)) # image size
@@ -209,7 +263,7 @@ class ConnectedDots(object):
 		elarge=[(u,v) for (u,v,d) in G.edges(data=True) if 'weight' in d and d['weight'] > 0.5]
 		esmall=[(u,v) for (u,v,d) in G.edges(data=True) if 'weight' in d and d['weight'] <=0.5]
 		nx.draw_networkx_edges(G, pos, edgelist=elarge, width=0.5, edge_color='gray')
-		nx.draw_networkx_edges(G, pos, edgelist=esmall, width=0.5, edge_color='gray', style='dashed')
+		nx.draw_networkx_edges(G, pos, edgelist=esmall, width=2.0, edge_color='gray', style='dashed')
 
 		nx.draw_networkx_labels(G, pos, labels)
 		if outputPath:
@@ -245,15 +299,27 @@ class ExcelRenderer(object):
 		ws = wb.create_sheet()
 		ws.title = 'Quotations'
 
-		ws.cell(row=1, column=1).value = 'ID'
+		ws.cell(row=1, column=1).value = 'Quotation Key'
 		ws.cell(row=1, column=2).value = 'Text'
 		ws.cell(row=1, column=3).value = 'Label'
 		ws.cell(row=1, column=4).value = 'Exemplar'
+		ws.cell(row=1, column=5).value = 'N=1'
+		ws.cell(row=1, column=6).value = 'N=2'
+		ws.cell(row=1, column=7).value = 'N=3'
+		ws.cell(row=1, column=8).value = 'N=4'
+		ws.cell(row=1, column=9).value = 'Date'
+		ws.cell(row=1, column=10).value = 'ArticleID'
 
 		ws.cell(row=1, column=1).style = self.__columnStyle
 		ws.cell(row=1, column=2).style = self.__columnStyle
 		ws.cell(row=1, column=3).style = self.__columnStyle
 		ws.cell(row=1, column=4).style = self.__columnStyle
+		ws.cell(row=1, column=5).style = self.__columnStyle
+		ws.cell(row=1, column=6).style = self.__columnStyle
+		ws.cell(row=1, column=7).style = self.__columnStyle
+		ws.cell(row=1, column=8).style = self.__columnStyle
+		ws.cell(row=1, column=9).style = self.__columnStyle
+		ws.cell(row=1, column=10).style = self.__columnStyle
 
 		quotations = self.__context.quotations
 		for (idx, qid) in enumerate(quotations):
@@ -269,6 +335,12 @@ class ExcelRenderer(object):
 				ws.cell(row=idx+2, column=4).value = "YES"
 			else:
 				ws.cell(row=idx+2, column=4).value = "NO"
+
+			for n in (1, 2, 3, 4):
+				ws.cell(row=idx+2, column=5 + n - 1).value = self.__context.degrees(qid, n)
+
+			ws.cell(row=idx+2, column=9).value = self.__context.quotationDate(qid)
+			ws.cell(row=idx+2, column=10).value = self.__context.quotationArticleID(qid)
 
 		return ws
 

@@ -76,7 +76,11 @@ DICT_NEWS_INFO = "./binfiles/dict_news_info.p"
 # MAX_NUM_SRC_ROWS=10 
 
 # max number of quotations for analysis.
+<<<<<<< HEAD
 MAX_NUM_QUO_ROWS=30
+=======
+MAX_NUM_QUO_ROWS=50
+>>>>>>> b393371d73f10c4ab82774b1aa4557f7cb740aa6
 
  
 ####
