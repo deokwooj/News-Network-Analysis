@@ -100,7 +100,10 @@ __MAX_CONNECTIVITY = 2
 def setMaxNumberOfQuotationRows(value):
 	global __MAX_NUM_QUO_ROWS
 	assert isinstance(value, (int, long))
-	__MAX_NUM_QUO_ROWS = value
+	if value == 0:
+		__MAX_NUM_QUO_ROWS = np.inf
+	else:
+		__MAX_NUM_QUO_ROWS = value
 
 
 def maxNumberOfQuotationRows():
