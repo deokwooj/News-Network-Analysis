@@ -16,7 +16,6 @@ from __future__ import division # To forace float point division
 """
 # newly imported
 from na_config import *
-#from na_build import *
 from na_build import *
 from sklearn import cluster
 from sklearn.cluster import Ward
@@ -262,7 +261,7 @@ if __name__ == "__main__":
     """    
     
     print '----------------------------------------------'
-    print 'Clustering quotaitons by Dq using ' +CLUSTER_ALG
+    print 'Clustering quotaitons by Dq'
     print '----------------------------------------------'
     print 'Start clustering.... '
     # construct similarity matrix
@@ -287,8 +286,7 @@ if __name__ == "__main__":
     ############################    
     # computer Intra, Inter..
     ############################    
-    # fill by junguk. 
-    
+    #TODO: fill by junguk. 
     Dq_inter=[] # outside cluster
     Dq_intra=[] # inside cluster
     for i in range(SIMM_MAT.shape[0]):
@@ -299,7 +297,38 @@ if __name__ == "__main__":
     ############################    
     # Construct G_q
     ############################    
-    # fill by junguk. 
+    sz = len(exemplars_)
+    G_q = np.zeros(shape=(sz, sz))
+    for i in range(sz):
+        for j in range(i+1, sz):
+            e1 = exemplars_[i]
+            e2 = exemplars_[j]
+            if AnalMatObj.Q_z[e1, e2]:
+                G_q[i, j] = 1
+                G_q[j, i] = 1
+
+    G_q = np.matrix(G_q)
+
+    ############################    
+    # Render to Excel file
+    ############################    
+    obj = na_renderer.Context()
+    for (qid, label) in enumerate(labels_):
+        text = 'text ' + str(qid)
+        print 'qid = %d, text = %s' % (qid, text)
+        print 'qid = %d, label = %d' % (qid, label)
+        obj.setQuotationText(qid, text)
+        obj.setQuotationLabel(qid, label)
+
+    for (label, qid) in enumerate(exemplars_):
+        obj.setLabelExamplar(label, qid)
+
+    obj.setConnectivityMatrix(G_q)
+    r2 = na_renderer.ExcelRenderer(obj)
+    r2.render(os.path.join(os.getcwd(), 'output/output.xlsx'), 4)
+
+
+
 
     """
     q_id={0:23, 1:10, 2:39, 3:44, 4:14, 5:33, 6:21, 7:66, 8:88, 9:11}

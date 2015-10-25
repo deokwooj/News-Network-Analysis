@@ -4,6 +4,7 @@
 import os
 import uuid
 import numpy as np 
+import math
 import networkx as nx 
 import matplotlib
 import matplotlib.pyplot
@@ -197,6 +198,10 @@ class ConnectedDots(object):
 		except:
 			pos=nx.spring_layout(G, iterations=20)
 
+		imageSize = math.sqrt(len(pos)) * 200 
+		matplotlib.pyplot.figure(figsize=(imageSize/100,imageSize/100)) # image size
+		matplotlib.pyplot.axis('equal')
+
 		# nodes
 		nx.draw_networkx_nodes(G, pos, nodelist=quotationIDs, node_size=sizes, font_size=5, node_color=colors)
 
@@ -207,7 +212,6 @@ class ConnectedDots(object):
 		nx.draw_networkx_edges(G, pos, edgelist=esmall, width=0.5, edge_color='gray', style='dashed')
 
 		nx.draw_networkx_labels(G, pos, labels)
-
 		if outputPath:
 			matplotlib.pyplot.savefig(outputPath)
 		
@@ -269,28 +273,25 @@ class ExcelRenderer(object):
 		return ws
 
 	def renderConnectivityMatrixSheet(self, wb, N):
-		def cellIndex(r, c):
-			return chr(ord('A') + c) + str(r + 1)
-
 		ws = wb.create_sheet()
 		ws.title = 'C.Matrix(N=%d)' % N
 
 		labelIDs = self.__context.labels
-		cell = ws[cellIndex(0, 0)]
+		cell = ws.cell(row=0 + 1, column=0 + 1)
 		cell.style = self.__columnStyle
 		for i in range(len(labelIDs)):
-			cell = ws[cellIndex(0, i+1)]
+			cell = ws.cell(row = 0 + 1, column = i+1 + 1)
 			cell.value = self.__context.labelExamplar(labelIDs[i])
 			cell.style = self.__columnStyle
 
-			cell = ws[cellIndex(i+1, 0)]
+			cell = ws.cell(row = i+1 + 1, column = 0 + 1)
 			cell.value = self.__context.labelExamplar(labelIDs[i])
 			cell.style = self.__columnStyle
 
 		m = self.__context.connectivityMatrixForStepN(N)
 		for r in range(m.shape[0]):
 			for c in range(m.shape[1]):
-				ws[cellIndex(r + 1, c + 1)].value = m[r, c]
+				ws.cell(row = r + 1 + 1, column = c + 1 + 1).value = m[r, c]
 
 		return ws
 
