@@ -351,7 +351,7 @@ if __name__ == "__main__":
 
     for idx in range(numQuotations):
         qobj = NewsQuoObjs[idx][1]
-        label = labels_[idx]
+        label = int(labels_[idx])
         qid = int(qobj.quotation_key)
         print '[%d] %s' % (qid, qobj.quotation)
         obj.setQuotationText(qid, qobj.quotation)
