@@ -162,11 +162,11 @@ class Context(object):
 		assert isinstance(quotationID, (int, long))	
 		return self.__quotations[quotationID]['label']
 
-	def degrees(self, quotationID, N):
+	def neighbors(self, quotationID, N):
 		assert isinstance(quotationID, (int, long))	
 		assert isinstance(N, (int, long))
 
-		degrees = 0
+		neighbors = []
 
 		quotationIDs = sorted(self.quotations)
 		l1 = self.labelIdForQuotationID(quotationID)
@@ -176,9 +176,12 @@ class Context(object):
 				l2 = self.labelIdForQuotationID(quotationIDs[j])
 				if l1 != l2:
 					if m[l1, l2]:
-						degrees += 1
+						neighbors.append(quotationIDs[j])
 
-		return degrees
+		return neighbors
+
+	def degrees(self, quotationID, N):
+		return len(self.neighbors(quotationID, N))
 
 
 class ConnectedDots(object):
@@ -303,23 +306,19 @@ class ExcelRenderer(object):
 		ws.cell(row=1, column=2).value = 'Text'
 		ws.cell(row=1, column=3).value = 'Label'
 		ws.cell(row=1, column=4).value = 'Exemplar'
-		ws.cell(row=1, column=5).value = 'N=1'
-		ws.cell(row=1, column=6).value = 'N=2'
-		ws.cell(row=1, column=7).value = 'N=3'
-		ws.cell(row=1, column=8).value = 'N=4'
-		ws.cell(row=1, column=9).value = 'Date'
-		ws.cell(row=1, column=10).value = 'ArticleID'
+		ws.cell(row=1, column=5).value = 'N=1 (degree)'
+		ws.cell(row=1, column=6).value = 'N=1 (Neighbors)'
+		ws.cell(row=1, column=7).value = 'N=2 (degree)'
+		ws.cell(row=1, column=8).value = 'N=2 (neighbors)'
+		ws.cell(row=1, column=9).value = 'N=3 (degree)'
+		ws.cell(row=1, column=10).value = 'N=3 (neighbors)'
+		ws.cell(row=1, column=11).value = 'N=4 (degree)'
+		ws.cell(row=1, column=12).value = 'N=4 (neighbors)'
+		ws.cell(row=1, column=13).value = 'Date'
+		ws.cell(row=1, column=14).value = 'ArticleID'
 
-		ws.cell(row=1, column=1).style = self.__columnStyle
-		ws.cell(row=1, column=2).style = self.__columnStyle
-		ws.cell(row=1, column=3).style = self.__columnStyle
-		ws.cell(row=1, column=4).style = self.__columnStyle
-		ws.cell(row=1, column=5).style = self.__columnStyle
-		ws.cell(row=1, column=6).style = self.__columnStyle
-		ws.cell(row=1, column=7).style = self.__columnStyle
-		ws.cell(row=1, column=8).style = self.__columnStyle
-		ws.cell(row=1, column=9).style = self.__columnStyle
-		ws.cell(row=1, column=10).style = self.__columnStyle
+		for c in range(14):
+			ws.cell(row=1, column=1 + c).style = self.__columnStyle
 
 		quotations = self.__context.quotations
 		for (idx, qid) in enumerate(quotations):
@@ -337,10 +336,12 @@ class ExcelRenderer(object):
 				ws.cell(row=idx+2, column=4).value = "NO"
 
 			for n in (1, 2, 3, 4):
-				ws.cell(row=idx+2, column=5 + n - 1).value = self.__context.degrees(qid, n)
+				neighbors = self.__context.neighbors(qid, n)
+				ws.cell(row=idx+2, column=5 + (n - 1) * 2 ).value = len(neighbors)
+				ws.cell(row=idx+2, column=6 + (n - 1) * 2 ).value = repr(tuple(neighbors))
 
-			ws.cell(row=idx+2, column=9).value = self.__context.quotationDate(qid)
-			ws.cell(row=idx+2, column=10).value = self.__context.quotationArticleID(qid)
+			ws.cell(row=idx+2, column=13).value = self.__context.quotationDate(qid)
+			ws.cell(row=idx+2, column=14).value = self.__context.quotationArticleID(qid)
 
 		return ws
 
