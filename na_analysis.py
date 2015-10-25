@@ -266,8 +266,36 @@ if __name__ == "__main__":
     print 'Start clustering.... '
     # construct similarity matrix
     Dq=np.asarray(AnalMatObj.Dq)
-    sim_thresh=0.8
+    sim_thresh=0.1
     SIMM_MAT=(np.sign(Dq-sim_thresh)+1)/2
+    
+    
+    sim_thresh=0.2
+    labels_=np.inf*ones(Dq.shape[0])
+    labels_id=0
+    exemplars_=[]
+    used_idx_set=set([])
+    for k,rows in enumerate(Dq):
+        idx=np.where(rows>sim_thresh)[0]
+        update_idx=np.array(list(set(idx)-used_idx_set))
+        print update_idx,list(used_idx_set)
+        #print labels_
+        #print k,labels_id
+        if len(update_idx)==0:
+            break
+        else:
+            labels_[update_idx]=labels_id
+            exemplars_.append(k)
+            used_idx_set=set(list(np.where(labels_<inf)[0]))
+            labels_id=labels_id+1
+            
+    
+
+    print labels_, exemplars_            
+    
+    for k,row_ in enumerate(SIMM_MAT):
+        print k,sum(row_>sim_thresh)
+    
     start_time = time.time()
     exemplars_, labels_ = cluster.affinity_propagation(SIMM_MAT,damping=0.5)
     print("Clustering done --- %s seconds ---" % (time.time() - start_time))
