@@ -293,15 +293,15 @@ if __name__ == "__main__":
     # construct similarity matrix
     Dq=np.asarray(AnalMatObj.Dq)
 
-    """
-    sim_thresh=0.1
-    SIMM_MAT=(np.sign(Dq-sim_thresh)+1)/2
+    sim_thr=0.8
+    SIMM_MAT=(np.sign(Dq-sim_thr)+1)/2
     start_time = time.time()
-    exemplars_, labels_ = cluster.affinity_propagation(SIMM_MAT,damping=0.5)
+    #exemplars_, labels_ = cluster.affinity_propagation(SIMM_MAT,damping=0.5)
+    #change cluster algorithm    
+    exemplars_,labels_ =sim_cluser(Dq,sim_thresh=sim_thr)
     print("Clustering done --- %s seconds ---" % (time.time() - start_time))
-    """
 
-    exemplars_,labels_ =sim_cluser(Dq,sim_thresh=0.8)
+
     quo_cluster=\
     nt.obj({'exemplars_':exemplars_,'labels_':labels_})
     nt.saveObjectBinaryFast(quo_cluster, QUO_CLUSTER_OBJ)

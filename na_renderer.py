@@ -237,7 +237,7 @@ class ConnectedDots(object):
 		colors = []
 		max_depth = float(max(degrees.values()))
 		for qid in quotationIDs:
-			k = degrees[qid] / max_depth
+			#k = degrees[qid] / max_depth
 			if self.__context.isExamplar(qid):
 				colors.append('red')
 			else:
