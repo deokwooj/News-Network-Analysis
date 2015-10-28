@@ -10,20 +10,8 @@
   - http://pearl.cs.pusan.ac.kr/~wiki/images/4/46/TR14-09-PBK-b.pdf
 
 #### 설치방법
-  - pip install konlpy
-  - pip install numpy
-  - pip install scipy
-  - pip install pylab
-  - pip install openpyxl
-  - pip install xlsxwriter
-  - pip install scikit-learn
-  - pip install networkx
+  - sudo apt-get install libxml2-dev libxslt1-dev python-dev
+  - pip install konlpy numpy scipy pylab openpyxl xlsxwriter scikit-learn networkx --upgrade
 
 #### SW 개발 현황 메모
   - https://github.com/deokwooj/NLP/blob/master/Report.md
-
-
-#### Ubuntu 설치 관련
-sudo apt-get install libxml2-dev
-sudo apt-get install libxslt1-dev 
-sudo apt-get install python-dev
