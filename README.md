@@ -21,3 +21,9 @@
 
 #### SW 개발 현황 메모
   - https://github.com/deokwooj/NLP/blob/master/Report.md
+
+
+#### Ubuntu 설치 관련
+sudo apt-get install libxml2-dev
+sudo apt-get install libxslt1-dev 
+sudo apt-get install python-dev
