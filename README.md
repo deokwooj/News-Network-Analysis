@@ -13,5 +13,8 @@
   - sudo apt-get install libxml2-dev libxslt1-dev python-dev
   - pip install konlpy numpy scipy pylab openpyxl xlsxwriter scikit-learn networkx --upgrade
 
+  * scikit-learn==0.16.1
+  * openpyxl==2.2.6
+
 #### SW 개발 현황 메모
   - https://github.com/deokwooj/NLP/blob/master/Report.md
