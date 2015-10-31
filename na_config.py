@@ -72,18 +72,7 @@ DICT_SPLIT_ARR_NOUNS = "./binfiles/dict_split_arr_nouns.p"
 # news info tuple in extraction sheet of reference.xlsx
 DICT_NEWS_INFO = "./binfiles/dict_news_info.p"
 
-<<<<<<< HEAD
-# max number of quotations for analysis. 
-# MAX_NUM_SRC_ROWS=10 
 
-# max number of quotations for analysis.
-#MAX_NUM_QUO_ROWS=np.inf
-MAX_NUM_QUO_ROWS=100
-sim_thr=0.1
-=======
->>>>>>> 73a10202115ec325ee77ba29e17193d39929f056
-
- 
 ####
 #
 NEWS_SRC_OBJ="./binfiles/NewsSrcObjs.p" 
