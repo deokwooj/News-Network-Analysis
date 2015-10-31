@@ -15,7 +15,9 @@ from __future__ import division # To forace float point division
  4. na_extraction.py
 """
 # newly imported
+import sys
 from na_config import *
+import na_config as conf
 from na_build import *
 from sklearn import cluster
 from sklearn.cluster import Ward
@@ -239,6 +241,37 @@ def verify_AnalMatObj(AnalMatObj):
     
 
 if __name__ == "__main__":
+    if len(sys.argv) == 4:
+        conf.setMaxConnectivity(int(sys.argv[1]))
+        conf.setSimilarityThreshold(float(sys.argv[2]))
+        conf.setMaxNumberOfQuotationRows(int(sys.argv[3]))
+
+    elif len(sys.argv) == 2 and sys.argv[1] == 'help':
+        print "usage) python na_analysis.py N sim_thr MAX_NUM_QUO_ROWS"
+        sys.exit(0)
+
+    else:
+        print "usage) python na_analysis.py N sim_thr MAX_NUM_QUO_ROWS"
+
+        ret = raw_input('N? (default:%d)' % conf.maxConnectivity())
+        try:
+            conf.setMaxConnectivity(int(ret))
+        except ValueError:
+            pass
+
+        ret = raw_input('sim_thr? (default:%f)' % conf.similarityThreshold())
+        try:
+            conf.setSimilarityThreshold(float(ret))
+        except ValueError:
+            pass
+
+        ret = raw_input('MAX_NUM_QUO_ROWS? (default:%f)' % conf.maxNumberOfQuotationRows())
+        try:
+            conf.setMaxNumberOfQuotationRows(int(ret))
+        except ValueError:
+            pass
+
+
     print " running news source analysis.....version 2.56"
     NewsSrcObjs, NewsQuoObjs=na_build_main(SRC_OBJ=False,QUO_OBJ=True, argv_print=False)
     #import pdb;pdb.set_trace(); ##
@@ -293,7 +326,7 @@ if __name__ == "__main__":
     print 'Start clustering.... '
     # construct similarity matrix
     Dq=np.asarray(AnalMatObj.Dq)
-
+    sim_thr=conf.similarityThreshold()
     SIMM_MAT=(np.sign(Dq-sim_thr)+1)/2
     start_time = time.time()
     #exemplars_, labels_ = cluster.affinity_propagation(SIMM_MAT,damping=0.5)
@@ -366,7 +399,7 @@ if __name__ == "__main__":
 
     obj.setConnectivityMatrix(G_q)
     r2 = na_renderer.ExcelRenderer(obj)
-    r2.render(os.path.join(os.getcwd(), 'output/output.xlsx'), 4)
+    r2.render(os.path.join(os.getcwd(), 'output/output.xlsx'), conf.maxConnectivity())
 
 
     """

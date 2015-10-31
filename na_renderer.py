@@ -9,6 +9,7 @@ import math
 import networkx as nx 
 import matplotlib
 import matplotlib.pyplot
+import na_config as conf
 from openpyxl import load_workbook
 from openpyxl.workbook import Workbook 
 from openpyxl.drawing import Image
@@ -162,11 +163,11 @@ class Context(object):
 		assert isinstance(quotationID, (int, long))	
 		return self.__quotations[quotationID]['label']
 
-	def degrees(self, quotationID, N):
+	def neighbors(self, quotationID, N):
 		assert isinstance(quotationID, (int, long))	
 		assert isinstance(N, (int, long))
 
-		degrees = 0
+		neighbors = []
 
 		quotationIDs = sorted(self.quotations)
 		l1 = self.labelIdForQuotationID(quotationID)
@@ -176,9 +177,12 @@ class Context(object):
 				l2 = self.labelIdForQuotationID(quotationIDs[j])
 				if l1 != l2:
 					if m[l1, l2]:
-						degrees += 1
+						neighbors.append(quotationIDs[j])
 
-		return degrees
+		return neighbors
+
+	def degrees(self, quotationID, N):
+		return len(self.neighbors(quotationID, N))
 
 
 class ConnectedDots(object):
@@ -231,7 +235,8 @@ class ConnectedDots(object):
 		sizes = []
 		for qid in quotationIDs:
 			d = degrees[qid]
-			sizes.append(500 + d * 100)
+			#sizes.append(500 + d * 100)
+			sizes.append(500 + 3 * 100)
 
 		#
 		colors = []
@@ -299,27 +304,27 @@ class ExcelRenderer(object):
 		ws = wb.create_sheet()
 		ws.title = 'Quotations'
 
-		ws.cell(row=1, column=1).value = 'Quotation Key'
-		ws.cell(row=1, column=2).value = 'Text'
-		ws.cell(row=1, column=3).value = 'Label'
-		ws.cell(row=1, column=4).value = 'Exemplar'
-		ws.cell(row=1, column=5).value = 'N=1'
-		ws.cell(row=1, column=6).value = 'N=2'
-		ws.cell(row=1, column=7).value = 'N=3'
-		ws.cell(row=1, column=8).value = 'N=4'
-		ws.cell(row=1, column=9).value = 'Date'
-		ws.cell(row=1, column=10).value = 'ArticleID'
+		N = conf.maxConnectivity()
 
-		ws.cell(row=1, column=1).style = self.__columnStyle
-		ws.cell(row=1, column=2).style = self.__columnStyle
-		ws.cell(row=1, column=3).style = self.__columnStyle
-		ws.cell(row=1, column=4).style = self.__columnStyle
-		ws.cell(row=1, column=5).style = self.__columnStyle
-		ws.cell(row=1, column=6).style = self.__columnStyle
-		ws.cell(row=1, column=7).style = self.__columnStyle
-		ws.cell(row=1, column=8).style = self.__columnStyle
-		ws.cell(row=1, column=9).style = self.__columnStyle
-		ws.cell(row=1, column=10).style = self.__columnStyle
+		ws.cell(row=1, column=1).value = 'N = %d, sim_thr = %f, MAX_NUM_QUO_ROWS = %d' % (conf.maxConnectivity(), conf.similarityThreshold(), conf.maxNumberOfQuotationRows())
+		for i in range(6 + N * 2):
+			ws.cell(row=1, column=1 + i).style = Style(fill=PatternFill(patternType=fills.FILL_SOLID, fgColor=colors.YELLOW), font=Font(bold=True, color=colors.RED))
+
+		ws.cell(row=2, column=1).value = 'Quotation Key'
+		ws.cell(row=2, column=2).value = 'Text'
+		ws.cell(row=2, column=3).value = 'Label'
+		ws.cell(row=2, column=4).value = 'Exemplar'
+
+		for i in range(1, N + 1):
+			ws.cell(row=2, column=3 + i * 2).value = 'N=%d (degree)' % i
+			ws.cell(row=2, column=4 + i * 2).value = 'N=%d (neighbors)' % i
+
+
+		ws.cell(row=2, column=5 + N * 2).value = 'Date'
+		ws.cell(row=2, column=6 + N * 2).value = 'ArticleID'
+
+		for c in range(6 + N * 2):
+			ws.cell(row=2, column=1 + c).style = self.__columnStyle
 
 		quotations = self.__context.quotations
 		for (idx, qid) in enumerate(quotations):
@@ -327,20 +332,22 @@ class ExcelRenderer(object):
 			label = self.__context.quotationLabel(qid)
 			is_examplar = self.__context.isExamplar(qid)
 
-			ws.cell(row=idx+2, column=1).value = qid
-			ws.cell(row=idx+2, column=2).value = text
-			ws.cell(row=idx+2, column=3).value = label
+			ws.cell(row=idx+3, column=1).value = qid
+			ws.cell(row=idx+3, column=2).value = text
+			ws.cell(row=idx+3, column=3).value = label
 
 			if is_examplar:
-				ws.cell(row=idx+2, column=4).value = "YES"
+				ws.cell(row=idx+3, column=4).value = "YES"
 			else:
-				ws.cell(row=idx+2, column=4).value = "NO"
+				ws.cell(row=idx+3, column=4).value = "NO"
 
-			for n in (1, 2, 3, 4):
-				ws.cell(row=idx+2, column=5 + n - 1).value = self.__context.degrees(qid, n)
+			for n in range(1, N + 1):
+				neighbors = self.__context.neighbors(qid, n)
+				ws.cell(row=idx+3, column=3 + n * 2).value = len(neighbors)
+				ws.cell(row=idx+3, column=4 + n * 2).value = repr(tuple(neighbors))
 
-			ws.cell(row=idx+2, column=9).value = self.__context.quotationDate(qid)
-			ws.cell(row=idx+2, column=10).value = self.__context.quotationArticleID(qid)
+			ws.cell(row=idx+3, column=5 + N * 2).value = self.__context.quotationDate(qid)
+			ws.cell(row=idx+3, column=6 + N * 2).value = self.__context.quotationArticleID(qid)
 
 		return ws
 
