@@ -235,7 +235,8 @@ class ConnectedDots(object):
 		sizes = []
 		for qid in quotationIDs:
 			d = degrees[qid]
-			sizes.append(500 + d * 100)
+			#sizes.append(500 + d * 100)
+			sizes.append(500 + 3 * 100)
 
 		#
 		colors = []
