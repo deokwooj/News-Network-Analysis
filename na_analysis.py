@@ -294,7 +294,6 @@ if __name__ == "__main__":
     # construct similarity matrix
     Dq=np.asarray(AnalMatObj.Dq)
 
-    sim_thr=0.8
     SIMM_MAT=(np.sign(Dq-sim_thr)+1)/2
     start_time = time.time()
     #exemplars_, labels_ = cluster.affinity_propagation(SIMM_MAT,damping=0.5)
