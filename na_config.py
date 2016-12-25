@@ -40,13 +40,10 @@ from na_const import *
 #from na_extraction import *
 __author__ = "Deokwoo Jung"
 __copyright__ = "Copyright 2015, Deokwoo Jung, All rights reserved."
-__credits__ = ["Deokwoo Jung"]
+__credits__ = ["한국언론진흥재단"]
 __license__ = "GPL"
 __version__ = "1.0.1"
-__maintainer__ = "Deokwoo Jung"
-__email__ = "deokwooj@gmail.com"
-__status__ = "Development"
-
+__email__ = "deokwoo.jung@gmail.com"
 
 # dictionary file path
 DICT_ID_NAME = "./binfiles/dict_id_name.p"

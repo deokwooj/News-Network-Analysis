@@ -15,15 +15,13 @@ from openpyxl.workbook import Workbook
 from openpyxl.drawing import Image
 from openpyxl.styles import Font, Style, Fill, Color, colors, fills, PatternFill
 
-
 __author__ = "Jung-uk Choi"
 __copyright__ = "Copyright 2015, Deokwoo Jung, All rights reserved."
-__credits__ = ["Jung-uk Choi"]
+__credits__ = ["한국언론진흥재단"]
 __license__ = "GPL"
 __version__ = "0.1"
 __maintainer__ = "Jung-uk Choi"
 __email__ = "choijunguk@gmail.com"
-__status__ = "Prototype"
 
 
 TMP_DIR = os.path.join('/tmp', 'NLP')

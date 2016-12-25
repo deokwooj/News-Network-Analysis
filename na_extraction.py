@@ -7,9 +7,15 @@ from openpyxl.writer.excel import ExcelWriter
 from openpyxl.cell import get_column_letter
 from openpyxl import load_workbook
 from na_config import *
-import pprint
-import na_tools as nt
+#import pprint
+#import na_tools as nt
 
+__author__ = "Deokwoo Jung"
+__copyright__ = "Copyright 2015, Deokwoo Jung, All rights reserved."
+__credits__ = ["한국언론진흥재단"]
+__license__ = "GPL"
+__version__ = "1.0.1"
+__email__ = "deokwoo.jung@gmail.com"
 
 def excel_noun():
 
